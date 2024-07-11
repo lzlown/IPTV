@@ -1,16 +1,14 @@
 package com.lzlown.iptv.player.vlc;
 
 import android.content.Context;
-import android.util.Log;
 import com.lzlown.iptv.api.ApiConfig;
+import tv.danmaku.ijk.media.player.pragma.DebugLog;
 import xyz.doikki.videoplayer.player.vlc.VlcPlayer;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 public class VlcmPlayer extends VlcPlayer {
-
+    private static final String TAG = VlcmPlayer.class.getName();
     public VlcmPlayer(Context context) {
         super(context);
     }
@@ -22,6 +20,7 @@ public class VlcmPlayer extends VlcPlayer {
         if (null != defaultOptions) {
             for (String ops : defaultOptions) {
                 mMediaPlayer.setOption(ops);
+                DebugLog.i(TAG, "setOption: " + ops);
             }
         }
     }

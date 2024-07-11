@@ -24,6 +24,9 @@ public class VlcMediaPlayer {
     private final MediaPlayer mMediaPlayer;
     public List<String> mediaOps = new ArrayList<>();
     private OnListener onListener;
+    private Integer sum = 0;
+    private Long time;
+    private String path;
 
 
 
@@ -63,6 +66,10 @@ public class VlcMediaPlayer {
                     if (onListener != null) {
                         if (event.getBuffering() == 100) {
                             DebugLog.i(TAG, "onEvent: Buffered");
+                            if (path.contains("rtsp") || path.contains("udp") || path.contains("rtp")) {
+                                time = System.currentTimeMillis() + 15000;
+                                rePlay();
+                            }
                         }
                     }
                     break;
@@ -96,6 +103,7 @@ public class VlcMediaPlayer {
 
     public void setDataSource(Uri uri, Map<String, String> headers)
             throws IOException, IllegalArgumentException, SecurityException, IllegalStateException {
+        path = uri.toString();
         IMedia mCurrentMedia = new Media(mILibVLC, uri);
         for (String vlcOp : mediaOps) {
             mCurrentMedia.addOption(":" + vlcOp);
@@ -185,4 +193,14 @@ public class VlcMediaPlayer {
         this.onListener = onListener;
     }
 
+    private synchronized void rePlay() {
+        sum++;
+        if (sum > 2 && System.currentTimeMillis() < time) {
+            DebugLog.i(TAG, "onEvent: rePlay");
+            sum = 0;
+            mMediaPlayer.stop();
+            mMediaPlayer.play();
+            time = System.currentTimeMillis() + 15000;
+        }
+    }
 }

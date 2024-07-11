@@ -6,6 +6,7 @@ import android.content.res.AssetFileDescriptor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 
@@ -24,6 +25,7 @@ public class IjkPlayer extends AbstractPlayer implements IMediaPlayer.OnErrorLis
         IMediaPlayer.OnBufferingUpdateListener, IMediaPlayer.OnPreparedListener,
         IMediaPlayer.OnVideoSizeChangedListener, IjkMediaPlayer.OnNativeInvokeListener {
 
+    private static final String TAG = IjkPlayer.class.getSimpleName();
     protected IjkMediaPlayer mMediaPlayer;
     private int mBufferedPercent;
     private final Context mAppContext;

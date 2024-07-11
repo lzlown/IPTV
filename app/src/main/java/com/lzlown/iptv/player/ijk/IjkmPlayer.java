@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import com.lzlown.iptv.api.ApiConfig;
 import com.lzlown.iptv.bean.IjkOption;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
+import tv.danmaku.ijk.media.player.pragma.DebugLog;
 import xyz.doikki.videoplayer.player.ijk.IjkPlayer;
 
 import java.util.List;
@@ -25,8 +26,10 @@ public class IjkmPlayer extends IjkPlayer {
         if (null != ijkOptionList) {
             for (IjkOption ijkOption : ijkOptionList) {
                 mMediaPlayer.setOption(ijkOption.getCategory(), ijkOption.getName(), ijkOption.getValue());
+                DebugLog.i(TAG, "setOption: " + ijkOption.getName()+"="+ijkOption.getValue());
             }
         }
+
         mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "subtitle", 1);
         mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "dns_cache_clear", 1);
         mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "dns_cache_timeout", 60 * 60 * 1000);
@@ -42,6 +45,7 @@ public class IjkmPlayer extends IjkPlayer {
                 List<IjkOption> ijkOptionList = ApiConfig.get().getIjkOptions().get("rtsp");
                 if (null != ijkOptionList) {
                     for (IjkOption ijkOption : ijkOptionList) {
+                        DebugLog.i(TAG, "setOption: " + ijkOption.getName()+"="+ijkOption.getValue());
                         mMediaPlayer.setOption(ijkOption.getCategory(), ijkOption.getName(), ijkOption.getValue());
                     }
                 }

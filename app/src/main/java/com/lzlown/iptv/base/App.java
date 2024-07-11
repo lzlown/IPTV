@@ -24,7 +24,7 @@ public class App extends MultiDexApplication {
     }
 
     private void initParams() {
-        Hawk.put(HawkConfig.PLAY_TYPE, 0);
+        Hawk.put(HawkConfig.PLAY_TYPE, 1);
         Hawk.put(HawkConfig.PLAY_SCALE, 1);
         Hawk.put(HawkConfig.LIVE_CROSS_GROUP, true);
         if (!Hawk.contains(HawkConfig.API_URL)) {

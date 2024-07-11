@@ -986,7 +986,7 @@ public final class IjkMediaPlayer extends AbstractMediaPlayer {
                         "IjkMediaPlayer went away with unhandled events");
                 return;
             }
-
+            DebugLog.d(TAG, "handleMessage "+msg.what);
             switch (msg.what) {
                 case MEDIA_PREPARED:
                     player.notifyOnPrepared();
