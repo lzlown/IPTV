@@ -1,8 +1,8 @@
 package com.lzlown.iptv.util;
 
 import android.content.Context;
-import com.lzlown.iptv.player.vlc.VlcmPlayer;
 import com.lzlown.iptv.player.ijk.IjkmPlayer;
+import com.lzlown.iptv.player.vlc.VlcmPlayer;
 import com.orhanobut.hawk.Hawk;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -10,11 +10,11 @@ import tv.danmaku.ijk.media.player.IjkLibLoader;
 import xyz.doikki.videoplayer.player.AndroidMediaPlayerFactory;
 import xyz.doikki.videoplayer.player.PlayerFactory;
 import xyz.doikki.videoplayer.player.VideoView;
+import xyz.doikki.videoplayer.player.vlc.VlcPlayer;
+import xyz.doikki.videoplayer.player.vlc.VlcPlayerFactory;
 import xyz.doikki.videoplayer.render.RenderViewFactory;
 import xyz.doikki.videoplayer.render.SurfaceRenderViewFactory;
 import xyz.doikki.videoplayer.render.TextureRenderViewFactory;
-import xyz.doikki.videoplayer.player.vlc.VlcPlayer;
-import xyz.doikki.videoplayer.player.vlc.VlcPlayerFactory;
 
 import java.text.DecimalFormat;
 

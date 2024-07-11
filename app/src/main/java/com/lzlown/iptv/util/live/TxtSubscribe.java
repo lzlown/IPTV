@@ -56,7 +56,7 @@ public class TxtSubscribe {
                 return;
             }
             linkedHashMap.put("未分组", linkedHashMap2);
-        } catch (Throwable unused) {
+        } catch (Throwable ignored) {
         }
     }
 }
