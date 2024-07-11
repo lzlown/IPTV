@@ -26,27 +26,19 @@ public class LiveChannelItemAdapter extends BaseQuickAdapter<LiveChannelItem, Ba
 
     @Override
     protected void convert(BaseViewHolder holder, LiveChannelItem item) {
-        TextView tvChannelNum = holder.getView(R.id.tvChannelNum);
         TextView tvChannel = holder.getView(R.id.tvChannelName);
         MarqueeTextView tvChannelEpg = holder.getView(R.id.tvChannelEpg);
-        LinearLayout linearLayoutLay=holder.getView(R.id.tvChannelName_Lay);
-        LinearLayout linearLayoutEpg=holder.getView(R.id.tvChannelName_Epg);
-        tvChannelNum.setText(String.format("%03d", item.getChannelNum()));
-        tvChannel.setText(item.getChannelName());
-        if (Hawk.get(HawkConfig.LIVE_SHOW_EPG, false)){
+        tvChannel.setText(String.format("%03d", item.getChannelNum()) + "  " + item.getChannelName());
+        if (Hawk.get(HawkConfig.LIVE_SHOW_EPG, false)) {
             tvChannelEpg.setText(ApiConfig.get().getLiveEpgItem(item.getChannelCh()).getTitle());
-        }else {
-            linearLayoutLay.setPadding(0,35,0,35);
-            linearLayoutEpg.setVisibility(View.GONE);
+        } else {
+            tvChannelEpg.setVisibility(View.GONE);
         }
         int channelIndex = item.getChannelIndex();
         if (channelIndex == selectedChannelIndex && channelIndex != focusedChannelIndex) {
-            tvChannelNum.setTextColor(mContext.getResources().getColor(R.color.color_00bfff));
             tvChannel.setTextColor(mContext.getResources().getColor(R.color.color_00bfff));
             tvChannelEpg.setTextColor(mContext.getResources().getColor(R.color.color_00bfff));
-        }
-        else{
-            tvChannelNum.setTextColor(Color.WHITE);
+        } else {
             tvChannel.setTextColor(Color.WHITE);
             tvChannelEpg.setTextColor(Color.WHITE);
         }

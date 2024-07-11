@@ -52,7 +52,7 @@ public class HomeActivity extends BaseActivity {
         AppManager.getInstance().appExit(0);
         finish();
     }
-    private Runnable getCfgRun =new Runnable() {
+    private final Runnable getCfgRun =new Runnable() {
         @Override
         public void run() {
             ApiConfig.get().loadData(new ApiConfig.LoadCallback() {

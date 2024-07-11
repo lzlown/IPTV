@@ -17,11 +17,11 @@ import java.util.*;
 public class ApiConfig {
     private static ApiConfig instance;
     private List<LiveChannelGroup> liveChannelGroupList = new ArrayList<>();
-    private static Map<String, Map<String, LiveEpg>> liveEpgMap = new HashMap();
+    private static final Map<String, Map<String, LiveEpg>> liveEpgMap = new HashMap();
     private HashMap<String, List<IjkOption>> ijkOptions = new HashMap<>();
     private HashMap<String, List<String>> vlcOptions = new HashMap<>();
-    private String userAgent = "okhttp/3.15";
-    private String requestAccept = "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9";
+    private final String userAgent = "okhttp/3.15";
+    private final String requestAccept = "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9";
 //    private ExecutorService executorService= Executors.newFixedThreadPool(5);
 
     //EPG 地址
@@ -43,7 +43,7 @@ public class ApiConfig {
     private List<IjkOption> defaultIJK() {
         List<IjkOption> list = new ArrayList<>();
         list.add(new IjkOption(4, "opensles", "0"));
-        list.add(new IjkOption(4, "framedrop", "1"));
+        list.add(new IjkOption(4, "framedrop", "5"));
         list.add(new IjkOption(4, "start-on-prepared", "1"));
         list.add(new IjkOption(1, "http-detect-rangeupport", "0"));
         list.add(new IjkOption(2, "skip_loop_filter", "0"));
@@ -55,17 +55,17 @@ public class ApiConfig {
         list.add(new IjkOption(4, "mediacodec-auto-rotate", "1"));
         list.add(new IjkOption(4, "mediacodec-handle-resolution-change", "1"));
         list.add(new IjkOption(4, "mediacodec-hevc", "1"));
+        list.add(new IjkOption(4, "mediacodec-avc", "1"));
         return list;
     }
 
     private List<String> defaultVLC() {
         List<String> list = new ArrayList<>();
-        int cache = 300;
-        list.add("--network-caching=" + cache);
-        list.add("--clock-jitter=" + cache);
-        list.add("--file-caching=" + cache);
-        list.add("--rtsp-tcp");
-        list.add("--cr-average=10000");
+        list.add("network-caching=300");
+        list.add("live-caching=200");
+        list.add("file-caching=200");
+        list.add("clock-jitter=5000");
+        list.add("avcodec-hw=any");
         return list;
     }
 
@@ -111,7 +111,7 @@ public class ApiConfig {
                 }
                 ApiConfig.this.ijkOptions.put(group, optionList);
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
     }
@@ -127,9 +127,7 @@ public class ApiConfig {
                 }
                 String options = option.getAsJsonObject().get("options").getAsString();
                 String[] split = options.split(",");
-                for (String item : split) {
-                    optionList.add(item);
-                }
+                optionList.addAll(Arrays.asList(split));
                 ApiConfig.this.vlcOptions.put(group, optionList);
             }
         } catch (Exception e) {
@@ -139,7 +137,7 @@ public class ApiConfig {
 
     //获取配置文件
     private void getCfg(LoadCallback callback) {
-        OkGo.<String>get(Hawk.get(HawkConfig.LIVE_API_URL))
+        OkGo.<String>get(Hawk.get(HawkConfig.API_URL))
                 .headers("User-Agent", userAgent)
                 .headers("Accept", requestAccept)
                 .execute(new AbsCallback<String>() {
@@ -169,8 +167,7 @@ public class ApiConfig {
                     }
 
                     public String convertResponse(okhttp3.Response response) throws Throwable {
-                        String result = "";
-                        return result;
+                        return "";
                     }
                 });
     }
@@ -193,7 +190,6 @@ public class ApiConfig {
                                 LiveChannelGroup liveChannelGroup = new LiveChannelGroup();
                                 liveChannelGroup.setGroupIndex(liveChannelGroupList.size());
                                 liveChannelGroup.setGroupName(entry.getKey().toString());
-                                liveChannelGroup.setGroupPassword("");
                                 ArrayList<LiveChannelItem> liveChannelItems = new ArrayList<>();
                                 for (Map.Entry entry2 : item.entrySet()) {
                                     sum++;
@@ -230,8 +226,7 @@ public class ApiConfig {
                     }
 
                     public String convertResponse(okhttp3.Response response) throws Throwable {
-                        String result = "";
-                        return result;
+                        return "";
                     }
                 });
     }
@@ -286,8 +281,7 @@ public class ApiConfig {
                     }
 
                     public String convertResponse(okhttp3.Response response) throws Throwable {
-                        String result = "";
-                        return result;
+                        return "";
                     }
                 });
     }
@@ -298,7 +292,7 @@ public class ApiConfig {
         if (null != liveEpg) {
             try {
                 List<LiveEpgItem> arrayList = liveEpg.getEpgItems();
-                if (arrayList != null && arrayList.size() > 0) {
+                if (arrayList != null && !arrayList.isEmpty()) {
                     int size = arrayList.size() - 1;
                     while (size >= 0) {
                         if (new Date().compareTo(((LiveEpgItem) arrayList.get(size)).startdateTime) >= 0) {
@@ -308,7 +302,7 @@ public class ApiConfig {
                         }
                     }
                 }
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
         return new LiveEpgItem("", "", "暂无预告");
@@ -320,7 +314,7 @@ public class ApiConfig {
         LiveEpg liveEpg = getLiveEpg(key, TimeUtil.getTime());
         if (null != liveEpg) {
             List<LiveEpgItem> arrayList = liveEpg.getEpgItems();
-            if (arrayList != null && arrayList.size() > 0) {
+            if (arrayList != null && !arrayList.isEmpty()) {
                 for (int i = 0; i < arrayList.size(); i++) {
                     if (new Date().compareTo(((LiveEpgItem) arrayList.get(i)).startdateTime) >= 0) {
                         map.put("c", arrayList.get(i));
@@ -340,7 +334,7 @@ public class ApiConfig {
         LiveEpg liveEpg = getLiveEpg(key, TimeUtil.getTimeNext());
         if (null != liveEpg) {
             List<LiveEpgItem> arrayList = liveEpg.getEpgItems();
-            if (arrayList != null && arrayList.size() > 0) {
+            if (arrayList != null && !arrayList.isEmpty()) {
                 return arrayList.get(0);
             }
         }

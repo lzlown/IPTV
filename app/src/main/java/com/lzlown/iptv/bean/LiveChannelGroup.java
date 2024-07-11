@@ -5,7 +5,6 @@ import java.util.ArrayList;
 public class LiveChannelGroup {
     private int groupIndex;
     private String groupName;
-    private String groupPassword;
     private ArrayList<LiveChannelItem> liveChannelItems;
 
     public int getGroupIndex() {
@@ -30,13 +29,5 @@ public class LiveChannelGroup {
 
     public void setLiveChannels(ArrayList<LiveChannelItem> liveChannelItems) {
         this.liveChannelItems = liveChannelItems;
-    }
-
-    public String getGroupPassword() {
-        return groupPassword;
-    }
-
-    public void setGroupPassword(String groupPassword) {
-        this.groupPassword = groupPassword;
     }
 }

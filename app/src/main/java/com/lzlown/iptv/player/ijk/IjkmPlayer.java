@@ -12,6 +12,8 @@ import java.util.Map;
 
 public class IjkmPlayer extends IjkPlayer {
 
+    private static final String TAG = IjkmPlayer.class.getName();
+
     public IjkmPlayer(Context context) {
         super(context);
     }
@@ -37,29 +39,20 @@ public class IjkmPlayer extends IjkPlayer {
                 mMediaPlayer.setOption(1, "infbuf", 1);
                 mMediaPlayer.setOption(1, "rtsp_transport", "tcp");
                 mMediaPlayer.setOption(1, "rtsp_flags", "prefer_tcp");
-                List<IjkOption> ijkOptionList = ApiConfig.get().getIjkOptions().get("rstp");
-                if (null != ijkOptionList) {
-                    for (IjkOption ijkOption : ijkOptionList) {
-                        mMediaPlayer.setOption(ijkOption.getCategory(), ijkOption.getName(), ijkOption.getValue());
-                    }
-                }
-            } else if (!TextUtils.isEmpty(path)
-                    && !path.contains(".m3u8")
-                    && (path.contains(".mp4") || path.contains(".mkv") || path.contains(".avi"))) {
-                List<IjkOption> ijkOptionList = ApiConfig.get().getIjkOptions().get("mp4");
+                List<IjkOption> ijkOptionList = ApiConfig.get().getIjkOptions().get("rtsp");
                 if (null != ijkOptionList) {
                     for (IjkOption ijkOption : ijkOptionList) {
                         mMediaPlayer.setOption(ijkOption.getCategory(), ijkOption.getName(), ijkOption.getValue());
                     }
                 }
             }
-            // TODO: 2024/6/27 暂时不需要
 //            setDataSourceHeader(headers);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ignored) {
+
         }
-        mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "protocol_whitelist", "ijkio,ffio,async,cache,crypto,file,http,https,ijkhttphook,ijkinject,ijklivehook,ijklongurl,ijksegment,ijktcphook,pipe,rtp,tcp,tls,udp,ijkurlhook,data,concat,subfile,ffconcat");
+        mMediaPlayer.setOption(tv.danmaku.ijk.media.player.IjkMediaPlayer.OPT_CATEGORY_FORMAT, "protocol_whitelist", "ijkio,ffio,async,cache,crypto,file,dash,http,https,ijkhttphook,ijkinject,ijklivehook,ijklongurl,ijksegment,ijktcphook,pipe,rtp,tcp,tls,udp,ijkurlhook,data");
         super.setDataSource(path, headers);
+
     }
 
     private void setDataSourceHeader(Map<String, String> headers) {

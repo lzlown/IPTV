@@ -41,7 +41,6 @@ public class LivePlayerManager {
         }
         if (playerConfig.toString().equals(currentPlayerConfig.toString()))
             return;
-
         try {
             if (playerConfig.getInt("pl") == currentPlayerConfig.getInt("pl")
                     && playerConfig.getInt("pr") == currentPlayerConfig.getInt("pr")) {
