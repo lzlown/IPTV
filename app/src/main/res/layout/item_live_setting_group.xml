@@ -20,5 +20,5 @@
         android:marqueeRepeatLimit="marquee_forever"
         android:singleLine="true"
         android:textColor="@android:color/white"
-        android:textSize="22mm" />
+        android:textSize="26mm" />
 </LinearLayout>
