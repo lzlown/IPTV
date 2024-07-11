@@ -23,7 +23,6 @@ import java.util.Map;
 import xyz.doikki.videoplayer.player.VideoView;
 import xyz.doikki.videoplayer.player.VideoViewManager;
 import xyz.doikki.videoplayer.util.CutoutUtil;
-import xyz.doikki.videoplayer.util.L;
 import xyz.doikki.videoplayer.util.PlayerUtils;
 
 /**
@@ -355,7 +354,6 @@ public abstract class BaseVideoController extends FrameLayout
                 mCutoutHeight = (int) PlayerUtils.getStatusBarHeightPortrait(mActivity);
             }
         }
-        L.d("hasCutout: " + mHasCutout + " cutout height: " + mCutoutHeight);
     }
 
     /**

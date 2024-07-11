@@ -1,117 +1,94 @@
-/*****************************************************************************
- * MediaPlayer.java
- *****************************************************************************
- * Copyright © 2015 VLC authors and VideoLAN
- *
- * Authors  Jean-Baptiste Kempf <jb@videolan.org>
- *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation; either version 2.1 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston MA 02110-1301, USA.
- *****************************************************************************/
-
 package xyz.doikki.videoplayer.player.vlc;
 
 import android.content.Context;
 import android.net.Uri;
 import android.view.Surface;
 import android.view.SurfaceHolder;
-import androidx.annotation.NonNull;
 import org.videolan.libvlc.LibVLC;
 import org.videolan.libvlc.Media;
+import org.videolan.libvlc.MediaPlayer;
 import org.videolan.libvlc.interfaces.ILibVLC;
 import org.videolan.libvlc.interfaces.IMedia;
 import org.videolan.libvlc.interfaces.IVLCVout;
+import tv.danmaku.ijk.media.player.pragma.DebugLog;
 
 import java.io.FileDescriptor;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class VlcMediaPlayer
-{
-
-    private IMedia mCurrentMedia = null;
+public class VlcMediaPlayer {
+    private final static String TAG = VlcMediaPlayer.class.getName();
     private final ILibVLC mILibVLC;
-    private org.videolan.libvlc.MediaPlayer mMediaPlayer;
-    private OnInfoListener onInfoListener;
-    private OnErrorListener onErrorListener;
-    private OnVideoSizeChangedListener onVideoSizeChangedListener;
-    private OnBufferingUpdateListener onBufferingUpdateListener;
-    private OnCompletionListener onCompletionListener;
-    private OnPreparedListener onPreparedListener;
+    private final MediaPlayer mMediaPlayer;
+    public List<String> mediaOps = new ArrayList<>();
+    private OnListener onListener;
 
-    public VlcMediaPlayer() {
-        mILibVLC = new LibVLC(null);
-        mMediaPlayer = new org.videolan.libvlc.MediaPlayer(mILibVLC);
-        mMediaPlayer.setEventListener(eventListener);
-    }
+
+
     public VlcMediaPlayer(Context context) {
         mILibVLC = new LibVLC(context);
-        mMediaPlayer = new org.videolan.libvlc.MediaPlayer(mILibVLC);
-        mMediaPlayer.setEventListener(eventListener);
-    }
-    public VlcMediaPlayer(Context context,List<String> args) {
-        mILibVLC = new LibVLC(context,args);
-        mMediaPlayer = new org.videolan.libvlc.MediaPlayer(mILibVLC);
+        mMediaPlayer = new MediaPlayer(mILibVLC);
         mMediaPlayer.setEventListener(eventListener);
     }
 
-    private IVLCVout.OnNewVideoLayoutListener onNewVideoLayoutListener = new IVLCVout.OnNewVideoLayoutListener() {
+    public VlcMediaPlayer(Context context, List<String> args) {
+        mILibVLC = new LibVLC(context,args);
+        mMediaPlayer = new MediaPlayer(mILibVLC);
+        mMediaPlayer.setEventListener(eventListener);
+    }
+
+    private final IVLCVout.OnNewVideoLayoutListener onNewVideoLayoutListener = new IVLCVout.OnNewVideoLayoutListener() {
         @Override
         public void onNewVideoLayout(IVLCVout vlcVout, int width, int height, int visibleWidth, int visibleHeight, int sarNum, int sarDen) {
-            try {
-                onVideoSizeChangedListener.onVideoSizeChanged(mMediaPlayer,width, height);
-            }catch (Exception e){
-
+            if (onListener != null) {
+                onListener.onVideoSizeChanged(mMediaPlayer, width, height);
+                DebugLog.i(TAG, "onNewVideoLayout");
             }
-
         }
     };
 
-    private org.videolan.libvlc.MediaPlayer.EventListener eventListener = new org.videolan.libvlc.MediaPlayer.EventListener() {
+    public void setOption(String value) {
+        mediaOps.add(value);
+    }
+
+    private final MediaPlayer.EventListener eventListener = new MediaPlayer.EventListener() {
         @Override
-        public void onEvent(org.videolan.libvlc.MediaPlayer.Event event) {
-            if (event.type == org.videolan.libvlc.MediaPlayer.Event.Opening) {
-
-            } else if (event.type == org.videolan.libvlc.MediaPlayer.Event.TimeChanged) {
-
-            } else if (event.type == org.videolan.libvlc.MediaPlayer.Event.Buffering && event.getBuffering() > 99) {
-                try {
-                    onPreparedListener.onPrepared(mMediaPlayer);
-                }catch (Exception e){
-
-                }
-
-            } else if (event.type == org.videolan.libvlc.MediaPlayer.Event.Playing) {
-
-            } else if (event.type == org.videolan.libvlc.MediaPlayer.Event.Paused) {
-
-            } else if (event.type == org.videolan.libvlc.MediaPlayer.Event.EncounteredError) {
-                try {
-                    onErrorListener.onError(mMediaPlayer,0,0);
-                }catch (Exception e){
-
-                }
-            } else if (event.type == org.videolan.libvlc.MediaPlayer.Event.EndReached && mMediaPlayer.getPlayerState() == Media.State.Ended) {
-                try {
-                    onCompletionListener.onCompletion(mMediaPlayer);
-                }catch (Exception e){
-
-                }
+        public void onEvent(MediaPlayer.Event event) {
+            switch (event.type) {
+                case MediaPlayer.Event.TimeChanged:
+                    break;
+                case MediaPlayer.Event.Buffering:
+                    if (onListener != null) {
+                        if (event.getBuffering() == 100) {
+                            DebugLog.i(TAG, "onEvent: Buffered");
+                        }
+                    }
+                    break;
+                case MediaPlayer.Event.Playing:
+                    break;
+                case MediaPlayer.Event.EncounteredError:
+                    if (onListener != null) {
+                        onListener.onError(mMediaPlayer, 0, 0);
+                        DebugLog.i(TAG, "onEvent: EncounteredError");
+                    }
+                    break;
+                case MediaPlayer.Event.EndReached:
+                    if (mMediaPlayer.getPlayerState() == Media.State.Ended && onListener != null) {
+                        onListener.onCompletion(mMediaPlayer);
+                        DebugLog.i(TAG, "onEvent: EndReached");
+                    }
+                    break;
+                case MediaPlayer.Event.Vout:
+                    DebugLog.i(TAG, "onEvent: Vout");
+                    mMediaPlayer.setVolume(100);
+                    onListener.onPrepared(mMediaPlayer);
+                    break;
             }
         }
     };
+
     public void setDataSource(Uri uri)
             throws IOException, IllegalArgumentException, SecurityException, IllegalStateException {
         setDataSource(uri, null);
@@ -119,30 +96,26 @@ public class VlcMediaPlayer
 
     public void setDataSource(Uri uri, Map<String, String> headers)
             throws IOException, IllegalArgumentException, SecurityException, IllegalStateException {
-        mCurrentMedia = new Media(mILibVLC, uri);
-        mCurrentMedia.setHWDecoderEnabled(true, false);
+        IMedia mCurrentMedia = new Media(mILibVLC, uri);
+        for (String vlcOp : mediaOps) {
+            mCurrentMedia.addOption(":" + vlcOp);
+        }
+        mCurrentMedia.setHWDecoderEnabled(true, true);
         mMediaPlayer.setMedia(mCurrentMedia);
+        mMediaPlayer.setVolume(0);
+        mMediaPlayer.play();
     }
 
     public void setDataSource(String path)
             throws IOException, IllegalArgumentException, SecurityException, IllegalStateException {
-        mCurrentMedia = new Media(mILibVLC, path);
-        mCurrentMedia.setHWDecoderEnabled(true, false);
-        mMediaPlayer.setMedia(mCurrentMedia);
+
     }
 
     public void setDataSource(FileDescriptor fd)
             throws IOException, IllegalArgumentException, IllegalStateException {
-        mCurrentMedia = new Media(mILibVLC, fd);
-        mCurrentMedia.setHWDecoderEnabled(true, false);
-        mMediaPlayer.setMedia(mCurrentMedia);
-    }
-
-    public void prepare() throws IOException, IllegalStateException {
     }
 
     public void prepareAsync() throws IllegalStateException {
-//        mCurrentMedia.addOption(":video-paused");
         mMediaPlayer.play();
     }
 
@@ -151,14 +124,15 @@ public class VlcMediaPlayer
             IVLCVout vlcVout = mMediaPlayer.getVLCVout();
             vlcVout.setVideoSurface(sh.getSurface(), sh);
             vlcVout.attachViews(onNewVideoLayoutListener);
-        }catch (Exception e){
+        } catch (Exception ignored) {
 
         }
-
     }
 
     public void setSurface(Surface surface) {
-        mMediaPlayer.getVLCVout().setVideoSurface(surface, null);
+        IVLCVout vlcVout = mMediaPlayer.getVLCVout();
+        vlcVout.setVideoSurface(surface, null);
+        vlcVout.attachViews(onNewVideoLayoutListener);
     }
 
     public void play() throws IllegalStateException {
@@ -177,73 +151,38 @@ public class VlcMediaPlayer
         return mMediaPlayer.isPlaying();
     }
 
-
     public void release() {
         mMediaPlayer.setEventListener(null);
+        mMediaPlayer.setVolume(0);
         mMediaPlayer.getVLCVout().detachViews();
-        mMediaPlayer.release();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                mMediaPlayer.release();
+                mILibVLC.release();
+            }
+        }).start();
     }
 
     public void reset() {
     }
 
-    public void setVolume(float leftVolume, float rightVolume) {
-        mMediaPlayer.setVolume( (int)((leftVolume + rightVolume) * 100/2));
-    }
+    public interface OnListener {
+        boolean onInfo(org.videolan.libvlc.MediaPlayer mp, int what, int extra);
 
-    public interface OnPreparedListener
-    {
+        boolean onError(org.videolan.libvlc.MediaPlayer mp, int what, int extra);
+
+        void onVideoSizeChanged(org.videolan.libvlc.MediaPlayer mp, int width, int height);
+
+        void onBufferingUpdate(org.videolan.libvlc.MediaPlayer mp, int percent);
+
+        void onCompletion(org.videolan.libvlc.MediaPlayer mp);
+
         void onPrepared(org.videolan.libvlc.MediaPlayer mp);
     }
 
-    public void setOnPreparedListener(OnPreparedListener listener) {
-        this.onPreparedListener=listener;
+    public void setOnListener(OnListener onListener) {
+        this.onListener = onListener;
     }
 
-    public interface OnCompletionListener
-    {
-        void onCompletion(org.videolan.libvlc.MediaPlayer mp);
-    }
-
-    public void setOnCompletionListener(OnCompletionListener listener) {
-        this.onCompletionListener=listener;
-    }
-
-    public interface OnBufferingUpdateListener
-    {
-        void onBufferingUpdate(org.videolan.libvlc.MediaPlayer mp, int percent);
-    }
-
-    public void setOnBufferingUpdateListener(OnBufferingUpdateListener listener) {
-        this.onBufferingUpdateListener=listener;
-    }
-
-
-    public interface OnVideoSizeChangedListener
-    {
-         void onVideoSizeChanged(org.videolan.libvlc.MediaPlayer mp, int width, int height);
-    }
-
-    public void setOnVideoSizeChangedListener(OnVideoSizeChangedListener listener) {
-        this.onVideoSizeChangedListener=listener;
-    }
-
-
-    public interface OnErrorListener
-    {
-        boolean onError(org.videolan.libvlc.MediaPlayer mp, int what, int extra);
-    }
-
-    public void setOnErrorListener(OnErrorListener listener) {
-        this.onErrorListener=listener;
-    }
-
-    public interface OnInfoListener
-    {
-        boolean onInfo(org.videolan.libvlc.MediaPlayer mp, int what, int extra);
-    }
-
-    public void setOnInfoListener(OnInfoListener listener) {
-        this.onInfoListener=listener;
-    }
 }

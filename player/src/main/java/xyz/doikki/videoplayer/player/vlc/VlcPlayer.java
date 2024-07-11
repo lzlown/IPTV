@@ -6,43 +6,27 @@ import android.net.Uri;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import org.videolan.libvlc.MediaPlayer;
+import tv.danmaku.ijk.media.player.pragma.DebugLog;
 import xyz.doikki.videoplayer.player.AbstractPlayer;
 import xyz.doikki.videoplayer.util.PlayerUtils;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
-public class VlcPlayer extends AbstractPlayer implements VlcMediaPlayer.OnErrorListener,
-        VlcMediaPlayer.OnCompletionListener,
-        VlcMediaPlayer.OnInfoListener,
-        VlcMediaPlayer.OnBufferingUpdateListener,
-        VlcMediaPlayer.OnPreparedListener,
-        VlcMediaPlayer.OnVideoSizeChangedListener {
-    private VlcMediaPlayer mMediaPlayer;
+public class VlcPlayer extends AbstractPlayer implements VlcMediaPlayer.OnListener {
+    private static final String TAG = VlcPlayer.class.getName();
+    protected VlcMediaPlayer mMediaPlayer;
     private final Context mAppContext;
     private int mBufferedPercent;
-    public List<String> vlcOps = new ArrayList<>();
 
     public VlcPlayer(Context context) {
         mAppContext = context;
     }
 
-    public List<String> getVlcOps() {
-        return vlcOps;
-    }
-
     @Override
     public void initPlayer() {
+        mMediaPlayer = new VlcMediaPlayer(mAppContext);
+        mMediaPlayer.setOnListener(this);
         setOptions();
-        mMediaPlayer = new VlcMediaPlayer(mAppContext, vlcOps);
-        mMediaPlayer.setOnErrorListener(this);
-        mMediaPlayer.setOnCompletionListener(this);
-        mMediaPlayer.setOnInfoListener(this);
-        mMediaPlayer.setOnBufferingUpdateListener(this);
-        mMediaPlayer.setOnPreparedListener(this);
-        mMediaPlayer.setOnVideoSizeChangedListener(this);
     }
 
     @Override
@@ -54,9 +38,10 @@ public class VlcPlayer extends AbstractPlayer implements VlcMediaPlayer.OnErrorL
     public void setDataSource(String path, Map<String, String> headers) {
         try {
             mMediaPlayer.setDataSource(Uri.parse(path), headers);
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            DebugLog.e(TAG, "setDataSource ERR");
         }
+
     }
 
     @Override
@@ -118,14 +103,8 @@ public class VlcPlayer extends AbstractPlayer implements VlcMediaPlayer.OnErrorL
 
     @Override
     public void release() {
-        mMediaPlayer.setOnErrorListener(null);
-        mMediaPlayer.setOnCompletionListener(null);
-        mMediaPlayer.setOnInfoListener(null);
-        mMediaPlayer.setOnBufferingUpdateListener(null);
-        mMediaPlayer.setOnPreparedListener(null);
-        mMediaPlayer.setOnVideoSizeChangedListener(null);
+        mMediaPlayer.setOnListener(null);
         mMediaPlayer.release();
-
     }
 
     @Override
@@ -170,7 +149,7 @@ public class VlcPlayer extends AbstractPlayer implements VlcMediaPlayer.OnErrorL
 
     @Override
     public float getSpeed() {
-        return 0;
+        return 1;
     }
 
     @Override

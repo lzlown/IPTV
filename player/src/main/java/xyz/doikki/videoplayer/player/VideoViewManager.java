@@ -1,8 +1,7 @@
 package xyz.doikki.videoplayer.player;
 
 import android.app.Application;
-
-import xyz.doikki.videoplayer.util.L;
+import android.util.Log;
 
 import java.util.LinkedHashMap;
 
@@ -12,7 +11,7 @@ import java.util.LinkedHashMap;
  * 以免内存泄漏
  */
 public class VideoViewManager {
-
+    private final static String TAG =VideoViewManager.class.getName();
     /**
      * 保存VideoView的容器
      */
@@ -89,7 +88,7 @@ public class VideoViewManager {
      */
     public void add(VideoView videoView, String tag) {
         if (!(videoView.getContext() instanceof Application)) {
-            L.w("The Context of this VideoView is not an Application Context," +
+            Log.w(TAG,"The Context of this VideoView is not an Application Context," +
                     "you must remove it after release,or it will lead to memory leek.");
         }
         VideoView old = get(tag);

@@ -24,11 +24,11 @@ import android.util.Log;
 
 @SuppressWarnings({"SameParameterValue", "WeakerAccess"})
 public class DebugLog {
-    public static final boolean ENABLE_ERROR = Pragma.ENABLE_VERBOSE;
-    public static final boolean ENABLE_INFO = Pragma.ENABLE_VERBOSE;
-    public static final boolean ENABLE_WARN = Pragma.ENABLE_VERBOSE;
-    public static final boolean ENABLE_DEBUG = Pragma.ENABLE_VERBOSE;
-    public static final boolean ENABLE_VERBOSE = Pragma.ENABLE_VERBOSE;
+    public static final boolean ENABLE_ERROR = true;
+    public static final boolean ENABLE_INFO = true;
+    public static final boolean ENABLE_WARN = true;
+    public static final boolean ENABLE_DEBUG = true;
+    public static final boolean ENABLE_VERBOSE = true;
 
     public static void e(String tag, String msg) {
         if (ENABLE_ERROR) {
