@@ -84,7 +84,7 @@ public abstract class BaseController extends BaseVideoController implements Gest
     }
 
     private TextView mSlideInfo;
-//    private RelativeLayout mLoading;
+    private RelativeLayout mLoading;
 //    private ViewGroup mPauseRoot;
     private TextView mPauseTime;
 
@@ -95,7 +95,7 @@ public abstract class BaseController extends BaseVideoController implements Gest
         mGestureDetector = new GestureDetector(getContext(), this);
         setOnTouchListener(this);
         mSlideInfo = findViewWithTag("vod_control_slide_info");
-//        mLoading = findViewWithTag("vod_control_loading");
+        mLoading = findViewWithTag("vod_control_loading");
 //        mPauseRoot = findViewWithTag("vod_control_pause");
         mPauseTime = findViewWithTag("vod_control_pause_t");
     }
@@ -103,7 +103,7 @@ public abstract class BaseController extends BaseVideoController implements Gest
     @Override
     protected void setProgress(int duration, int position) {
         super.setProgress(duration, position);
-        mPauseTime.setText(PlayerUtils.stringForTime(position) + " / " + PlayerUtils.stringForTime(duration));
+        mPauseTime.setText(String.format("%s / %s", PlayerUtils.stringForTime(position), PlayerUtils.stringForTime(duration)));
     }
 
     @Override
@@ -115,20 +115,21 @@ public abstract class BaseController extends BaseVideoController implements Gest
                 break;
             case VideoView.STATE_PLAYING:
 //                mPauseRoot.setVisibility(GONE);
-//                mLoading.setVisibility(GONE);
+                mLoading.setVisibility(GONE);
                 break;
             case VideoView.STATE_PAUSED:
 //                mPauseRoot.setVisibility(VISIBLE);
 //                mLoading.setVisibility(GONE);
                 break;
-            case VideoView.STATE_PREPARED:
             case VideoView.STATE_ERROR:
+                break;
+            case VideoView.STATE_PREPARED:
             case VideoView.STATE_BUFFERED:
-//                mLoading.setVisibility(GONE);
+                mLoading.setVisibility(GONE);
                 break;
             case VideoView.STATE_PREPARING:
             case VideoView.STATE_BUFFERING:
-//                mLoading.setVisibility(VISIBLE);
+                mLoading.setVisibility(VISIBLE);
                 break;
             case VideoView.STATE_PLAYBACK_COMPLETED:
 //                mLoading.setVisibility(GONE);

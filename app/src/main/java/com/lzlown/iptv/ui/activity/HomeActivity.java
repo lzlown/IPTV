@@ -40,7 +40,6 @@ public class HomeActivity extends BaseActivity {
         ll_loading = findViewById(R.id.ll_loading);
         progress = findViewById(R.id.loadingBar);
         loadErr = findViewById(R.id.loadErr);
-        progress.setProgress(0);
         ll_loading.setVisibility(View.VISIBLE);
         mHandler.post(getCfgRun);
 

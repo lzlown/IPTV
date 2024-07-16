@@ -43,7 +43,7 @@ public class LivePlayActivity extends BaseActivity {
     public static Context context;
     private VideoView mVideoView;
 
-    private RelativeLayout ll_loading;
+//    private RelativeLayout ll_loading;
     private LinearLayout tvLeftChannelListLayout;
     private TvRecyclerView mChannelGroupView;
     private TvRecyclerView mLiveChannelView;
@@ -99,8 +99,8 @@ public class LivePlayActivity extends BaseActivity {
 //        mVideoView.start();
 //        mVideoView.setScreenScaleType(0);
 
-        ll_loading = findViewById(R.id.ll_loading);
-        ll_loading.setVisibility(View.GONE);
+//        ll_loading = findViewById(R.id.ll_loading);
+//        ll_loading.setVisibility(View.GONE);
 
         //界面 view
         tvLeftChannelListLayout = findViewById(R.id.tvLeftChannnelListLayout);
@@ -186,7 +186,7 @@ public class LivePlayActivity extends BaseActivity {
         if (mVideoView != null && loadEnd) {
             //todo 睡眠处理
             mVideoView.release();
-            ll_loading.setVisibility(View.VISIBLE);
+//            ll_loading.setVisibility(View.VISIBLE);
             mVideoView.start();
         }
     }
@@ -324,7 +324,7 @@ public class LivePlayActivity extends BaseActivity {
         }
         Log.i(TAG,"playChannel"+currentChannelGroupIndex + currentLiveChannelItem.getChannelName()+currentLiveChannelItem.getSourceIndex());
         livePlayerManager.getLiveChannelPlayer(mVideoView, currentChannelGroupIndex + currentLiveChannelItem.getChannelName()+currentLiveChannelItem.getSourceIndex());
-        ll_loading.setVisibility(View.VISIBLE);
+//        ll_loading.setVisibility(View.VISIBLE);
         mVideoView.release();
         mVideoView.setUrl(currentLiveChannelItem.getUrl());
         mVideoView.start();
@@ -375,7 +375,7 @@ public class LivePlayActivity extends BaseActivity {
                     case VideoView.STATE_BUFFERED:
                     case VideoView.STATE_PLAYING:
                         mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
-                        ll_loading.setVisibility(View.INVISIBLE);
+//                        ll_loading.setVisibility(View.INVISIBLE);
                         tvName.setVisibility(View.INVISIBLE);
                         break;
                     case VideoView.STATE_ERROR:
@@ -779,7 +779,7 @@ public class LivePlayActivity extends BaseActivity {
                 livePlayerManager.changeLivePlayerScale(mVideoView, position, currentChannelGroupIndex + currentLiveChannelItem.getChannelName()+currentLiveChannelItem.getSourceIndex());
                 break;
             case 2://播放器
-                ll_loading.setVisibility(View.VISIBLE);
+//                ll_loading.setVisibility(View.VISIBLE);
                 mVideoView.release();
                 livePlayerManager.changeLivePlayerType(mVideoView, position, currentChannelGroupIndex + currentLiveChannelItem.getChannelName()+currentLiveChannelItem.getSourceIndex());
                 mVideoView.start();

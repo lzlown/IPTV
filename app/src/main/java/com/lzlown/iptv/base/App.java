@@ -17,9 +17,6 @@ public class App extends MultiDexApplication {
         return instance.proxy;
     }
 
-    private HttpProxyCacheServer newProxy() {
-        return new HttpProxyCacheServer(this);
-    }
     @Override
     public void onCreate() {
         super.onCreate();

@@ -2,9 +2,7 @@ package com.lzlown.iptv.ui.adapter;
 
 import android.graphics.Color;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.lzlown.iptv.R;

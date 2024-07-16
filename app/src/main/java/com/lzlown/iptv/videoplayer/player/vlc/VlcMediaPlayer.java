@@ -2,6 +2,7 @@ package com.lzlown.iptv.videoplayer.player.vlc;
 
 import android.content.Context;
 import android.net.Uri;
+import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import org.videolan.libvlc.LibVLC;
@@ -99,6 +100,7 @@ public class VlcMediaPlayer {
         for (String vlcOp : mediaOps) {
             mCurrentMedia.addOption(":" + vlcOp);
         }
+        Log.d(TAG, "setDataSource: uri="+uri.toString());
         mCurrentMedia.setHWDecoderEnabled(true, true);
         mMediaPlayer.setMedia(mCurrentMedia);
         mMediaPlayer.setVolume(0);

@@ -3,24 +3,19 @@ package com.lzlown.iptv.util;
 import android.content.Context;
 import com.lzlown.iptv.player.ijk.IjkmPlayer;
 import com.lzlown.iptv.player.vlc.VlcmPlayer;
-import com.lzy.okgo.OkGo;
-import com.lzy.okgo.callback.AbsCallback;
-import com.lzy.okgo.model.Response;
-import com.orhanobut.hawk.Hawk;
-import org.json.JSONException;
-import org.json.JSONObject;
-import tv.danmaku.ijk.media.player.IjkLibLoader;
-import tv.danmaku.ijk.media.player.pragma.DebugLog;
-import com.lzlown.iptv.videoplayer.player.android.AndroidMediaPlayerFactory;
 import com.lzlown.iptv.videoplayer.player.PlayerFactory;
 import com.lzlown.iptv.videoplayer.player.VideoView;
+import com.lzlown.iptv.videoplayer.player.android.AndroidMediaPlayerFactory;
 import com.lzlown.iptv.videoplayer.player.vlc.VlcPlayer;
 import com.lzlown.iptv.videoplayer.player.vlc.VlcPlayerFactory;
 import com.lzlown.iptv.videoplayer.render.RenderViewFactory;
 import com.lzlown.iptv.videoplayer.render.SurfaceRenderViewFactory;
 import com.lzlown.iptv.videoplayer.render.TextureRenderViewFactory;
+import com.orhanobut.hawk.Hawk;
+import org.json.JSONException;
+import org.json.JSONObject;
+import tv.danmaku.ijk.media.player.IjkLibLoader;
 
-import java.io.IOException;
 import java.text.DecimalFormat;
 
 public class PlayerHelper {

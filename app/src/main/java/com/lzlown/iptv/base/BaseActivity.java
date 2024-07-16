@@ -54,7 +54,7 @@ public abstract class BaseActivity extends AppCompatActivity implements CustomAd
     protected void onResume() {
         super.onResume();
         hideSysBar();
-        changeWallpaper(false);
+//        changeWallpaper(false);
     }
 
     public void hideSysBar() {

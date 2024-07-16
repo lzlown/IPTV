@@ -11,8 +11,6 @@ public class LiveEpgItem {
     private String title;
     public Date startdateTime;
     public Date enddateTime;
-    public LiveEpgItem() {
-    }
 
     public LiveEpgItem(String start, String end, String title) {
         this.start = start;

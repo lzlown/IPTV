@@ -1,11 +1,9 @@
 package com.lzlown.iptv.api;
 
-import android.media.MediaPlayer;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.lzlown.iptv.bean.*;
-import com.lzlown.iptv.util.CheckUrl;
 import com.lzlown.iptv.util.HawkConfig;
 import com.lzlown.iptv.util.StringUtils;
 import com.lzlown.iptv.util.TimeUtil;
