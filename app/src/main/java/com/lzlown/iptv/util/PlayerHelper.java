@@ -3,19 +3,24 @@ package com.lzlown.iptv.util;
 import android.content.Context;
 import com.lzlown.iptv.player.ijk.IjkmPlayer;
 import com.lzlown.iptv.player.vlc.VlcmPlayer;
+import com.lzy.okgo.OkGo;
+import com.lzy.okgo.callback.AbsCallback;
+import com.lzy.okgo.model.Response;
 import com.orhanobut.hawk.Hawk;
 import org.json.JSONException;
 import org.json.JSONObject;
 import tv.danmaku.ijk.media.player.IjkLibLoader;
-import xyz.doikki.videoplayer.player.AndroidMediaPlayerFactory;
-import xyz.doikki.videoplayer.player.PlayerFactory;
-import xyz.doikki.videoplayer.player.VideoView;
-import xyz.doikki.videoplayer.player.vlc.VlcPlayer;
-import xyz.doikki.videoplayer.player.vlc.VlcPlayerFactory;
-import xyz.doikki.videoplayer.render.RenderViewFactory;
-import xyz.doikki.videoplayer.render.SurfaceRenderViewFactory;
-import xyz.doikki.videoplayer.render.TextureRenderViewFactory;
+import tv.danmaku.ijk.media.player.pragma.DebugLog;
+import com.lzlown.iptv.videoplayer.player.android.AndroidMediaPlayerFactory;
+import com.lzlown.iptv.videoplayer.player.PlayerFactory;
+import com.lzlown.iptv.videoplayer.player.VideoView;
+import com.lzlown.iptv.videoplayer.player.vlc.VlcPlayer;
+import com.lzlown.iptv.videoplayer.player.vlc.VlcPlayerFactory;
+import com.lzlown.iptv.videoplayer.render.RenderViewFactory;
+import com.lzlown.iptv.videoplayer.render.SurfaceRenderViewFactory;
+import com.lzlown.iptv.videoplayer.render.TextureRenderViewFactory;
 
+import java.io.IOException;
 import java.text.DecimalFormat;
 
 public class PlayerHelper {
@@ -58,14 +63,14 @@ public class PlayerHelper {
                 th.printStackTrace();
             }
 
-        }else if (playerType==1){
+        } else if (playerType == 1) {
             playerFactory = new VlcPlayerFactory() {
                 @Override
                 public VlcPlayer createPlayer(Context context) {
                     return new VlcmPlayer(context);
                 }
             };
-        }else {
+        } else {
             playerFactory = AndroidMediaPlayerFactory.create();
         }
         RenderViewFactory renderViewFactory = null;
@@ -81,6 +86,7 @@ public class PlayerHelper {
         videoView.setPlayerFactory(playerFactory);
         videoView.setRenderViewFactory(renderViewFactory);
         videoView.setScreenScaleType(scale);
+
     }
 
     public static void init() {

@@ -61,6 +61,7 @@ public class HomeActivity extends BaseActivity {
                     ll_loading.setVisibility(View.GONE);
                     jumpActivity(LivePlayActivity.class);
                 }
+
                 @Override
                 public void error(String msg) {
                     progress.setVisibility(View.GONE);

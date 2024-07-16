@@ -5,7 +5,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-    <xyz.doikki.videoplayer.player.VideoView
+    <com.lzlown.iptv.videoplayer.player.VideoView
             android:id="@+id/mVideoView"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />

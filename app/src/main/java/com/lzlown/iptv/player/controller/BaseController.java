@@ -12,11 +12,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import xyz.doikki.videoplayer.controller.BaseVideoController;
-import xyz.doikki.videoplayer.controller.IControlComponent;
-import xyz.doikki.videoplayer.controller.IGestureComponent;
-import xyz.doikki.videoplayer.player.VideoView;
-import xyz.doikki.videoplayer.util.PlayerUtils;
+import com.lzlown.iptv.videoplayer.controller.BaseVideoController;
+import com.lzlown.iptv.videoplayer.controller.IControlComponent;
+import com.lzlown.iptv.videoplayer.controller.IGestureComponent;
+import com.lzlown.iptv.videoplayer.player.VideoView;
+import com.lzlown.iptv.videoplayer.util.PlayerUtils;
 
 import java.util.Map;
 

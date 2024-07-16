@@ -18,7 +18,7 @@ import com.lzlown.iptv.R;
 import com.lzlown.iptv.util.AppManager;
 import me.jessyan.autosize.AutoSizeCompat;
 import me.jessyan.autosize.internal.CustomAdapt;
-import xyz.doikki.videoplayer.util.CutoutUtil;
+import com.lzlown.iptv.videoplayer.util.CutoutUtil;
 
 import java.io.BufferedReader;
 import java.io.File;
