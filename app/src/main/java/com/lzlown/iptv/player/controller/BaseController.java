@@ -6,26 +6,19 @@ import android.media.AudioManager;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
-import android.view.GestureDetector;
-import android.view.KeyEvent;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
+import android.view.*;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import com.lzlown.iptv.videoplayer.controller.BaseVideoController;
+import com.lzlown.iptv.videoplayer.controller.IControlComponent;
+import com.lzlown.iptv.videoplayer.controller.IGestureComponent;
+import com.lzlown.iptv.videoplayer.player.VideoView;
+import com.lzlown.iptv.videoplayer.util.PlayerUtils;
 
 import java.util.Map;
-
-import xyz.doikki.videoplayer.controller.BaseVideoController;
-import xyz.doikki.videoplayer.controller.IControlComponent;
-import xyz.doikki.videoplayer.controller.IGestureComponent;
-import xyz.doikki.videoplayer.player.VideoView;
-import xyz.doikki.videoplayer.util.PlayerUtils;
 
 public abstract class BaseController extends BaseVideoController implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener, View.OnTouchListener {
     private GestureDetector mGestureDetector;
@@ -91,6 +84,9 @@ public abstract class BaseController extends BaseVideoController implements Gest
     }
 
     private TextView mSlideInfo;
+    private RelativeLayout mLoading;
+//    private ViewGroup mPauseRoot;
+    private TextView mPauseTime;
 
     @Override
     protected void initView() {
@@ -99,11 +95,15 @@ public abstract class BaseController extends BaseVideoController implements Gest
         mGestureDetector = new GestureDetector(getContext(), this);
         setOnTouchListener(this);
         mSlideInfo = findViewWithTag("vod_control_slide_info");
+        mLoading = findViewWithTag("vod_control_loading");
+//        mPauseRoot = findViewWithTag("vod_control_pause");
+        mPauseTime = findViewWithTag("vod_control_pause_t");
     }
 
     @Override
     protected void setProgress(int duration, int position) {
         super.setProgress(duration, position);
+        mPauseTime.setText(String.format("%s / %s", PlayerUtils.stringForTime(position), PlayerUtils.stringForTime(duration)));
     }
 
     @Override
@@ -111,19 +111,29 @@ public abstract class BaseController extends BaseVideoController implements Gest
         super.onPlayStateChanged(playState);
         switch (playState) {
             case VideoView.STATE_IDLE:
+//                mLoading.setVisibility(GONE);
                 break;
             case VideoView.STATE_PLAYING:
+//                mPauseRoot.setVisibility(GONE);
+                mLoading.setVisibility(GONE);
                 break;
             case VideoView.STATE_PAUSED:
+//                mPauseRoot.setVisibility(VISIBLE);
+//                mLoading.setVisibility(GONE);
+                break;
+            case VideoView.STATE_ERROR:
                 break;
             case VideoView.STATE_PREPARED:
-            case VideoView.STATE_ERROR:
             case VideoView.STATE_BUFFERED:
+                mLoading.setVisibility(GONE);
                 break;
             case VideoView.STATE_PREPARING:
             case VideoView.STATE_BUFFERING:
+                mLoading.setVisibility(VISIBLE);
                 break;
             case VideoView.STATE_PLAYBACK_COMPLETED:
+//                mLoading.setVisibility(GONE);
+//                mPauseRoot.setVisibility(GONE);
                 break;
         }
     }
@@ -405,13 +415,9 @@ public abstract class BaseController extends BaseVideoController implements Gest
         return false;
     }
 
-
     @Override
     public boolean onSingleTapUp(MotionEvent e) {
         return false;
     }
 
-    public boolean onKeyEvent(KeyEvent event) {
-        return false;
-    }
 }

@@ -6,7 +6,7 @@ import com.lzlown.iptv.util.PlayerHelper;
 import com.orhanobut.hawk.Hawk;
 import org.json.JSONException;
 import org.json.JSONObject;
-import xyz.doikki.videoplayer.player.VideoView;
+import com.lzlown.iptv.videoplayer.player.VideoView;
 
 public class LivePlayerManager {
     JSONObject defaultPlayerConfig = new JSONObject();
@@ -41,7 +41,6 @@ public class LivePlayerManager {
         }
         if (playerConfig.toString().equals(currentPlayerConfig.toString()))
             return;
-
         try {
             if (playerConfig.getInt("pl") == currentPlayerConfig.getInt("pl")
                     && playerConfig.getInt("pr") == currentPlayerConfig.getInt("pr")) {

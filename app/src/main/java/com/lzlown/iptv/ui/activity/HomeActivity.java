@@ -40,7 +40,6 @@ public class HomeActivity extends BaseActivity {
         ll_loading = findViewById(R.id.ll_loading);
         progress = findViewById(R.id.loadingBar);
         loadErr = findViewById(R.id.loadErr);
-        progress.setProgress(0);
         ll_loading.setVisibility(View.VISIBLE);
         mHandler.post(getCfgRun);
 
@@ -52,7 +51,7 @@ public class HomeActivity extends BaseActivity {
         AppManager.getInstance().appExit(0);
         finish();
     }
-    private Runnable getCfgRun =new Runnable() {
+    private final Runnable getCfgRun =new Runnable() {
         @Override
         public void run() {
             ApiConfig.get().loadData(new ApiConfig.LoadCallback() {
@@ -61,6 +60,7 @@ public class HomeActivity extends BaseActivity {
                     ll_loading.setVisibility(View.GONE);
                     jumpActivity(LivePlayActivity.class);
                 }
+
                 @Override
                 public void error(String msg) {
                     progress.setVisibility(View.GONE);

@@ -2,8 +2,6 @@ package com.lzlown.iptv.player.controller;
 
 import android.content.Context;
 import android.view.MotionEvent;
-import android.widget.ProgressBar;
-
 import androidx.annotation.NonNull;
 import com.lzlown.iptv.R;
 

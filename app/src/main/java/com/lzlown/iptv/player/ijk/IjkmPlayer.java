@@ -1,20 +1,24 @@
 package com.lzlown.iptv.player.ijk;
 
 import android.content.Context;
-import android.text.TextUtils;
 import com.lzlown.iptv.api.ApiConfig;
+import com.lzlown.iptv.base.App;
 import com.lzlown.iptv.bean.IjkOption;
+import com.lzlown.iptv.videoplayer.player.ijk.IjkPlayer;
+import com.lzlown.iptv.videoplayer.util.PlayerUtils;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
-import xyz.doikki.videoplayer.player.ijk.IjkPlayer;
 
 import java.util.List;
 import java.util.Map;
 
 public class IjkmPlayer extends IjkPlayer {
+    private static final String TAG = IjkmPlayer.class.getName();
+    private String url;
 
     public IjkmPlayer(Context context) {
         super(context);
     }
+
 
     @Override
     public void setOptions() {
@@ -27,62 +31,36 @@ public class IjkmPlayer extends IjkPlayer {
         }
         mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "subtitle", 1);
         mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "dns_cache_clear", 1);
-        mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "dns_cache_timeout", 60 * 60 * 1000);
     }
 
     @Override
     public void setDataSource(String path, Map<String, String> headers) {
-        try {
-            if (path.contains("rtsp") || path.contains("udp") || path.contains("rtp")) {
-                mMediaPlayer.setOption(1, "infbuf", 1);
-                mMediaPlayer.setOption(1, "rtsp_transport", "tcp");
-                mMediaPlayer.setOption(1, "rtsp_flags", "prefer_tcp");
-                List<IjkOption> ijkOptionList = ApiConfig.get().getIjkOptions().get("rstp");
-                if (null != ijkOptionList) {
-                    for (IjkOption ijkOption : ijkOptionList) {
-                        mMediaPlayer.setOption(ijkOption.getCategory(), ijkOption.getName(), ijkOption.getValue());
-                    }
-                }
-            } else if (!TextUtils.isEmpty(path)
-                    && !path.contains(".m3u8")
-                    && (path.contains(".mp4") || path.contains(".mkv") || path.contains(".avi"))) {
-                List<IjkOption> ijkOptionList = ApiConfig.get().getIjkOptions().get("mp4");
-                if (null != ijkOptionList) {
-                    for (IjkOption ijkOption : ijkOptionList) {
-                        mMediaPlayer.setOption(ijkOption.getCategory(), ijkOption.getName(), ijkOption.getValue());
-                    }
+        url = path;
+        if (path.contains("socket=true")) {
+            mMediaPlayer.setOption(1, "infbuf", 1);
+            path = App.getProxy().getProxyUrl(path);
+        }
+        if (path.contains("rtsp") || path.contains("udp") || path.contains("rtp")) {
+            mMediaPlayer.setOption(1, "infbuf", 1);
+            mMediaPlayer.setOption(1, "rtsp_transport", "tcp");
+            mMediaPlayer.setOption(1, "rtsp_flags", "prefer_tcp");
+            List<IjkOption> ijkOptionList = ApiConfig.get().getIjkOptions().get("rtsp");
+            if (null != ijkOptionList) {
+                for (IjkOption ijkOption : ijkOptionList) {
+                    mMediaPlayer.setOption(ijkOption.getCategory(), ijkOption.getName(), ijkOption.getValue());
                 }
             }
-            // TODO: 2024/6/27 暂时不需要
-//            setDataSourceHeader(headers);
-        } catch (Exception e) {
-            e.printStackTrace();
         }
-        mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "protocol_whitelist", "ijkio,ffio,async,cache,crypto,file,http,https,ijkhttphook,ijkinject,ijklivehook,ijklongurl,ijksegment,ijktcphook,pipe,rtp,tcp,tls,udp,ijkurlhook,data,concat,subfile,ffconcat");
+        mMediaPlayer.setOption(tv.danmaku.ijk.media.player.IjkMediaPlayer.OPT_CATEGORY_FORMAT, "protocol_whitelist", "ijkio,ffio,async,cache,crypto,file,dash,http,https,ijkhttphook,ijkinject,ijklivehook,ijklongurl,ijksegment,ijktcphook,pipe,rtp,tcp,tls,udp,ijkurlhook,data");
         super.setDataSource(path, headers);
     }
 
-    private void setDataSourceHeader(Map<String, String> headers) {
-        if (headers != null && !headers.isEmpty()) {
-            String userAgent = headers.get("User-Agent");
-            if (!TextUtils.isEmpty(userAgent)) {
-                mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "user_agent", userAgent);
-                // 移除header中的User-Agent，防止重复
-                headers.remove("User-Agent");
-            }
-            if (headers.size() > 0) {
-                StringBuilder sb = new StringBuilder();
-                for (Map.Entry<String, String> entry : headers.entrySet()) {
-                    String value = entry.getValue();
-                    if (!TextUtils.isEmpty(value)) {
-                        sb.append(entry.getKey());
-                        sb.append(": ");
-                        sb.append(value);
-                        sb.append("\r\n");
-                    }
-                }
-                mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "headers", sb.toString());
-            }
+    @Override
+    public long getTcpSpeed() {
+        if (url.contains("rtsp") || url.contains("udp") || url.contains("rtp")) {
+            return PlayerUtils.getNetSpeed(mAppContext);
+        } else {
+            return super.getTcpSpeed();
         }
     }
 }

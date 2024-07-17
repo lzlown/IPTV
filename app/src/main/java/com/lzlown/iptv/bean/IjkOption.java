@@ -5,9 +5,6 @@ public class IjkOption {
     String name;
     String value;
 
-    public IjkOption() {
-    }
-
     public IjkOption(int category, String name, String value) {
         this.category = category;
         this.name = name;

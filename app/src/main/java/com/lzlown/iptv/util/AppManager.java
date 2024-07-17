@@ -91,7 +91,7 @@ public class AppManager {
      * 结束所有Activity
      */
     public void finishAllActivity() {
-        if (activityStack != null && activityStack.size() > 0) {
+        if (activityStack != null && !activityStack.isEmpty()) {
             for (int i = 0, size = activityStack.size(); i < size; i++) {
                 Activity activity = activityStack.get(i);
                 if (null != activityStack.get(i)) {

@@ -2,6 +2,7 @@ package com.lzlown.iptv.base;
 
 import android.app.Activity;
 import androidx.multidex.MultiDexApplication;
+import com.lzlown.iptv.videocache.HttpProxyCacheServer;
 import com.lzlown.iptv.util.AppManager;
 import com.lzlown.iptv.util.HawkConfig;
 import com.orhanobut.hawk.Hawk;
@@ -10,11 +11,18 @@ import me.jessyan.autosize.unit.Subunits;
 
 public class App extends MultiDexApplication {
     private static App instance;
+    private HttpProxyCacheServer proxy;
+
+    public static HttpProxyCacheServer getProxy() {
+        return instance.proxy;
+    }
 
     @Override
     public void onCreate() {
         super.onCreate();
         instance = this;
+        proxy=new HttpProxyCacheServer(this);
+        Hawk.init(this).build();
         initParams();
         AutoSizeConfig.getInstance().setCustomFragment(true).getUnitsManager()
                 .setSupportDP(false)
@@ -23,21 +31,29 @@ public class App extends MultiDexApplication {
     }
 
     private void initParams() {
-        // Hawk
-        Hawk.init(this).build();
-        Hawk.put(HawkConfig.DEBUG_OPEN, false);
         Hawk.put(HawkConfig.PLAY_TYPE, 0);
-//        Hawk.put(HawkConfig.PLAY_RENDER, 1);
-//        Hawk.put(HawkConfig.IJK_CODEC, "硬解码");
-//        Hawk.put(HawkConfig.PLAY_SCALE, 1);
+        Hawk.put(HawkConfig.PLAY_SCALE, 0);
         Hawk.put(HawkConfig.LIVE_CROSS_GROUP, true);
-        Hawk.put(HawkConfig.LIVE_API_URL, "https://lzlown.com:9090/6b16ccd8540eca89/tvcfg.json");
+        if (!Hawk.contains(HawkConfig.API_URL)) {
+            Hawk.put(HawkConfig.API_URL, "https://lzlown.com:9090/6b16ccd8540eca89/tvcfg.json");
+        }
         if (!Hawk.contains(HawkConfig.LIVE_SHOW_EPG)) {
             Hawk.put(HawkConfig.LIVE_SHOW_EPG, true);
+        }
+        if (!Hawk.contains(HawkConfig.LIVE_CONNECT_TIMEOUT)) {
+            Hawk.put(HawkConfig.LIVE_CONNECT_TIMEOUT, 10);
         }
         if (!Hawk.contains(HawkConfig.LIVE_SHOW_TIME)) {
             Hawk.put(HawkConfig.LIVE_SHOW_TIME, true);
         }
+        if (!Hawk.contains(HawkConfig.LIVE_SHOW_SPEED)) {
+            Hawk.put(HawkConfig.LIVE_SHOW_SPEED, false);
+        }
+    }
+
+    public void cleanParams(){
+        Hawk.deleteAll();
+        initParams();
     }
 
     public static App getInstance() {
