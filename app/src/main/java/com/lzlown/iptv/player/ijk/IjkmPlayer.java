@@ -37,6 +37,7 @@ public class IjkmPlayer extends IjkPlayer {
     public void setDataSource(String path, Map<String, String> headers) {
         url = path;
         if (path.contains("socket=true")) {
+            mMediaPlayer.setOption(1, "infbuf", 1);
             path = App.getProxy().getProxyUrl(path);
         }
         if (path.contains("rtsp") || path.contains("udp") || path.contains("rtp")) {

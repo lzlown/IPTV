@@ -218,7 +218,11 @@ public class ApiConfig {
                                                 strings2.add("默认");
                                             }
                                         } else if (i == 1) {
-                                            strings2.add("标清");
+                                            if (split.length > 2) {
+                                                strings2.add("标清");
+                                            } else {
+                                                strings2.add("默认");
+                                            }
                                         } else {
                                             strings2.add("默认");
                                         }
