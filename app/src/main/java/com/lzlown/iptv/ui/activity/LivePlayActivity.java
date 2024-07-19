@@ -585,15 +585,15 @@ public class LivePlayActivity extends BaseActivity {
 
     private void initLiveSettingGroupList() {
         ArrayList<ArrayList<String>> itemsArrayList = new ArrayList<>();
-        ArrayList<String> groupNames = new ArrayList<>(Arrays.asList("画质线路","画面比例", "播放解码", "偏好设置"));
+        ArrayList<String> groupNames = new ArrayList<>(Arrays.asList("画质线路","画面比例", "偏好设置"));
         ArrayList<String> sourceItems = new ArrayList<>();
-        ArrayList<String> playerDecoderItems = new ArrayList<>(Arrays.asList("IJK", "VLC","EXO","ALI"));
+//        ArrayList<String> playerDecoderItems = new ArrayList<>(Arrays.asList("IJK", "VLC","EXO","ALI"));
         ArrayList<String> scaleItems = new ArrayList<>(Arrays.asList("默认", "16:9", "4:3", "填充", "原始", "裁剪"));
         ArrayList<String> personalSettingItems = new ArrayList<>(Arrays.asList("显示时间", "显示网速", "显示预告","清理缓存"));
 
         itemsArrayList.add(sourceItems);
         itemsArrayList.add(scaleItems);
-        itemsArrayList.add(playerDecoderItems);
+//        itemsArrayList.add(playerDecoderItems);
         itemsArrayList.add(personalSettingItems);
         liveSettingGroupList.clear();
         for (int i = 0; i < groupNames.size(); i++) {
@@ -610,9 +610,9 @@ public class LivePlayActivity extends BaseActivity {
             liveSettingGroup.setLiveSettingItems(liveSettingItemList);
             liveSettingGroupList.add(liveSettingGroup);
         }
-        liveSettingGroupList.get(3).getLiveSettingItems().get(0).setItemSelected(Hawk.get(HawkConfig.LIVE_SHOW_TIME, false));
-        liveSettingGroupList.get(3).getLiveSettingItems().get(1).setItemSelected(Hawk.get(HawkConfig.LIVE_SHOW_SPEED, false));
-        liveSettingGroupList.get(3).getLiveSettingItems().get(2).setItemSelected(Hawk.get(HawkConfig.LIVE_SHOW_EPG, false));
+        liveSettingGroupList.get(2).getLiveSettingItems().get(0).setItemSelected(Hawk.get(HawkConfig.LIVE_SHOW_TIME, false));
+        liveSettingGroupList.get(2).getLiveSettingItems().get(1).setItemSelected(Hawk.get(HawkConfig.LIVE_SHOW_SPEED, false));
+        liveSettingGroupList.get(2).getLiveSettingItems().get(2).setItemSelected(Hawk.get(HawkConfig.LIVE_SHOW_EPG, false));
     }
 
     //显示设置列表
@@ -706,9 +706,9 @@ public class LivePlayActivity extends BaseActivity {
             case 1:
                 liveSettingItemAdapter.selectItem(livePlayerManager.getLivePlayerScale(), true, true);
                 break;
-            case 2:
-                liveSettingItemAdapter.selectItem(livePlayerManager.getLivePlayerType(), true, true);
-                break;
+//            case 2:
+//                liveSettingItemAdapter.selectItem(livePlayerManager.getLivePlayerType(), true, true);
+//                break;
         }
         int scrollToPosition = liveSettingItemAdapter.getSelectedItemIndex();
         if (scrollToPosition < 0) scrollToPosition = 0;
@@ -765,7 +765,7 @@ public class LivePlayActivity extends BaseActivity {
 
     private void clickSettingItem(int position) {
         int settingGroupIndex = liveSettingGroupAdapter.getSelectedGroupIndex();
-        if (settingGroupIndex < 3) {
+        if (settingGroupIndex < 2) {
             if (position == liveSettingItemAdapter.getSelectedItemIndex())
                 return;
             liveSettingItemAdapter.selectItem(position, true, true);
@@ -778,13 +778,13 @@ public class LivePlayActivity extends BaseActivity {
             case 1://画面比例
                 livePlayerManager.changeLivePlayerScale(mVideoView, position, currentChannelGroupIndex + currentLiveChannelItem.getChannelName()+currentLiveChannelItem.getSourceIndex());
                 break;
-            case 2://播放器
-//                ll_loading.setVisibility(View.VISIBLE);
-                mVideoView.release();
-                livePlayerManager.changeLivePlayerType(mVideoView, position, currentChannelGroupIndex + currentLiveChannelItem.getChannelName()+currentLiveChannelItem.getSourceIndex());
-                mVideoView.start();
-                break;
-            case 3://偏好设置
+//            case 2://播放器
+////                ll_loading.setVisibility(View.VISIBLE);
+//                mVideoView.release();
+//                livePlayerManager.changeLivePlayerType(mVideoView, position, currentChannelGroupIndex + currentLiveChannelItem.getChannelName()+currentLiveChannelItem.getSourceIndex());
+//                mVideoView.start();
+//                break;
+            case 2://偏好设置
                 boolean select = false;
                 switch (position) {
                     case 0:
