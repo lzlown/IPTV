@@ -28,6 +28,7 @@ public class App extends MultiDexApplication {
                 .setSupportDP(false)
                 .setSupportSP(false)
                 .setSupportSubunits(Subunits.MM);
+
     }
 
     private void initParams() {
@@ -47,7 +48,7 @@ public class App extends MultiDexApplication {
             Hawk.put(HawkConfig.LIVE_SHOW_TIME, true);
         }
         if (!Hawk.contains(HawkConfig.LIVE_SHOW_SPEED)) {
-            Hawk.put(HawkConfig.LIVE_SHOW_SPEED, false);
+            Hawk.put(HawkConfig.LIVE_SHOW_SPEED, true);
         }
     }
 

@@ -585,9 +585,9 @@ public class LivePlayActivity extends BaseActivity {
 
     private void initLiveSettingGroupList() {
         ArrayList<ArrayList<String>> itemsArrayList = new ArrayList<>();
-        ArrayList<String> groupNames = new ArrayList<>(Arrays.asList("画质选择","画面比例", "播放解码", "偏好设置"));
+        ArrayList<String> groupNames = new ArrayList<>(Arrays.asList("画质线路","画面比例", "播放解码", "偏好设置"));
         ArrayList<String> sourceItems = new ArrayList<>();
-        ArrayList<String> playerDecoderItems = new ArrayList<>(Arrays.asList("IJK", "VLC"));
+        ArrayList<String> playerDecoderItems = new ArrayList<>(Arrays.asList("IJK", "VLC","EXO","ALI"));
         ArrayList<String> scaleItems = new ArrayList<>(Arrays.asList("默认", "16:9", "4:3", "填充", "原始", "裁剪"));
         ArrayList<String> personalSettingItems = new ArrayList<>(Arrays.asList("显示时间", "显示网速", "显示预告","清理缓存"));
 

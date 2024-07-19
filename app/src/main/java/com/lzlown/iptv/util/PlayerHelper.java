@@ -1,11 +1,16 @@
 package com.lzlown.iptv.util;
 
 import android.content.Context;
+import com.lzlown.iptv.player.exo.ExomPlayer;
 import com.lzlown.iptv.player.ijk.IjkmPlayer;
 import com.lzlown.iptv.player.vlc.VlcmPlayer;
 import com.lzlown.iptv.videoplayer.player.PlayerFactory;
 import com.lzlown.iptv.videoplayer.player.VideoView;
+import com.lzlown.iptv.videoplayer.player.ali.AliPlayer;
+import com.lzlown.iptv.videoplayer.player.ali.AliPlayerFactory;
 import com.lzlown.iptv.videoplayer.player.android.AndroidMediaPlayerFactory;
+import com.lzlown.iptv.videoplayer.player.exo.ExoPlayer;
+import com.lzlown.iptv.videoplayer.player.exo.ExoPlayerFactory;
 import com.lzlown.iptv.videoplayer.player.vlc.VlcPlayer;
 import com.lzlown.iptv.videoplayer.player.vlc.VlcPlayerFactory;
 import com.lzlown.iptv.videoplayer.render.RenderViewFactory;
@@ -63,6 +68,20 @@ public class PlayerHelper {
                 @Override
                 public VlcPlayer createPlayer(Context context) {
                     return new VlcmPlayer(context);
+                }
+            };
+        } else if (playerType == 2) {
+            playerFactory = new ExoPlayerFactory() {
+                @Override
+                public ExoPlayer createPlayer(Context context) {
+                    return new ExomPlayer(context);
+                }
+            };
+        } else if (playerType == 3) {
+            playerFactory = new AliPlayerFactory() {
+                @Override
+                public AliPlayer createPlayer(Context context) {
+                    return new AliPlayer(context);
                 }
             };
         } else {

@@ -210,23 +210,17 @@ public class ApiConfig {
                                     liveChannelItem.setChannelNum(sum);
                                     liveChannelItem.setChannelUrls((ArrayList<String>) entry2.getValue());
                                     ArrayList<String> strings2 = new ArrayList<>();
+                                    String[] split1 = new String[0];
+                                    if (split.length > 2) {
+                                        String display = split[2];
+                                         split1 = display.split("#");
+                                    }
                                     for (int i = 0; i < ((ArrayList<?>) entry2.getValue()).size(); i++) {
-                                        if (i == 0) {
-                                            if (split.length > 2) {
-                                                strings2.add(split[2]);
-                                            } else {
-                                                strings2.add("默认");
-                                            }
-                                        } else if (i == 1) {
-                                            if (split.length > 2) {
-                                                strings2.add("标清");
-                                            } else {
-                                                strings2.add("默认");
-                                            }
-                                        } else {
-                                            strings2.add("默认");
-                                        }
-
+                                          if (split1.length>i){
+                                              strings2.add(split1[i]);
+                                          }else {
+                                              strings2.add("源画质");
+                                          }
                                     }
                                     liveChannelItem.setChannelSourceNames(strings2);
                                     liveChannelItems.add(liveChannelItem);
