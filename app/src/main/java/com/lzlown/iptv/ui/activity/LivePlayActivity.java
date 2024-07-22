@@ -166,6 +166,9 @@ public class LivePlayActivity extends BaseActivity {
                 }
             }
         });
+        divEpg.setVisibility(View.GONE);
+        divLoadEpgleft.setVisibility(View.GONE);
+        divLoadEpg.setVisibility(View.GONE);
 
 
         initEpgDateView();
@@ -311,7 +314,7 @@ public class LivePlayActivity extends BaseActivity {
             mLiveChannelView.setSelection(currentLiveChannelIndex);
             mChannelGroupView.scrollToPosition(currentChannelGroupIndex);
             mChannelGroupView.setSelection(currentChannelGroupIndex);
-            divLoadEpgLeft(null);
+//            divLoadEpgLeft(null);
             //todo xianshi
             mHandler.postDelayed(mFocusCurrentChannelAndShowChannelList, 200);
             ll_epg.setVisibility(View.INVISIBLE);

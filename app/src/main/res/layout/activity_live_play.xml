@@ -344,6 +344,7 @@
                     android:scrollbars="none"/>
             <LinearLayout
                     android:layout_width="1mm"
+                    android:visibility="gone"
                     android:layout_height="match_parent"
                     android:background="@color/color_FFFFFF"/>
             <LinearLayout
