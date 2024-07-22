@@ -9,6 +9,7 @@ public class LiveChannelItem {
     private String channelName;
     private ArrayList<String> channelSourceNames;
     private ArrayList<String> channelUrls;
+    private ArrayList<String> socUrls;
     public int sourceIndex = 0;
     public int sourceNum = 0;
     private String channelCh;
@@ -88,5 +89,21 @@ public class LiveChannelItem {
 
     public String getSourceName() {
         return channelSourceNames.get(sourceIndex);
+    }
+
+    public Boolean getinclude_back() {
+        return true;
+    }
+
+    public void setSocUrls(ArrayList<String> socUrls) {
+        this.socUrls = socUrls;
+    }
+
+    public String getSocUrls() {
+        if (sourceIndex<socUrls.size()){
+            return socUrls.get(sourceIndex);
+        }else {
+            return null;
+        }
     }
 }

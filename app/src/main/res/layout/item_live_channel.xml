@@ -33,7 +33,6 @@
                 android:textColor="@android:color/white"
                 android:textSize="18mm"
                 android:layout_marginStart="60mm"
-
                 tools:ignore="InOrMmUsage"/>
     </LinearLayout>
 </LinearLayout>
