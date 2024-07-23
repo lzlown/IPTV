@@ -4,7 +4,7 @@ import java.util.List;
 
 public class LiveEpg {
    private String name;
-   public List<LiveEpgItem> epgItems;
+    private List<LiveEpgItem> epgItems;
 
     public String getName() {
         return name;

@@ -8,7 +8,9 @@
     <com.lzlown.iptv.videoplayer.player.VideoView
             android:id="@+id/mVideoView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"/>
+
+
     <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -25,6 +27,57 @@
                 android:indeterminateOnly="true"
                 android:layout_centerInParent="true"/>
     </RelativeLayout>
+
+    <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/vs_200"
+            android:layout_marginRight="@dimen/vs_200"
+            android:layout_marginBottom="@dimen/vs_30"
+            android:layout_gravity="bottom"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:gravity="center"
+            android:id="@+id/backcontroller"
+            android:background="@drawable/bg_progress_bar_out"
+            android:orientation="horizontal">
+
+        <TextView
+                android:id="@+id/tv_currentpos"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="5dp"
+                android:text="00:00:00"
+                android:textColor="#fff"/>
+        <SeekBar
+                android:id="@+id/pb_progressbar"
+                android:padding="6dp"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:maxHeight="3dp"
+                android:max="100"
+                android:progress="30"
+                android:progressDrawable="@drawable/seekbar_style"
+                android:minHeight="3dp"
+                android:thumb="@drawable/transparent"
+                android:thumbOffset="0dp"
+                android:layout_weight="1"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dip"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dip"/>
+
+        <TextView
+                android:id="@+id/tv_duration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="00:00:00"
+                android:textColor="#fff"/>
+    </LinearLayout>
     <!--频道序号显示-->
     <RelativeLayout
             android:layout_gravity="bottom|center"
@@ -182,6 +235,19 @@
             android:textColor="@android:color/white"
             android:textSize="22mm"
             android:visibility="invisible"/>
+    <TextView
+            android:id="@+id/tvBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:layout_marginBottom="30mm"
+            android:layout_marginRight="30mm"
+            android:background="@android:color/transparent"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:textSize="22mm"
+            android:text="回放"
+            android:visibility="invisible"/>
     <LinearLayout
             android:id="@+id/tvLeftChannnelListLayout"
             android:layout_width="match_parent"
@@ -191,7 +257,6 @@
             android:baselineAligned="false"
             android:orientation="horizontal"
             android:padding="0dp" android:visibility="invisible">
-
         <LinearLayout
                 android:id="@+id/ll_typeSelect"
                 android:layout_width="wrap_content"
@@ -199,13 +264,11 @@
                 android:background="@drawable/bg_channel_list"
                 android:baselineAligned="false"
                 android:padding="0dp">
-
             <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:orientation="horizontal" android:visibility="visible">
-
                 <com.owen.tvrecyclerview.widget.TvRecyclerView
                         android:id="@+id/mGroupGridView"
                         android:layout_width="@dimen/vs_140"
@@ -217,16 +280,13 @@
                         android:scrollbars="none"/>
 
             </LinearLayout>
-
-
             <LinearLayout
                     android:layout_width="1mm"
                     android:layout_height="match_parent"
                     android:background="@color/color_FFFFFF"/>
-
             <com.owen.tvrecyclerview.widget.TvRecyclerView
                     android:id="@+id/mChannelGridView"
-                    android:layout_width="@dimen/vs_250"
+                    android:layout_width="@dimen/vs_270"
                     android:layout_height="match_parent"
                     android:divider="@null"
                     android:fadeScrollbars="false"
@@ -234,7 +294,6 @@
                     android:listSelector="@drawable/item_bg_selector_right"
                     android:padding="5dp"
                     android:scrollbars="none"/>
-
         </LinearLayout>
     </LinearLayout>
     <LinearLayout

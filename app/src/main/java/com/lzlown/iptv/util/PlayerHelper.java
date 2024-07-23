@@ -2,12 +2,9 @@ package com.lzlown.iptv.util;
 
 import android.content.Context;
 import com.lzlown.iptv.player.ijk.IjkmPlayer;
-import com.lzlown.iptv.player.vlc.VlcmPlayer;
 import com.lzlown.iptv.videoplayer.player.PlayerFactory;
 import com.lzlown.iptv.videoplayer.player.VideoView;
 import com.lzlown.iptv.videoplayer.player.android.AndroidMediaPlayerFactory;
-import com.lzlown.iptv.videoplayer.player.vlc.VlcPlayer;
-import com.lzlown.iptv.videoplayer.player.vlc.VlcPlayerFactory;
 import com.lzlown.iptv.videoplayer.render.RenderViewFactory;
 import com.lzlown.iptv.videoplayer.render.SurfaceRenderViewFactory;
 import com.lzlown.iptv.videoplayer.render.TextureRenderViewFactory;
@@ -58,13 +55,6 @@ public class PlayerHelper {
                 th.printStackTrace();
             }
 
-        } else if (playerType == 1) {
-            playerFactory = new VlcPlayerFactory() {
-                @Override
-                public VlcPlayer createPlayer(Context context) {
-                    return new VlcmPlayer(context);
-                }
-            };
         } else {
             playerFactory = AndroidMediaPlayerFactory.create();
         }

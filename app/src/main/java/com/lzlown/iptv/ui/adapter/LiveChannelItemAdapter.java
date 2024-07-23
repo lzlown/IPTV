@@ -66,4 +66,8 @@ public class LiveChannelItemAdapter extends BaseQuickAdapter<LiveChannelItem, Ba
     public int getFocusedChannelIndex() {
         return focusedChannelIndex;
     }
+
+    public int getSelectedChannelIndex() {
+        return selectedChannelIndex;
+    }
 }

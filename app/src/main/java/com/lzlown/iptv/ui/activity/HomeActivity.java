@@ -42,7 +42,6 @@ public class HomeActivity extends BaseActivity {
         loadErr = findViewById(R.id.loadErr);
         ll_loading.setVisibility(View.VISIBLE);
         mHandler.post(getCfgRun);
-
     }
 
     @Override
@@ -51,7 +50,9 @@ public class HomeActivity extends BaseActivity {
         AppManager.getInstance().appExit(0);
         finish();
     }
-    private final Runnable getCfgRun =new Runnable() {
+
+    private final Runnable getCfgRun = new Runnable() {
+
         @Override
         public void run() {
             ApiConfig.get().loadData(new ApiConfig.LoadCallback() {

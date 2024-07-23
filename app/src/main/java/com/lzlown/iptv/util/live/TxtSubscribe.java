@@ -32,7 +32,7 @@ public class TxtSubscribe {
                             }
                         } else {
                             String trim2 = split[0].trim();
-                            for (String str2 : split[1].trim().split("#")) {
+                            for (String str2 : split[2].trim().split("#")) {
                                 String trim3 = str2.trim();
                                 if (!trim3.isEmpty() && (trim3.startsWith("http") || trim3.startsWith("rtp") || trim3.startsWith("rtsp") || trim3.startsWith("rtmp"))) {
                                     if (!linkedHashMap3.containsKey(trim2)) {
@@ -41,8 +41,8 @@ public class TxtSubscribe {
                                     } else {
                                         arrayList = linkedHashMap3.get(trim2);
                                     }
-                                    if (!arrayList.contains(trim3)) {
-                                        arrayList.add(trim3);
+                                    if (!arrayList.contains(split[1]+"#"+trim3)) {
+                                        arrayList.add(split[1]+"#"+trim3);
                                     }
                                 }
                             }
