@@ -37,7 +37,7 @@ public class App extends MultiDexApplication {
             Hawk.put(HawkConfig.API_URL, "https://lzlown.com:9090/6b16ccd8540eca89/tvcfg.json");
         }
         if (!Hawk.contains(HawkConfig.LIVE_CONNECT_TIMEOUT)) {
-            Hawk.put(HawkConfig.LIVE_CONNECT_TIMEOUT, 10);
+            Hawk.put(HawkConfig.LIVE_CONNECT_TIMEOUT, 5);
         }
         if (!Hawk.contains(HawkConfig.LIVE_SHOW_EPG)) {
             Hawk.put(HawkConfig.LIVE_SHOW_EPG, false);

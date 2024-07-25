@@ -13,13 +13,18 @@ import com.lzy.okgo.callback.AbsCallback;
 import com.lzy.okgo.model.Response;
 import com.orhanobut.hawk.Hawk;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.CountDownLatch;
 
 public class ApiConfig {
     private static ApiConfig instance;
     private List<LiveChannelGroup> liveChannelGroupList = new ArrayList<>();
-    private static final Map<String, Map<String, LiveEpg>> liveEpgMap = new HashMap();
+    private List<LiveChannelItem> liveChannelList = new ArrayList<>();
+    private static final Map<String, Map<String, LiveEpg>> liveEpgMap = new HashMap<>();
     private HashMap<String, List<IjkOption>> ijkOptions = new HashMap<>();
+    private String date;
+    private final List<LiveEpgDate> epgDateList = new ArrayList<>();
     private final String userAgent = "okhttp/3.15";
     private final String requestAccept = "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9";
 
@@ -75,6 +80,10 @@ public class ApiConfig {
 
     public List<LiveChannelGroup> getChannelGroupList() {
         return liveChannelGroupList;
+    }
+
+    public List<LiveChannelItem> getLiveChannelList() {
+        return liveChannelList;
     }
 
     private void loadIjkOptions(JsonElement jsonElement) {
@@ -186,6 +195,10 @@ public class ApiConfig {
                                 }
                                 liveChannelGroup.setLiveChannels(liveChannelItems);
                                 liveChannelGroupList.add(liveChannelGroup);
+                            }
+                            liveChannelList.clear();
+                            for (LiveChannelGroup liveChannelGroup : liveChannelGroupList) {
+                                liveChannelList.addAll(liveChannelGroup.getLiveChannels());
                             }
                             callback.success();
                         } catch (Throwable th) {
@@ -348,28 +361,58 @@ public class ApiConfig {
         return null;
     }
 
+    private void initEpgDate() {
+        epgDateList.clear();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        SimpleDateFormat datePresentFormat = new SimpleDateFormat("MM-dd");
+        calendar.add(Calendar.DAY_OF_MONTH, -6);
+        for (int i = 0; i < 8; i++) {
+            Date dateIns = calendar.getTime();
+            LiveEpgDate epgDate = new LiveEpgDate();
+            epgDate.setIndex(i);
+            epgDate.setDatePresented(datePresentFormat.format(dateIns));
+            epgDate.setDateParamVal(dateIns);
+            epgDateList.add(epgDate);
+            calendar.add(Calendar.DAY_OF_MONTH, 1);
+        }
+    }
+
+    public List<LiveEpgDate> getEpgDateList() {
+        if (!TimeUtil.getTime().equals(date)) {
+            initEpgDate();
+            date = TimeUtil.getTime();
+        }
+        return epgDateList;
+    }
+
     //初始化 逻辑
     public void loadData(LoadCallback callback) {
+        CountDownLatch countDownLatch = new CountDownLatch(getEpgDateList().size());
         getCfg(new LoadCallback() {
             @Override
             public void success() {
                 getLive(liveUrl, new LoadCallback() {
                     @Override
                     public void success() {
-                        if (Hawk.get(HawkConfig.LIVE_SHOW_EPG, false)) {
+                        for (LiveEpgDate liveEpgDate : getEpgDateList()) {
                             getEpgAll(new LoadCallback() {
                                 @Override
                                 public void success() {
-                                    callback.success();
+                                   countDownLatch.countDown();
+                                   if (countDownLatch.getCount() == 0) {
+                                       callback.success();
+                                   }
                                 }
 
                                 @Override
                                 public void error(String msg) {
-                                    callback.success();
+                                    countDownLatch.countDown();
+                                    if (countDownLatch.getCount() == 0) {
+                                        callback.success();
+                                    }
                                 }
-                            }, TimeUtil.getTime());
-                        } else {
-                            callback.success();
+                            }, TimeUtil.timeFormat.format(liveEpgDate.getDateParamVal()));
                         }
                     }
 

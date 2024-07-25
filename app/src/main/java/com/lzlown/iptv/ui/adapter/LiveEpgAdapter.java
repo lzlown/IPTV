@@ -1,7 +1,6 @@
 package com.lzlown.iptv.ui.adapter;
 
 import android.graphics.Color;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -18,7 +17,7 @@ public class LiveEpgAdapter extends BaseQuickAdapter<LiveEpgItem, BaseViewHolder
     private int focusedEpgIndex = -1;
 
     public LiveEpgAdapter() {
-        super(R.layout.epglist_item, new ArrayList<>());
+        super(R.layout.item_live_epg, new ArrayList<>());
     }
 
     @Override
