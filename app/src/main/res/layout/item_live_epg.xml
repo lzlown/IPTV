@@ -12,7 +12,6 @@ android:layout_width="match_parent"
 android:layout_height="wrap_content">
 
 <LinearLayout
-    android:id="@+id/touch"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:paddingLeft="6dp"
@@ -30,7 +29,7 @@ android:layout_height="wrap_content">
         android:textColor="@android:color/white"/>
 		
     <com.lzlown.iptv.ui.tv.widget.MarqueeTextView
-        android:textSize="@dimen/ts_16"
+        android:textSize="18mm"
         android:ellipsize="marquee"
         android:singleLine="true"
         android:marqueeRepeatLimit="marquee_forever"
