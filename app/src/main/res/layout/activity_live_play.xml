@@ -9,8 +9,6 @@
             android:id="@+id/mVideoView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
-
-
     <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -27,7 +25,7 @@
                 android:indeterminateOnly="true"
                 android:layout_centerInParent="true"/>
     </RelativeLayout>
-
+    <!--回放进度条-->
     <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -59,16 +57,14 @@
                 android:layout_height="30dp"
                 android:maxHeight="3dp"
                 android:max="100"
-                android:progress="30"
+                android:progress="0"
                 android:progressDrawable="@drawable/seekbar_style"
                 android:minHeight="3dp"
                 android:thumb="@drawable/transparent"
                 android:thumbOffset="0dp"
                 android:layout_weight="1"
                 android:paddingStart="5dp"
-                android:paddingEnd="5dip"
-                android:paddingLeft="5dp"
-                android:paddingRight="5dip"/>
+                android:paddingEnd="5dp"/>
 
         <TextView
                 android:id="@+id/tv_duration"
@@ -248,6 +244,7 @@
             android:textSize="22mm"
             android:text="回放"
             android:visibility="invisible"/>
+    <!--左侧节目-->
     <LinearLayout
             android:id="@+id/tvLeftChannnelListLayout"
             android:layout_width="match_parent"
@@ -296,6 +293,7 @@
                     android:scrollbars="none"/>
         </LinearLayout>
     </LinearLayout>
+    <!--右侧设置-->
     <LinearLayout
             android:id="@+id/tvRightSettingLayout"
             android:layout_width="361mm"
@@ -339,6 +337,7 @@
                 app:tv_selectedItemIsCentered="true"
                 app:tv_verticalSpacingWithMargins="10mm"/>
     </LinearLayout>
+    <!--左侧回放-->
     <LinearLayout
             android:id="@+id/divEPG"
             android:layout_width="wrap_content"
@@ -372,7 +371,7 @@
                 android:scrollbars="none"/>
         <com.owen.tvrecyclerview.widget.TvRecyclerView
                 android:id="@+id/lv_epg"
-                android:layout_width="@dimen/vs_360"
+                android:layout_width="@dimen/vs_420"
                 android:layout_height="wrap_content"
                 android:gravity="center|center_vertical"
                 android:listSelector="@drawable/item_bg_selector_right"

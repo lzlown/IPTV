@@ -7,7 +7,6 @@ import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.os.CountDownTimer;
 import android.os.Handler;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,7 +29,6 @@ import com.owen.tvrecyclerview.widget.TvRecyclerView;
 import com.owen.tvrecyclerview.widget.V7LinearLayoutManager;
 import org.greenrobot.eventbus.EventBus;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -40,7 +38,6 @@ public class LivePlayActivity extends BaseActivity {
     private VideoView mVideoView;
     private Handler mHandler = new Handler();
     private final LivePlayerManager livePlayerManager = new LivePlayerManager();
-
 
     //频道列表
     private LinearLayout tvLeftChannelListLayout;
@@ -84,14 +81,16 @@ public class LivePlayActivity extends BaseActivity {
     private LiveEpgDateAdapter liveEpgDateAdapter;
     private LiveEpgChannelItemAdapter liveEpgChannelItemAdapter;
 
-
-    private Boolean isCanBack = false;
-
     //回放控制
     private View backController;
     private SeekBar sBar;
     private TextView tv_currentpos;
     private TextView tv_duration;
+
+    private Boolean isCanBack = false;
+    private LiveChannelItem backLiveChannelItem;
+    private LiveEpgItem selectedData;
+    private int selectTime = 0;
 
     @Override
     protected int getLayoutResID() {
@@ -145,6 +144,7 @@ public class LivePlayActivity extends BaseActivity {
         backController = findViewById(R.id.backcontroller);
         tv_duration = findViewById(R.id.tv_duration);
         backController.setVisibility(View.GONE);
+        sBar.setKeyProgressIncrement(10000);
         sBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onStopTrackingTouch(SeekBar arg0) {
@@ -157,11 +157,8 @@ public class LivePlayActivity extends BaseActivity {
             }
 
             @Override
-            public void onProgressChanged(SeekBar sb, int progress, boolean fromuser) {
-                if (!fromuser) {
-                    return;
-                }
-                if (fromuser) {
+            public void onProgressChanged(SeekBar sb, int progress, boolean fromUser) {
+                if (fromUser) {
                     if (tvBack.getVisibility() == View.VISIBLE) {
                         playBack(progress);
                     } else {
@@ -223,10 +220,12 @@ public class LivePlayActivity extends BaseActivity {
                         showEpg();
                         break;
                     case KeyEvent.KEYCODE_DPAD_LEFT:
-                        showEpgMenu(true);
+                        if (backController.getVisibility() != View.VISIBLE) {
+                            showEpgMenu(true);
+                        }
                         break;
                     case KeyEvent.KEYCODE_DPAD_RIGHT:
-                        if (isCanBack) {
+                        if (isCanBack && mVideoView.isPlaying()) {
                             showProgressBars(true);
                         }
                         break;
@@ -240,11 +239,6 @@ public class LivePlayActivity extends BaseActivity {
         } else if (event.getAction() == KeyEvent.ACTION_UP) {
         }
         return super.dispatchKeyEvent(event);
-    }
-
-
-    private boolean isListOrSettingLayoutVisible() {
-        return tvLeftChannelListLayout.getVisibility() == View.VISIBLE || tvRightSettingLayout.getVisibility() == View.VISIBLE || mEpgLayout.getVisibility() == View.VISIBLE;
     }
 
     @Override
@@ -403,7 +397,15 @@ public class LivePlayActivity extends BaseActivity {
         } else {
             isCanBack = false;
         }
-        tvBack.setVisibility(View.GONE);
+        if (tvBack.getVisibility() == View.VISIBLE) {
+            tvBack.setVisibility(View.GONE);
+            backLiveChannelItem = null;
+            selectedData = null;
+            if (liveEpgAdapter != null) {
+                liveEpgAdapter.setLiveEpgItemIndex(null);
+            }
+        }
+        selectTime = 0;
         showProgressBars(false);
         mVideoView.release();
         mVideoView.setUrl(currentLiveChannelItem.getUrl());
@@ -473,7 +475,7 @@ public class LivePlayActivity extends BaseActivity {
             @Override
             public void changeSource(int direction) {
                 if (direction > 0) {
-                    if (isCanBack) {
+                    if (isCanBack && mVideoView.isPlaying()) {
                         showProgressBars(true);
                     }
                 } else {
@@ -500,7 +502,6 @@ public class LivePlayActivity extends BaseActivity {
 //            } else {
 //                playNextSource();
 //            }
-
             if (tvBack.getVisibility() == View.VISIBLE) {
                 playChannel(currentChannelGroupIndex, currentLiveChannelIndex, false);
                 return;
@@ -512,23 +513,29 @@ public class LivePlayActivity extends BaseActivity {
         }
     };
 
+    private boolean isListOrSettingLayoutVisible() {
+        return tvLeftChannelListLayout.getVisibility() == View.VISIBLE || tvRightSettingLayout.getVisibility() == View.VISIBLE || mEpgLayout.getVisibility() == View.VISIBLE|| backController.getVisibility() == View.VISIBLE;
+    }
 
-    private void initChannelGroupView() {
-        mChannelGroupView.setHasFixedSize(true);
-        mChannelGroupView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
-        liveChannelGroupAdapter = new LiveChannelGroupAdapter();
-        liveChannelGroupAdapter.closeLoadAnimation();
-        mChannelGroupView.setAdapter(liveChannelGroupAdapter);
-        mChannelGroupView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+    private void initTvRecyclerView(TvRecyclerView view, BaseQuickAdapter adapter, Runnable runnable) {
+        view.setHasFixedSize(true);
+        view.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
+        adapter.closeLoadAnimation();
+        view.setAdapter(adapter);
+        view.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-                mHandler.removeCallbacks(mHideChannelListRun);
-                mHandler.postDelayed(mHideChannelListRun, 5000);
+                mHandler.removeCallbacks(runnable);
+                mHandler.postDelayed(runnable, 5000);
             }
         });
+    }
 
-        //电视
+    //左侧节目列表
+    private void initChannelGroupView() {
+        liveChannelGroupAdapter = new LiveChannelGroupAdapter();
+        initTvRecyclerView(mChannelGroupView, liveChannelGroupAdapter, mHideChannelListRun);
         mChannelGroupView.setOnItemListener(new TvRecyclerView.OnItemListener() {
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
@@ -544,8 +551,6 @@ public class LivePlayActivity extends BaseActivity {
 
             }
         });
-
-        //手机/模拟器
         liveChannelGroupAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
@@ -571,21 +576,8 @@ public class LivePlayActivity extends BaseActivity {
     }
 
     private void initLiveChannelView() {
-        mLiveChannelView.setHasFixedSize(true);
-        mLiveChannelView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
         liveChannelItemAdapter = new LiveChannelItemAdapter();
-        liveChannelItemAdapter.closeLoadAnimation();
-        mLiveChannelView.setAdapter(liveChannelItemAdapter);
-        mLiveChannelView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-                mHandler.removeCallbacks(mHideChannelListRun);
-                mHandler.postDelayed(mHideChannelListRun, 5000);
-            }
-        });
-
-        //电视
+        initTvRecyclerView(mLiveChannelView, liveChannelItemAdapter, mHideChannelListRun);
         mLiveChannelView.setOnItemListener(new TvRecyclerView.OnItemListener() {
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
@@ -606,8 +598,6 @@ public class LivePlayActivity extends BaseActivity {
                 clickLiveChannel(position);
             }
         });
-
-        //手机/模拟器
         liveChannelItemAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
@@ -669,8 +659,7 @@ public class LivePlayActivity extends BaseActivity {
         selectChannelGroup(lastChannelGroupIndex, false, lastLiveChannelIndex);
     }
 
-
-    //显示设置列表
+    //右侧设置列表
     private void initLiveSettingGroupList() {
         ArrayList<ArrayList<String>> itemsArrayList = new ArrayList<>();
         ArrayList<String> groupNames = new ArrayList<>(Arrays.asList("画质线路", "画面比例", "偏好设置"));
@@ -733,20 +722,8 @@ public class LivePlayActivity extends BaseActivity {
     }
 
     private void initSettingGroupView() {
-        mSettingGroupView.setHasFixedSize(true);
-        mSettingGroupView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
         liveSettingGroupAdapter = new LiveSettingGroupAdapter();
-        mSettingGroupView.setAdapter(liveSettingGroupAdapter);
-        mSettingGroupView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-                mHandler.removeCallbacks(mHideSettingLayoutRun);
-                mHandler.postDelayed(mHideSettingLayoutRun, 5000);
-            }
-        });
-
-        //电视
+        initTvRecyclerView(mSettingGroupView, liveSettingGroupAdapter, mHideSettingLayoutRun);
         mSettingGroupView.setOnItemListener(new TvRecyclerView.OnItemListener() {
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
@@ -761,8 +738,6 @@ public class LivePlayActivity extends BaseActivity {
             public void onItemClick(TvRecyclerView parent, View itemView, int position) {
             }
         });
-
-        //手机/模拟器
         liveSettingGroupAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
@@ -798,20 +773,8 @@ public class LivePlayActivity extends BaseActivity {
     }
 
     private void initSettingItemView() {
-        mSettingItemView.setHasFixedSize(true);
-        mSettingItemView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
         liveSettingItemAdapter = new LiveSettingItemAdapter();
-        mSettingItemView.setAdapter(liveSettingItemAdapter);
-        mSettingItemView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-                mHandler.removeCallbacks(mHideSettingLayoutRun);
-                mHandler.postDelayed(mHideSettingLayoutRun, 5000);
-            }
-        });
-
-        //电视
+        initTvRecyclerView(mSettingItemView, liveSettingItemAdapter, mHideSettingLayoutRun);
         mSettingItemView.setOnItemListener(new TvRecyclerView.OnItemListener() {
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
@@ -831,8 +794,6 @@ public class LivePlayActivity extends BaseActivity {
                 clickSettingItem(position);
             }
         });
-
-        //手机/模拟器
         liveSettingItemAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
@@ -1031,7 +992,7 @@ public class LivePlayActivity extends BaseActivity {
                 }
                 LiveEpgItem liveEpgItem1 = liveEpgItemForMap.get("n");
                 if (liveEpgItem1 != null) {
-                    tip_time2.setText(liveEpgItem1.getStart() + "-" + liveEpgItem1.getEnd());
+                    tip_time2.setText(String.format("%s-%s", liveEpgItem1.getStart(), liveEpgItem1.getEnd()));
                     tip_name2.setText(liveEpgItem1.getTitle());
                 } else {
                     tip_time2.setText("00:00-00:00");
@@ -1090,10 +1051,212 @@ public class LivePlayActivity extends BaseActivity {
         }
     };
 
+    private CountDownTimer countDownTimer;
+
+
+    public void showProgressBars(boolean show) {
+        if (show) {
+            sBar.requestFocus();
+            if (tvBack.getVisibility() != View.VISIBLE) {
+                sBar.setMax((int) mVideoView.getDuration());
+                sBar.setKeyProgressIncrement(10000);
+            }
+            tv_currentpos.setText(TimeUtil.durationToString((int) mVideoView.getCurrentPosition() + selectTime));
+            tv_duration.setText(TimeUtil.durationToString((int) mVideoView.getDuration() + selectTime));
+            backController.setVisibility(View.VISIBLE);
+            if (countDownTimer == null) {
+                countDownTimer = new CountDownTimer(5000, 1000) {
+                    @Override
+                    public void onTick(long arg0) {
+                        if (mVideoView != null&& mVideoView.isPlaying()) {
+                            sBar.setProgress((int) mVideoView.getCurrentPosition() + selectTime);
+                            tv_currentpos.setText(TimeUtil.durationToString((int) mVideoView.getCurrentPosition() + selectTime));
+                        }
+                    }
+
+                    @Override
+                    public void onFinish() {
+                        if (backController.getVisibility() == View.VISIBLE) {
+                            backController.setVisibility(View.GONE);
+                        }
+                    }
+                };
+            } else {
+                countDownTimer.cancel();
+            }
+            countDownTimer.start();
+        } else {
+            backController.setVisibility(View.GONE);
+        }
+
+    }
+
+    //预告回放
+    private void initEpgChannelView() {
+        liveEpgChannelItemAdapter = new LiveEpgChannelItemAdapter();
+        liveEpgChannelItemAdapter.setNewData(ApiConfig.get().getLiveChannelList());
+        initTvRecyclerView(mEpgChannelGridView, liveEpgChannelItemAdapter, mHideChannelListRun);
+        mEpgChannelGridView.setOnItemListener(new TvRecyclerView.OnItemListener() {
+            @Override
+            public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
+            }
+
+            @Override
+            public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
+                mHandler.removeCallbacks(mHideChannelListRun);
+                mHandler.postDelayed(mHideChannelListRun, 5000);
+                if (mEpgChannelGridView.isComputingLayout() || position == -1) {
+                    return;
+                }
+                if (position == liveEpgChannelItemAdapter.getSelectedChannelIndex()) {
+                    liveEpgChannelItemAdapter.setFocusedChannelIndex(position);
+                    return;
+                }
+                liveEpgChannelItemAdapter.setFocusedChannelIndex(position);
+                liveEpgChannelItemAdapter.setSelectedChannelIndex(position);
+                changeEpgRight(position);
+            }
+
+            @Override
+            public void onItemClick(TvRecyclerView parent, View itemView, int position) {
+
+            }
+        });
+        liveEpgChannelItemAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                mHandler.removeCallbacks(mHideChannelListRun);
+                mHandler.postDelayed(mHideChannelListRun, 5000);
+                if (position == liveEpgChannelItemAdapter.getSelectedChannelIndex()) {
+                    return;
+                }
+                liveEpgChannelItemAdapter.setSelectedChannelIndex(position);
+                changeEpgRight(position);
+            }
+        });
+    }
+
+    private void initEpgDateView() {
+        liveEpgDateAdapter = new LiveEpgDateAdapter();
+        initTvRecyclerView(mEpgDateGridView, liveEpgDateAdapter, mHideChannelListRun);
+        mEpgDateGridView.setOnItemListener(new TvRecyclerView.OnItemListener() {
+            @Override
+            public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
+            }
+
+            @Override
+            public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
+                mHandler.removeCallbacks(mHideChannelListRun);
+                mHandler.postDelayed(mHideChannelListRun, 5000);
+                if (position == -1) {
+                    return;
+                }
+                if (position == liveEpgDateAdapter.getSelectedIndex()) {
+                    liveEpgDateAdapter.setFocusedIndex(position);
+                    return;
+                }
+                liveEpgDateAdapter.setFocusedIndex(position);
+                liveEpgDateAdapter.setSelectedIndex(position);
+                epgRight(position);
+            }
+
+            @Override
+            public void onItemClick(TvRecyclerView parent, View itemView, int position) {
+
+            }
+        });
+        liveEpgDateAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                mHandler.removeCallbacks(mHideChannelListRun);
+                mHandler.postDelayed(mHideChannelListRun, 5000);
+                liveEpgDateAdapter.setSelectedIndex(position);
+                epgRight(position);
+            }
+        });
+    }
+
+    private void initEpgListView() {
+        liveEpgAdapter = new LiveEpgAdapter();
+        initTvRecyclerView(mEpgListView, liveEpgAdapter, mHideChannelListRun);
+        mEpgListView.setOnItemListener(new TvRecyclerView.OnItemListener() {
+            @Override
+            public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
+
+            }
+
+            @Override
+            public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
+                mHandler.removeCallbacks(mHideChannelListRun);
+                mHandler.postDelayed(mHideChannelListRun, 5000);
+                liveEpgAdapter.setFocusedEpgIndex(position);
+            }
+
+            @Override
+            public void onItemClick(TvRecyclerView parent, View itemView, int position) {
+
+            }
+        });
+        liveEpgAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                mHandler.removeCallbacks(mHideChannelListRun);
+                mHandler.postDelayed(mHideChannelListRun, 5000);
+                selectedData = liveEpgAdapter.getItem(position);
+                if (selectedData == null) {
+                    return;
+                }
+                String startDate = selectedData.currentEpgDate.replaceAll("-", "") + selectedData.originStart.replace(":", "") + "00";
+                String endDate = selectedData.currentEpgDate.replaceAll("-", "") + selectedData.originEnd.replace(":", "") + "00";
+                Date now = new Date();
+                Date ctime = TimeUtil.getTime(selectedData.currentEpgDate);
+                Date time = TimeUtil.getTime(TimeUtil.getTime());
+                if (ctime.compareTo(time) <= 0) {
+                    if (ctime.compareTo(time) == 0 && now.compareTo(selectedData.startdateTime) >= 0 && now.compareTo(selectedData.enddateTime) <= 0) {
+                        return;
+                    }
+                    if (ctime.compareTo(time) == 0 && now.compareTo(selectedData.startdateTime) <= 0) {
+                        return;
+                    }
+                    Date breTime = TimeUtil.getTime(TimeUtil.getTime(-1));
+                    if (ctime.compareTo(breTime) >= 0) {
+                        LiveChannelItem currentLiveChannel = liveEpgChannelItemAdapter.getItem(liveEpgChannelItemAdapter.getSelectedChannelIndex());
+                        if (currentLiveChannel == null) {
+                            return;
+                        }
+                        if (StringUtils.isNotEmpty(currentLiveChannel.getSocUrls())) {
+                            liveEpgAdapter.setLiveEpgItemIndex(selectedData);
+                            backLiveChannelItem = currentLiveChannel;
+                            int maxTime = (int) TimeUtil.getTime(TimeUtil.timeFormat.format(new Date()) + " " + selectedData.start + ":" + "00", TimeUtil.timeFormat.format(new Date()) + " " + selectedData.end + ":" + "00");
+                            sBar.setMax(maxTime * 1000);
+                            sBar.setProgress(0);
+                            sBar.setKeyProgressIncrement(10000);
+                            tv_currentpos.setText(TimeUtil.durationToString(0));
+                            tv_duration.setText(TimeUtil.durationToString(maxTime * 1000));
+                            isCanBack = true;
+                            selectTime = 0;
+                            mVideoView.release();
+                            mVideoView.setUrl(String.format(currentLiveChannel.getSocUrls(), TimeUtil.getTimeS(startDate) + "GMT-" + TimeUtil.getTimeS(endDate) + "GMT"));
+                            mVideoView.start();
+                            showProgressBars(false);
+                            tvBack.setVisibility(View.VISIBLE);
+                            mHandler.removeCallbacks(backChange);
+                            mHandler.postDelayed(backChange, 5000);
+                        }
+                    }
+                }
+            }
+        });
+    }
+
     private void showEpgMenu(boolean focus) {
         if (!isListOrSettingLayoutVisible()) {
-//            int pos = 0;
-            int pos = currentLiveChannelItem.getChannelNum() - 1;
+            int pos;
+            if (backLiveChannelItem != null) {
+                pos = backLiveChannelItem.getChannelNum() - 1;
+            } else {
+                pos = currentLiveChannelItem.getChannelNum() - 1;
+            }
             if (focus) {
                 liveEpgChannelItemAdapter.setSelectedChannelIndex(-1);
                 liveEpgChannelItemAdapter.setFocusedChannelIndex(pos);
@@ -1101,11 +1264,11 @@ public class LivePlayActivity extends BaseActivity {
                 liveEpgChannelItemAdapter.setSelectedChannelIndex(pos);
                 liveEpgChannelItemAdapter.setFocusedChannelIndex(-1);
             }
+            changeEpgRight(pos);
             liveEpgChannelItemAdapter.setNewData(ApiConfig.get().getLiveChannelList());
             mEpgChannelGridView.scrollToPosition(pos);
             mEpgChannelGridView.setSelection(pos);
             mEpgLayout.setVisibility(View.VISIBLE);
-            changeEpgRight(pos);
             mHandler.removeCallbacks(mHideChannelListRun);
             mHandler.postDelayed(mHideChannelListRun, 5000);
 
@@ -1141,211 +1304,16 @@ public class LivePlayActivity extends BaseActivity {
         }
     }
 
-    private void initEpgChannelView() {
-        mEpgChannelGridView.setHasFixedSize(true);
-        mEpgChannelGridView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
-        liveEpgChannelItemAdapter = new LiveEpgChannelItemAdapter();
-        liveEpgChannelItemAdapter.setNewData(ApiConfig.get().getLiveChannelList());
-        liveEpgChannelItemAdapter.closeLoadAnimation();
-        mEpgChannelGridView.setAdapter(liveEpgChannelItemAdapter);
-        mEpgChannelGridView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-                mHandler.removeCallbacks(mHideChannelListRun);
-                mHandler.postDelayed(mHideChannelListRun, 5000);
-            }
-        });
-
-        //电视
-        mEpgChannelGridView.setOnItemListener(new TvRecyclerView.OnItemListener() {
-            @Override
-            public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
-            }
-
-            @Override
-            public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
-                mHandler.removeCallbacks(mHideChannelListRun);
-                mHandler.postDelayed(mHideChannelListRun, 5000);
-                Log.i(TAG, "onItemSelected: " + position);
-                if (mEpgChannelGridView.isComputingLayout() || position == -1) {
-                    return;
-                }
-                if (position == liveEpgChannelItemAdapter.getSelectedChannelIndex()) {
-                    Log.i(TAG, "onItemSelected: ");
-                    liveEpgChannelItemAdapter.setFocusedChannelIndex(position);
-                    return;
-                }
-                liveEpgChannelItemAdapter.setFocusedChannelIndex(position);
-                liveEpgChannelItemAdapter.setSelectedChannelIndex(position);
-                changeEpgRight(position);
-            }
-
-            @Override
-            public void onItemClick(TvRecyclerView parent, View itemView, int position) {
-
-            }
-        });
-
-        //手机/模拟器
-        liveEpgChannelItemAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                mHandler.removeCallbacks(mHideChannelListRun);
-                mHandler.postDelayed(mHideChannelListRun, 5000);
-                if (position == liveEpgChannelItemAdapter.getSelectedChannelIndex()) {
-                    return;
-                }
-                liveEpgChannelItemAdapter.setSelectedChannelIndex(position);
-                changeEpgRight(position);
-            }
-        });
-    }
-
-    private void initEpgDateView() {
-        mEpgDateGridView.setHasFixedSize(true);
-        mEpgDateGridView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
-        liveEpgDateAdapter = new LiveEpgDateAdapter();
-//        liveEpgDateAdapter.setNewData(ApiConfig.get().getEpgDateList());
-        mEpgDateGridView.setAdapter(liveEpgDateAdapter);
-        mEpgDateGridView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-                mHandler.removeCallbacks(mHideChannelListRun);
-                mHandler.postDelayed(mHideChannelListRun, 5000);
-            }
-        });
-
-        //电视
-        mEpgDateGridView.setOnItemListener(new TvRecyclerView.OnItemListener() {
-            @Override
-            public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
-            }
-
-            @Override
-            public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
-                mHandler.removeCallbacks(mHideChannelListRun);
-                mHandler.postDelayed(mHideChannelListRun, 5000);
-                if (position == -1) {
-                    return;
-                }
-                if (position == liveEpgDateAdapter.getSelectedIndex()) {
-                    liveEpgDateAdapter.setFocusedIndex(position);
-                    return;
-                }
-                liveEpgDateAdapter.setFocusedIndex(position);
-                liveEpgDateAdapter.setSelectedIndex(position);
-                epgRight(position);
-            }
-
-            @Override
-            public void onItemClick(TvRecyclerView parent, View itemView, int position) {
-
-            }
-        });
-
-        //手机/模拟器
-        liveEpgDateAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                mHandler.removeCallbacks(mHideChannelListRun);
-                mHandler.postDelayed(mHideChannelListRun, 5000);
-                liveEpgDateAdapter.setSelectedIndex(position);
-                epgRight(position);
-            }
-        });
-    }
-
-    private void initEpgListView() {
-        mEpgListView.setHasFixedSize(true);
-        mEpgListView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
-        liveEpgAdapter = new LiveEpgAdapter();
-        mEpgListView.setAdapter(liveEpgAdapter);
-        mEpgListView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-                mHandler.removeCallbacks(mHideChannelListRun);
-                mHandler.postDelayed(mHideChannelListRun, 5000);
-            }
-        });
-        //电视
-        mEpgListView.setOnItemListener(new TvRecyclerView.OnItemListener() {
-            @Override
-            public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
-
-            }
-
-            @Override
-            public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
-                mHandler.removeCallbacks(mHideChannelListRun);
-                mHandler.postDelayed(mHideChannelListRun, 5000);
-                liveEpgAdapter.setFocusedEpgIndex(position);
-            }
-
-            @Override
-            public void onItemClick(TvRecyclerView parent, View itemView, int position) {
-
-            }
-        });
-
-        //手机/模拟器
-        liveEpgAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                selectedData = liveEpgAdapter.getItem(position);
-                if (selectedData == null) {
-                    return;
-                }
-                String startDate = selectedData.currentEpgDate.replaceAll("-", "") + selectedData.originStart.replace(":", "") + "00";
-                String endDate = selectedData.currentEpgDate.replaceAll("-", "") + selectedData.originEnd.replace(":", "") + "00";
-                Date now = new Date();
-                Date ctime = TimeUtil.getTime(selectedData.currentEpgDate);
-                Date time = TimeUtil.getTime(TimeUtil.getTime());
-                if (ctime.compareTo(time) <= 0) {
-                    if (ctime.compareTo(time) == 0 && now.compareTo(selectedData.startdateTime) >= 0 && now.compareTo(selectedData.enddateTime) <= 0) {
-                        return;
-                    }
-                    if (ctime.compareTo(time) == 0 && now.compareTo(selectedData.startdateTime) <= 0) {
-                        return;
-                    }
-                    Date breTime = TimeUtil.getTime(TimeUtil.getTime(-1));
-                    if (ctime.compareTo(breTime) >= 0) {
-                        LiveChannelItem currentLiveChannel = liveEpgChannelItemAdapter.getItem(liveEpgChannelItemAdapter.getSelectedChannelIndex());
-                        if (currentLiveChannel == null) {
-                            return;
-                        }
-                        if (StringUtils.isNotEmpty(currentLiveChannel.getSocUrls())) {
-                            int maxTime = (int) getTime(TimeUtil.timeFormat.format(new Date()) + " " + selectedData.start + ":" + "00", TimeUtil.timeFormat.format(new Date()) + " " + selectedData.end + ":" + "00");
-                            sBar.setMax(maxTime * 1000);
-                            sBar.setProgress(0);
-                            tv_currentpos.setText(durationToString(0));
-                            tv_duration.setText(durationToString(maxTime * 1000));
-                            isCanBack = true;
-                            selectTime = 0;
-                            mVideoView.release();
-                            mVideoView.setUrl(String.format(currentLiveChannel.getSocUrls(), TimeUtil.getTimeS(startDate) + "GMT-" + TimeUtil.getTimeS(endDate) + "GMT"));
-                            mVideoView.start();
-                            showProgressBars(false);
-                            tvBack.setVisibility(View.VISIBLE);
-                            mHandler.removeCallbacks(backChange);
-                            mHandler.postDelayed(backChange, 5000);
-                        }
-                    }
-                }
-            }
-        });
-    }
-
     private void showEpg(String date, List<LiveEpgItem> arrayList) {
-        if (arrayList != null && arrayList.size() > 0) {
+        if (arrayList != null && !arrayList.isEmpty()) {
+            mEpgListView.setVisibility(View.VISIBLE);
+            liveEpgAdapter.setLiveEpgItemIndex(selectedData);
             liveEpgAdapter.setNewData(arrayList);
             if (date.equals(TimeUtil.getTime())) {
                 int i = -1;
                 int size = arrayList.size() - 1;
                 while (size >= 0) {
-                    if (new Date().compareTo(((LiveEpgItem) arrayList.get(size)).startdateTime) >= 0) {
+                    if (new Date().compareTo(arrayList.get(size).startdateTime) >= 0) {
                         break;
                     }
                     size--;
@@ -1367,25 +1335,8 @@ public class LivePlayActivity extends BaseActivity {
 
         } else {
             liveEpgAdapter.setNewData(new ArrayList<>());
+            mEpgListView.setVisibility(View.INVISIBLE);
         }
-    }
-
-    public static long getTime(String startTime, String endTime) {
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        long eTime = 0;
-        try {
-            eTime = df.parse(endTime).getTime();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        long sTime = 0;
-        try {
-            sTime = df.parse(startTime).getTime();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        long diff = (eTime - sTime) / 1000;
-        return diff;
     }
 
     private final Runnable backChange = new Runnable() {
@@ -1400,8 +1351,6 @@ public class LivePlayActivity extends BaseActivity {
             }
         }
     };
-    private LiveEpgItem selectedData;
-    private int selectTime = 0;
 
     private void playBack(int time) {
         selectTime = time;
@@ -1409,80 +1358,11 @@ public class LivePlayActivity extends BaseActivity {
         startDate = TimeUtil.getTimeS(startDate, selectTime);
         String endDate = selectedData.currentEpgDate.replaceAll("-", "") + selectedData.originEnd.replace(":", "") + "00";
         mVideoView.release();
-        mVideoView.setUrl(String.format(currentLiveChannelItem.getSocUrls(), TimeUtil.getTimeS(startDate) + "GMT-" + TimeUtil.getTimeS(endDate) + "GMT"));
+        mVideoView.setUrl(String.format(backLiveChannelItem.getSocUrls(), TimeUtil.getTimeS(startDate) + "GMT-" + TimeUtil.getTimeS(endDate) + "GMT"));
         mVideoView.start();
+        tv_currentpos.setText(TimeUtil.durationToString(selectTime));
+        countDownTimer.cancel();
+        countDownTimer.start();
     }
-
-    private CountDownTimer countDownTimer;
-
-    public void showProgressBars(boolean show) {
-        if (show) {
-            sBar.requestFocus();
-            backController.setVisibility(View.VISIBLE);
-            if (countDownTimer == null) {
-                countDownTimer = new CountDownTimer(5000, 1000) {
-                    @Override
-                    public void onTick(long arg0) {
-                        if (mVideoView != null) {
-                            sBar.setProgress((int) mVideoView.getCurrentPosition() + selectTime);
-                            tv_currentpos.setText(durationToString((int) mVideoView.getCurrentPosition() + selectTime));
-                        }
-                    }
-
-                    @Override
-                    public void onFinish() {
-                        if (backController.getVisibility() == View.VISIBLE) {
-                            backController.setVisibility(View.GONE);
-                        }
-                    }
-                };
-            } else {
-                countDownTimer.cancel();
-            }
-            countDownTimer.start();
-        } else {
-            backController.setVisibility(View.GONE);
-        }
-
-    }
-
-    private String durationToString(int duration) {
-        String result = "";
-        int dur = duration / 1000;
-        int hour = dur / 3600;
-        int min = (dur / 60) % 60;
-        int sec = dur % 60;
-        if (hour > 0) {
-            if (min > 9) {
-                if (sec > 9) {
-                    result = hour + ":" + min + ":" + sec;
-                } else {
-                    result = hour + ":" + min + ":0" + sec;
-                }
-            } else {
-                if (sec > 9) {
-                    result = hour + ":" + "0" + min + ":" + sec;
-                } else {
-                    result = hour + ":" + "0" + min + ":0" + sec;
-                }
-            }
-        } else {
-            if (min > 9) {
-                if (sec > 9) {
-                    result = min + ":" + sec;
-                } else {
-                    result = min + ":0" + sec;
-                }
-            } else {
-                if (sec > 9) {
-                    result = "0" + min + ":" + sec;
-                } else {
-                    result = "0" + min + ":0" + sec;
-                }
-            }
-        }
-        return result;
-    }
-
 
 }

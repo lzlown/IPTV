@@ -1,8 +1,8 @@
 package com.lzlown.iptv.api;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
+
+import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONObject;
 import com.lzlown.iptv.bean.*;
 import com.lzlown.iptv.util.HawkConfig;
 import com.lzlown.iptv.util.StringUtils;
@@ -86,20 +86,22 @@ public class ApiConfig {
         return liveChannelList;
     }
 
-    private void loadIjkOptions(JsonElement jsonElement) {
+    private void loadIjkOptions(JSONObject jsonObject) {
         try {
-            JsonArray ijk_options = jsonElement.getAsJsonObject().getAsJsonArray("ijk");
-            for (JsonElement option : ijk_options) {
-                String group = option.getAsJsonObject().get("group").getAsString();
+            JSONArray ijk_options = jsonObject.getJSONArray("ijk");
+            for (int i = 0; i < ijk_options.size(); i++) {
+                JSONObject ijk_option = ijk_options.getJSONObject(i);
+                String group = ijk_option.getString("group");
                 List<IjkOption> optionList = ApiConfig.this.ijkOptions.get(group);
                 if (null == optionList) {
                     optionList = new ArrayList<>();
                 }
-                JsonArray rules = option.getAsJsonObject().getAsJsonArray("options");
-                for (JsonElement item : rules) {
-                    int category = item.getAsJsonObject().get("category").getAsInt();
-                    String name = item.getAsJsonObject().get("name").getAsString();
-                    String value = item.getAsJsonObject().get("value").getAsString();
+                JSONArray options = ijk_option.getJSONArray("options");
+                for (int i1 = 0; i1 < options.size(); i1++) {
+                    JSONObject itemJson = options.getJSONObject(i1);
+                    int category = itemJson.getIntValue("category");
+                    String name = itemJson.getString("name");
+                    String value = itemJson.getString("value");
                     IjkOption ijkOption = new IjkOption(category, name, value);
                     optionList.add(ijkOption);
                 }
@@ -121,10 +123,10 @@ public class ApiConfig {
                         ijkOptions = new HashMap<>();
                         ijkOptions.put("default", defaultIJK());
                         try {
-                            JsonElement jsonElement = JsonParser.parseString(response.getRawResponse().body().string());
-                            liveUrl = jsonElement.getAsJsonObject().get("live").getAsString();
-                            epgAllUrl = jsonElement.getAsJsonObject().get("epgAll").getAsString();
-                            loadIjkOptions(jsonElement);
+                            JSONObject parse = JSONObject.parse(response.getRawResponse().body().string());
+                            liveUrl = parse.getString("live");
+                            epgAllUrl = parse.getString("epgAll");
+                            loadIjkOptions(parse);
                             callback.success();
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -221,13 +223,6 @@ public class ApiConfig {
 
     //获取EPG
     private void getEpgAll(LoadCallback callback, String time) {
-//        Set<String> epgKeys = liveEpgMap.keySet();
-//        List<String> dates = Arrays.asList(TimeUtil.getTimeBef(), TimeUtil.getTime(), TimeUtil.getTimeNext());
-//        for (String key : epgKeys) {
-//            if (!dates.contains(key)) {
-//                liveEpgMap.remove(key);
-//            }
-//        }
         Map<String, LiveEpg> epgMap = new HashMap<>();
         liveEpgMap.put(time, epgMap);
         OkGo.<String>get(epgAllUrl)
@@ -238,19 +233,20 @@ public class ApiConfig {
                     @Override
                     public void onSuccess(Response<String> response) {
                         try {
-                            JsonElement jsonElement = JsonParser.parseString(response.getRawResponse().body().string());
-                            JsonArray jsonArray = jsonElement.getAsJsonObject().getAsJsonArray(time);
-                            for (JsonElement element : jsonArray) {
-                                String cc = element.getAsJsonObject().get("cc").getAsString();
-                                JsonArray asJsonArray = element.getAsJsonObject().get("epg").getAsJsonArray();
+                            JSONArray jsonarray = JSONObject.parse(response.getRawResponse().body().string()).getJSONArray(time);
+                            for (int i = 0; i < jsonarray.size(); i++) {
+                                JSONObject parse1 = jsonarray.getJSONObject(i);
+                                String cc = parse1.getString("cc");
+                                JSONArray epgs = parse1.getJSONArray("epg");
                                 LiveEpg liveEpg = new LiveEpg();
                                 liveEpg.setName(cc);
                                 ArrayList<LiveEpgItem> liveEpgItems = new ArrayList<>();
-                                Integer num = 0;
-                                for (JsonElement obj : asJsonArray) {
-                                    String start = obj.getAsJsonObject().get("start").getAsString();
-                                    String end = obj.getAsJsonObject().get("end").getAsString();
-                                    String title = obj.getAsJsonObject().get("title").getAsString();
+                                int num = 0;
+                                for (int i1 = 0; i1 < epgs.size(); i1++) {
+                                    JSONObject epg = epgs.getJSONObject(i1);
+                                    String start = epg.getString("start");
+                                    String end = epg.getString("end");
+                                    String title = epg.getString("title");
                                     LiveEpgItem liveEpgItem = new LiveEpgItem(TimeUtil.getTime(time), start, end, title, num);
                                     liveEpgItems.add(liveEpgItem);
                                     num++;
@@ -337,6 +333,8 @@ public class ApiConfig {
     }
 
     public LiveEpg getLiveEpg(String key, String time) {
+        if (StringUtils.isEmpty(key))
+            return null;
         if (!liveEpgMap.containsKey(time)) {
             synchronized (this) {
                 if (!liveEpgMap.containsKey(time)) {
@@ -399,10 +397,10 @@ public class ApiConfig {
                             getEpgAll(new LoadCallback() {
                                 @Override
                                 public void success() {
-                                   countDownLatch.countDown();
-                                   if (countDownLatch.getCount() == 0) {
-                                       callback.success();
-                                   }
+                                    countDownLatch.countDown();
+                                    if (countDownLatch.getCount() == 0) {
+                                        callback.success();
+                                    }
                                 }
 
                                 @Override
