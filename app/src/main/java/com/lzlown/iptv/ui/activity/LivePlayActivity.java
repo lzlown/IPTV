@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.alibaba.fastjson2.JSONObject;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -925,8 +926,11 @@ public class LivePlayActivity extends BaseActivity {
     private void loadChannelGroupDataAndPlay(int groupIndex, int liveChannelIndex) {
         liveChannelItemAdapter.setNewData(getLiveChannels(groupIndex));
         if (groupIndex == currentChannelGroupIndex) {
-            if (currentLiveChannelIndex > -1)
-                mLiveChannelView.smoothScrollToPosition(currentLiveChannelIndex);
+            if (currentLiveChannelIndex > -1){
+                mLiveChannelView.scrollToPosition(currentLiveChannelIndex);
+                LinearLayoutManager layoutManager = (LinearLayoutManager) mLiveChannelView.getLayoutManager();
+                layoutManager.scrollToPositionWithOffset(currentLiveChannelIndex,0);
+            }
             liveChannelItemAdapter.setSelectedChannelIndex(currentLiveChannelIndex);
         } else {
             mLiveChannelView.scrollToPosition(0);
@@ -936,6 +940,8 @@ public class LivePlayActivity extends BaseActivity {
             clickLiveChannel(liveChannelIndex);
             mChannelGroupView.scrollToPosition(groupIndex);
             mLiveChannelView.scrollToPosition(liveChannelIndex);
+            LinearLayoutManager layoutManager = (LinearLayoutManager) mLiveChannelView.getLayoutManager();
+            layoutManager.scrollToPositionWithOffset(currentLiveChannelIndex,0);
             playChannel(groupIndex, liveChannelIndex, false);
         }
     }
@@ -1212,7 +1218,9 @@ public class LivePlayActivity extends BaseActivity {
             liveEpgAdapter.setNewData(epgItems);
             if (selectedData != null && selectedData.currentEpgDate.equals(date)) {
                 liveEpgAdapter.setLiveEpgItemIndex(selectedData);
-                mEpgListView.smoothScrollToPosition(selectedData.index);
+                mEpgListView.scrollToPosition(selectedData.index);
+                LinearLayoutManager layoutManager = (LinearLayoutManager) mEpgListView.getLayoutManager();
+                layoutManager.scrollToPositionWithOffset(selectedData.index,0);
                 return;
             }
             if (date.equals(TimeUtil.getTime())) {
@@ -1220,7 +1228,9 @@ public class LivePlayActivity extends BaseActivity {
                 for (LiveEpgItem epgItem : epgItems) {
                     if (time.compareTo(TimeUtil.getEpgTime(epgItem.currentEpgDate + epgItem.start)) > 0 && time.compareTo(TimeUtil.getEpgTime(epgItem.currentEpgDate + epgItem.end)) < 0) {
                         liveEpgAdapter.setSelectedEpgIndex(epgItem.index);
-                        mEpgListView.smoothScrollToPosition(epgItem.index);
+                        mEpgListView.scrollToPosition(epgItem.index);
+                        LinearLayoutManager layoutManager = (LinearLayoutManager) mEpgListView.getLayoutManager();
+                        layoutManager.scrollToPositionWithOffset(epgItem.index,0);
                         return;
                     }
                 }
