@@ -102,7 +102,6 @@ public class LiveEpgAdapter extends BaseQuickAdapter<LiveEpgItem, BaseViewHolder
                 liveEpgItemIndex = -1;
             }
         } else {
-            if (liveEpgItemIndex == liveEpgItem.index) return;
             this.liveEpgItem = liveEpgItem;
             notifyItemChanged(liveEpgItemIndex);
             liveEpgItemIndex = liveEpgItem.index;
