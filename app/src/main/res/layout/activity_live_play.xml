@@ -46,7 +46,6 @@
                 android:id="@+id/tv_currentpos"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="15dp"
                 android:layout_marginRight="5dp"
                 android:text="00:00:00"
                 android:textColor="#fff"/>
@@ -83,7 +82,6 @@
             android:background="@drawable/bg_channel_list"
             android:layout_width="@dimen/vs_520"
             android:layout_height="@dimen/vs_100">
-
         <RelativeLayout
                 android:id="@+id/channelinfo"
                 android:layout_width="@dimen/vs_160"
@@ -247,20 +245,13 @@
     <!--左侧节目-->
     <LinearLayout
             android:id="@+id/tvLeftChannnelListLayout"
-            android:layout_width="match_parent"
+            android:layout_width="430mm"
             android:layout_height="match_parent"
-            android:layout_gravity="center_horizontal"
-            android:layout_margin="0dp"
-            android:baselineAligned="false"
+            android:layout_gravity="left"
             android:orientation="horizontal"
-            android:padding="0dp" android:visibility="invisible">
-        <LinearLayout
-                android:id="@+id/ll_typeSelect"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:background="@drawable/bg_channel_list"
-                android:baselineAligned="false"
-                android:padding="0dp">
+            android:background="@drawable/bg_channel_list"
+            android:layout_marginRight="-430mm"
+            android:visibility="invisible">
             <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -283,7 +274,7 @@
                     android:background="@color/color_FFFFFF"/>
             <com.owen.tvrecyclerview.widget.TvRecyclerView
                     android:id="@+id/mChannelGridView"
-                    android:layout_width="@dimen/vs_270"
+                    android:layout_width="@dimen/vs_280"
                     android:layout_height="match_parent"
                     android:divider="@null"
                     android:fadeScrollbars="false"
@@ -291,14 +282,13 @@
                     android:listSelector="@drawable/item_bg_selector_right"
                     android:padding="5dp"
                     android:scrollbars="none"/>
-        </LinearLayout>
     </LinearLayout>
     <!--右侧设置-->
     <LinearLayout
             android:id="@+id/tvRightSettingLayout"
-            android:layout_width="361mm"
+            android:layout_width="@dimen/vs_361"
             android:layout_height="match_parent"
-            android:layout_marginRight="-361mm"
+            android:layout_marginRight="@dimen/vs_361_"
             android:layout_gravity="right"
             android:background="@drawable/bg_channel_list"
             android:gravity="center_vertical"
@@ -348,27 +338,17 @@
             android:orientation="horizontal"
             android:visibility="gone">
         <com.owen.tvrecyclerview.widget.TvRecyclerView
-                android:id="@+id/mEpgChannelGridView"
-                android:layout_width="@dimen/vs_270"
-                android:layout_height="match_parent"
-                android:divider="@null"
-                android:fadeScrollbars="false"
-                android:focusable="true"
+                android:id="@+id/mEpgDateGridView"
+                android:layout_width="@dimen/vs_140"
+                android:layout_height="wrap_content"
                 android:listSelector="@drawable/item_bg_selector_right"
-                android:padding="5dp"
+                android:layout_gravity="center_vertical"
+                android:padding="10dp"
                 android:scrollbars="none"/>
         <LinearLayout
                 android:layout_width="1mm"
                 android:layout_height="match_parent"
                 android:background="@color/color_FFFFFF"/>
-        <com.owen.tvrecyclerview.widget.TvRecyclerView
-                android:id="@+id/mEpgDateGridView"
-                android:layout_width="@dimen/vs_100"
-                android:layout_height="wrap_content"
-                android:listSelector="@drawable/item_bg_selector_right"
-                android:layout_gravity="center_vertical"
-                android:padding="5dp"
-                android:scrollbars="none"/>
         <com.owen.tvrecyclerview.widget.TvRecyclerView
                 android:id="@+id/lv_epg"
                 android:layout_width="@dimen/vs_420"

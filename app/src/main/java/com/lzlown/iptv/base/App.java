@@ -9,6 +9,7 @@ import me.jessyan.autosize.unit.Subunits;
 
 public class App extends MultiDexApplication {
     private static App instance;
+    public static Boolean LIVE_SHOW_EPG;
     private HttpProxyCacheServer proxy;
 
     public static HttpProxyCacheServer getProxy() {
@@ -40,7 +41,7 @@ public class App extends MultiDexApplication {
             Hawk.put(HawkConfig.LIVE_CONNECT_TIMEOUT, 5);
         }
         if (!Hawk.contains(HawkConfig.LIVE_SHOW_EPG)) {
-            Hawk.put(HawkConfig.LIVE_SHOW_EPG, false);
+            Hawk.put(HawkConfig.LIVE_SHOW_EPG, true);
         }
         if (!Hawk.contains(HawkConfig.LIVE_SHOW_TIME)) {
             Hawk.put(HawkConfig.LIVE_SHOW_TIME, false);
@@ -48,6 +49,7 @@ public class App extends MultiDexApplication {
         if (!Hawk.contains(HawkConfig.LIVE_SHOW_SPEED)) {
             Hawk.put(HawkConfig.LIVE_SHOW_SPEED, false);
         }
+        LIVE_SHOW_EPG= Hawk.get(HawkConfig.LIVE_SHOW_EPG, false);
     }
 
     public void cleanParams(){

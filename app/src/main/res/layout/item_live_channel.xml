@@ -1,22 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-              android:layout_height="70mm"
-              android:layout_marginTop="10mm"
-              android:layout_marginBottom="10mm"
+              android:layout_width="match_parent"
+              android:layout_height="@dimen/vs_70"
               android:background="@drawable/shape_live_focus"
-              android:layout_marginLeft="10mm"
-              android:layout_marginRight="10mm"
+              android:layout_margin="@dimen/vs_10"
               android:focusable="true"
               android:focusableInTouchMode="false"
               android:gravity="center_vertical"
-              android:orientation="vertical" tools:ignore="InOrMmUsage">
+              android:orientation="vertical">
 
     <LinearLayout
             android:orientation="vertical"
             android:gravity="center_vertical"
             android:layout_width="match_parent"
-            android:layout_height="70mm">
+            android:layout_height="@dimen/vs_70">
         <TextView
                 android:id="@+id/tvChannelName"
                 android:layout_width="match_parent"
@@ -25,14 +22,13 @@
                 android:marqueeRepeatLimit="marquee_forever"
                 android:singleLine="true"
                 android:textColor="@android:color/white"
-                android:textSize="26mm" tools:ignore="InOrMmUsage,RtlHardcoded"/>
+                android:textSize="@dimen/ts_26"/>
         <com.lzlown.iptv.ui.tv.widget.MarqueeTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/tvChannelEpg"
                 android:textColor="@android:color/white"
-                android:textSize="18mm"
-                android:layout_marginStart="60mm"
-                tools:ignore="InOrMmUsage"/>
+                android:textSize="@dimen/ts_18"
+                android:layout_marginStart="@dimen/vs_60"/>
     </LinearLayout>
 </LinearLayout>

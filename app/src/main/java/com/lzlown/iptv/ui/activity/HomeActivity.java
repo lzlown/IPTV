@@ -2,9 +2,11 @@ package com.lzlown.iptv.ui.activity;
 
 import android.content.Context;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import com.lzlown.iptv.R;
 import com.lzlown.iptv.api.ApiConfig;
@@ -18,7 +20,6 @@ public class HomeActivity extends BaseActivity {
     private ProgressBar progress;
     private TextView loadErr;
     private Handler mHandler = new Handler();
-
     @Override
     protected int getLayoutResID() {
         return R.layout.activity_home;

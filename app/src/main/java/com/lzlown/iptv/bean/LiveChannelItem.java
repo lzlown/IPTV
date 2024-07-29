@@ -3,7 +3,7 @@ package com.lzlown.iptv.bean;
 import java.util.ArrayList;
 
 
-public class LiveChannelItem {
+public class LiveChannelItem implements Cloneable{
     private int channelIndex;
     private int channelNum;
     private String channelName;
@@ -104,6 +104,16 @@ public class LiveChannelItem {
             return socUrls.get(sourceIndex);
         }else {
             return null;
+        }
+    }
+
+    @Override
+    public LiveChannelItem clone() {
+        try {
+            LiveChannelItem clone = (LiveChannelItem) super.clone();
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
         }
     }
 }

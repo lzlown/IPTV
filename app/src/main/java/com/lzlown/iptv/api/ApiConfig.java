@@ -247,7 +247,7 @@ public class ApiConfig {
                                     String start = epg.getString("start");
                                     String end = epg.getString("end");
                                     String title = epg.getString("title");
-                                    LiveEpgItem liveEpgItem = new LiveEpgItem(TimeUtil.getTime(time), start, end, title, num);
+                                    LiveEpgItem liveEpgItem = new LiveEpgItem(time, start, end, title, num);
                                     liveEpgItems.add(liveEpgItem);
                                     num++;
                                 }
@@ -256,14 +256,12 @@ public class ApiConfig {
                             }
                             callback.success();
                         } catch (Exception e) {
-                            e.printStackTrace();
                             callback.error("EPG解析失败");
                         }
                     }
 
                     @Override
                     public void onError(Response<String> response) {
-                        super.onError(response);
                         callback.error("EPG获取失败");
                     }
 
@@ -276,14 +274,15 @@ public class ApiConfig {
     //左列表使用
     public LiveEpgItem getLiveEpgItem(String key) {
         if (!StringUtils.isEmpty(key)) {
-            LiveEpg liveEpg = getLiveEpg(key, TimeUtil.getTime());
+            String time = TimeUtil.getTime();
+            LiveEpg liveEpg = getLiveEpg(key, time);
             if (null != liveEpg) {
                 try {
                     List<LiveEpgItem> arrayList = liveEpg.getEpgItems();
                     if (arrayList != null && !arrayList.isEmpty()) {
                         int size = arrayList.size() - 1;
                         while (size >= 0) {
-                            if (new Date().compareTo(((LiveEpgItem) arrayList.get(size)).startdateTime) >= 0) {
+                            if (new Date().compareTo(TimeUtil.getEpgTime(time + ((LiveEpgItem) arrayList.get(size)).start)) >= 0) {
                                 return arrayList.get(size);
                             } else {
                                 size--;
@@ -294,19 +293,20 @@ public class ApiConfig {
                 }
             }
         }
-        return new LiveEpgItem(new Date(), "", "", "暂无预告", 0);
+        return new LiveEpgItem(TimeUtil.getTime(), "", "", "暂无预告", 0);
     }
 
     //中间使用
     public Map<String, LiveEpgItem> getLiveEpgItemForMap(String key) {
         Map<String, LiveEpgItem> map = new HashMap<>();
         if (!StringUtils.isEmpty(key)) {
+            String time = TimeUtil.getTime();
             LiveEpg liveEpg = getLiveEpg(key, TimeUtil.getTime());
             if (null != liveEpg) {
                 List<LiveEpgItem> arrayList = liveEpg.getEpgItems();
                 if (arrayList != null && !arrayList.isEmpty()) {
                     for (int i = 0; i < arrayList.size(); i++) {
-                        if (new Date().compareTo(((LiveEpgItem) arrayList.get(i)).startdateTime) >= 0) {
+                        if (new Date().compareTo(TimeUtil.getEpgTime(time + ((LiveEpgItem) arrayList.get(i)).start)) >= 0) {
                             map.put("c", arrayList.get(i));
                             if (i < arrayList.size() - 1) {
                                 map.put("n", arrayList.get(i + 1));
@@ -364,8 +364,8 @@ public class ApiConfig {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
         SimpleDateFormat datePresentFormat = new SimpleDateFormat("MM-dd");
-        calendar.add(Calendar.DAY_OF_MONTH, -6);
-        for (int i = 0; i < 8; i++) {
+        calendar.add(Calendar.DAY_OF_MONTH, -7);
+        for (int i = 0; i < 9; i++) {
             Date dateIns = calendar.getTime();
             LiveEpgDate epgDate = new LiveEpgDate();
             epgDate.setIndex(i);
@@ -393,24 +393,28 @@ public class ApiConfig {
                 getLive(liveUrl, new LoadCallback() {
                     @Override
                     public void success() {
-                        for (LiveEpgDate liveEpgDate : getEpgDateList()) {
-                            getEpgAll(new LoadCallback() {
-                                @Override
-                                public void success() {
-                                    countDownLatch.countDown();
-                                    if (countDownLatch.getCount() == 0) {
-                                        callback.success();
+                        if (Hawk.get(HawkConfig.LIVE_SHOW_EPG, false)) {
+                            for (LiveEpgDate liveEpgDate : getEpgDateList()) {
+                                getEpgAll(new LoadCallback() {
+                                    @Override
+                                    public void success() {
+                                        countDownLatch.countDown();
+                                        if (countDownLatch.getCount() == 0) {
+                                            callback.success();
+                                        }
                                     }
-                                }
 
-                                @Override
-                                public void error(String msg) {
-                                    countDownLatch.countDown();
-                                    if (countDownLatch.getCount() == 0) {
-                                        callback.success();
+                                    @Override
+                                    public void error(String msg) {
+                                        countDownLatch.countDown();
+                                        if (countDownLatch.getCount() == 0) {
+                                            callback.success();
+                                        }
                                     }
-                                }
-                            }, TimeUtil.timeFormat.format(liveEpgDate.getDateParamVal()));
+                                }, TimeUtil.timeFormat.format(liveEpgDate.getDateParamVal()));
+                            }
+                        } else {
+                            callback.success();
                         }
                     }
 

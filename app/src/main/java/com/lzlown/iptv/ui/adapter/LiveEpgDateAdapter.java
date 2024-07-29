@@ -27,7 +27,7 @@ public class LiveEpgDateAdapter extends BaseQuickAdapter<LiveEpgDate, BaseViewHo
         if (item.getIndex() == selectedIndex && item.getIndex() != focusedIndex) {
             tvGroupName.setTextColor(mContext.getResources().getColor(R.color.color_00bfff));
         } else {
-            tvGroupName.setTextColor(mContext.getResources().getColor(R.color.color_CCFFFFFF));
+            tvGroupName.setTextColor(Color.WHITE);
         }
     }
 
