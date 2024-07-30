@@ -264,7 +264,7 @@
     <!--左侧回放-->
     <LinearLayout
             android:id="@+id/divEPG"
-            android:layout_width="wrap_content"
+            android:layout_width="560mm"
             android:layout_height="match_parent"
             android:fadeScrollbars="false"
             android:focusable="false"
@@ -291,7 +291,7 @@
                 android:background="@color/color_FFFFFF"/>
         <com.owen.tvrecyclerview.widget.TvRecyclerView
                 android:id="@+id/lv_epg"
-                android:layout_width="@dimen/vs_420"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:divider="@null"
                 android:fadeScrollbars="false"
@@ -299,7 +299,7 @@
                 android:scrollbars="none"/>
         <TextView
                 android:text="暂无信息"
-                android:layout_width="@dimen/vs_420"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:textColor="@color/color_FFFFFF"
                 android:id="@+id/no_epg"
