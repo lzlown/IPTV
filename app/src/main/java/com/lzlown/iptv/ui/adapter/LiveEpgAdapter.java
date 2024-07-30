@@ -13,10 +13,9 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class LiveEpgAdapter extends BaseQuickAdapter<LiveEpgItem, BaseViewHolder> {
-    private int selectedEpgIndex = -1;
-    private int focusedEpgIndex = -1;
+    private int selectedIndex = -1;
+    private int focusedIndex = -1;
     private LiveEpgItem liveEpgItem;
-    private int liveEpgItemIndex;
 
     public LiveEpgAdapter() {
         super(R.layout.item_live_epg, new ArrayList<>());
@@ -27,8 +26,7 @@ public class LiveEpgAdapter extends BaseQuickAdapter<LiveEpgItem, BaseViewHolder
         TextView name = holder.getView(R.id.tv_epg_name);
         TextView time = holder.getView(R.id.tv_epg_time);
         TextView back = holder.getView(R.id.goback);
-        String nowTimeStr = TimeUtil.getTime();
-        if (value.index == selectedEpgIndex && value.index != focusedEpgIndex && value.currentEpgDate.equals(nowTimeStr)) {
+        if (value.index == selectedIndex && value.index != focusedIndex) {
             name.setTextColor(mContext.getResources().getColor(R.color.color_1890FF));
             time.setTextColor(mContext.getResources().getColor(R.color.color_1890FF));
         } else {
@@ -58,7 +56,7 @@ public class LiveEpgAdapter extends BaseQuickAdapter<LiveEpgItem, BaseViewHolder
             back.setText("直播中");
             back.setTextColor(Color.RED);
         } else {
-            if (value.equals(liveEpgItem) && value.index == liveEpgItemIndex) {
+            if (value.equals(liveEpgItem)) {
                 back.setVisibility(View.VISIBLE);
                 back.setBackgroundColor(Color.YELLOW);
                 back.setText("回看中");
@@ -73,39 +71,36 @@ public class LiveEpgAdapter extends BaseQuickAdapter<LiveEpgItem, BaseViewHolder
     }
 
     public int getSelectedIndex() {
-        return selectedEpgIndex;
+        return selectedIndex;
     }
 
-    public void setSelectedEpgIndex(int selectedEpgIndex) {
-        if (selectedEpgIndex == this.selectedEpgIndex) return;
-        this.selectedEpgIndex = selectedEpgIndex;
-        if (this.selectedEpgIndex != -1)
-            notifyItemChanged(this.selectedEpgIndex);
+    public void setSelectedIndex(int selectedIndex) {
+        if (selectedIndex == this.selectedIndex) return;
+        int preSelectedChannelIndex = this.selectedIndex;
+        this.selectedIndex = selectedIndex;
+        if (preSelectedChannelIndex != -1)
+            notifyItemChanged(preSelectedChannelIndex);
+        if (this.selectedIndex != -1)
+            notifyItemChanged(this.selectedIndex);
     }
 
 
-    public int getFocusedEpgIndex() {
-        return focusedEpgIndex;
+    public int getFocusedIndex() {
+        return focusedIndex;
     }
 
-    public void setFocusedEpgIndex(int focusedEpgIndex) {
-        this.focusedEpgIndex = focusedEpgIndex;
-        if (this.focusedEpgIndex != -1)
-            notifyItemChanged(this.focusedEpgIndex);
+    public void setFocusedIndex(int focusedIndex) {
+        int preFocusedChannelIndex = this.focusedIndex;
+        this.focusedIndex = focusedIndex;
+        if (preFocusedChannelIndex != -1)
+            notifyItemChanged(preFocusedChannelIndex);
+        if (this.focusedIndex != -1)
+            notifyItemChanged(this.focusedIndex);
+        else if (this.focusedIndex != -1)
+            notifyItemChanged(this.focusedIndex);
     }
 
     public void setLiveEpgItemIndex(LiveEpgItem liveEpgItem) {
-        if (liveEpgItem == null) {
-            if (liveEpgItemIndex != -1) {
-                this.liveEpgItem = null;
-                notifyItemChanged(liveEpgItemIndex);
-                liveEpgItemIndex = -1;
-            }
-        } else {
-            this.liveEpgItem = liveEpgItem;
-            notifyItemChanged(liveEpgItemIndex);
-            liveEpgItemIndex = liveEpgItem.index;
-            notifyItemChanged(liveEpgItem.index);
-        }
+        this.liveEpgItem = liveEpgItem;
     }
 }
