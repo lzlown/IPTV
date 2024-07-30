@@ -1,26 +1,17 @@
 package com.lzlown.iptv.bean;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
-public class LiveChannelItem implements Cloneable{
+public class LiveChannelItem implements Cloneable {
     private int channelIndex;
     private int channelNum;
     private String channelName;
-    private ArrayList<String> channelSourceNames;
-    private ArrayList<String> channelUrls;
-    private ArrayList<String> socUrls;
+    private List<LiveChannelItemSource> liveChannelItemSources;
     public int sourceIndex = 0;
     public int sourceNum = 0;
-    private String channelCh;
 
-    public String getChannelCh() {
-        return channelCh;
-    }
-
-    public void setChannelCh(String channelCh) {
-        this.channelCh = channelCh;
-    }
 
     public void setChannelIndex(int channelIndex) {
         this.channelIndex = channelIndex;
@@ -46,18 +37,21 @@ public class LiveChannelItem implements Cloneable{
         return channelName;
     }
 
-    public ArrayList<String> getChannelUrls() {
-        return channelUrls;
+    public void setLiveChannelItemSources(List<LiveChannelItemSource> liveChannelItemSources) {
+        this.liveChannelItemSources = liveChannelItemSources;
+        sourceNum = liveChannelItemSources.size();
     }
 
-    public void setChannelUrls(ArrayList<String> channelUrls) {
-        this.channelUrls = channelUrls;
-        sourceNum = channelUrls.size();
+
+    public String getChannelCh() {
+        return liveChannelItemSources.get(sourceIndex).cc;
     }
+
     public void preSource() {
         sourceIndex--;
         if (sourceIndex < 0) sourceIndex = sourceNum - 1;
     }
+
     public void nextSource() {
         sourceIndex++;
         if (sourceIndex == sourceNum) sourceIndex = 0;
@@ -72,7 +66,7 @@ public class LiveChannelItem implements Cloneable{
     }
 
     public String getUrl() {
-        return channelUrls.get(sourceIndex);
+        return liveChannelItemSources.get(sourceIndex).url;
     }
 
     public int getSourceNum() {
@@ -80,29 +74,22 @@ public class LiveChannelItem implements Cloneable{
     }
 
     public ArrayList<String> getChannelSourceNames() {
-        return channelSourceNames;
-    }
-
-    public void setChannelSourceNames(ArrayList<String> channelSourceNames) {
-        this.channelSourceNames = channelSourceNames;
+        ArrayList<String> names = new ArrayList<>();
+        for (LiveChannelItemSource liveChannelItemSource : liveChannelItemSources) {
+            names.add(liveChannelItemSource.getName());
+        }
+        return names;
     }
 
     public String getSourceName() {
-        return channelSourceNames.get(sourceIndex);
+        return liveChannelItemSources.get(sourceIndex).getName();
     }
 
-    public Boolean getinclude_back() {
-        return true;
-    }
-
-    public void setSocUrls(ArrayList<String> socUrls) {
-        this.socUrls = socUrls;
-    }
 
     public String getSocUrls() {
-        if (sourceIndex<socUrls.size()){
-            return socUrls.get(sourceIndex);
-        }else {
+        if (sourceIndex < liveChannelItemSources.size()) {
+            return liveChannelItemSources.get(sourceIndex).getBackUrl();
+        } else {
             return null;
         }
     }
@@ -116,4 +103,6 @@ public class LiveChannelItem implements Cloneable{
             throw new AssertionError();
         }
     }
+
+
 }

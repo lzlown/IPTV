@@ -83,10 +83,6 @@ public class ApiConfig {
         return liveChannelGroupList;
     }
 
-    public List<LiveChannelItem> getLiveChannelList() {
-        return liveChannelList;
-    }
-
     private void loadIjkOptions(JSONObject jsonObject) {
         try {
             JSONArray ijk_options = jsonObject.getJSONArray("ijk");
@@ -171,30 +167,25 @@ public class ApiConfig {
                                     liveChannelItem.setChannelIndex(liveChannelItems.size());
                                     liveChannelItem.setChannelNum(sum);
                                     liveChannelItem.setChannelName(entry2.getKey().toString());
-                                    ArrayList<String> socname = new ArrayList<>();
-                                    ArrayList<String> urls = new ArrayList<>();
-                                    ArrayList<String> socurls = new ArrayList<>();
+                                    List<LiveChannelItemSource> sources=new ArrayList<>();
                                     for (int i = 0; i < ((ArrayList<?>) entry2.getValue()).size(); i++) {
+                                        LiveChannelItemSource liveChannelItemSource = new LiveChannelItemSource();
                                         String url = ((ArrayList<?>) entry2.getValue()).get(i).toString();
                                         String[] split = url.split("#");
-                                        urls.add(split[1]);
+                                        liveChannelItemSource.setUrl(split[1]);
                                         String[] splitsoc = split[0].split("&");
                                         if (splitsoc.length > 2) {
-                                            socurls.add(splitsoc[2]);
+                                            liveChannelItemSource.setBackUrl(splitsoc[2]);
                                         }
                                         if (splitsoc.length > 1) {
-                                            if (StringUtils.isNotEmpty(splitsoc[0])) {
-                                                liveChannelItem.setChannelCh(splitsoc[0]);
-                                            }
-                                            socname.add(splitsoc[1]);
+                                            liveChannelItemSource.setCc(splitsoc[0]);
+                                            liveChannelItemSource.setName(splitsoc[1]);
                                         } else {
-                                            socname.add(splitsoc[0]);
+                                            liveChannelItemSource.setName(splitsoc[0]);
                                         }
-
+                                        sources.add(liveChannelItemSource);
                                     }
-                                    liveChannelItem.setChannelSourceNames(socname);
-                                    liveChannelItem.setChannelUrls(urls);
-                                    liveChannelItem.setSocUrls(socurls);
+                                    liveChannelItem.setLiveChannelItemSources(sources);
                                     liveChannelItems.add(liveChannelItem);
                                 }
                                 liveChannelGroup.setLiveChannels(liveChannelItems);
