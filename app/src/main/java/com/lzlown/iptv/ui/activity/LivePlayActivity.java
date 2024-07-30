@@ -81,6 +81,7 @@ public class LivePlayActivity extends BaseActivity {
     private TvRecyclerView mEpgItemView;
     private LiveEpgItemAdapter liveEpgItemAdapter;
     private LiveEpgGroupAdapter liveEpgGroupAdapter;
+    private TextView no_epg;
 
     //回放控制
     private View tvBackLayout;
@@ -137,6 +138,7 @@ public class LivePlayActivity extends BaseActivity {
         tvEpgLayout = findViewById(R.id.divEPG);
         mEpgGroupView = findViewById(R.id.mEpgDateGridView);
         mEpgItemView = findViewById(R.id.lv_epg);
+        no_epg = findViewById(R.id.no_epg);
 
         tvBackLayout = findViewById(R.id.backcontroller);
         sBar = findViewById(R.id.pb_progressbar);
@@ -1253,6 +1255,14 @@ public class LivePlayActivity extends BaseActivity {
 
     private void loadEpg(String date) {
         LiveEpg liveEpg = ApiConfig.get().getLiveEpg(epgLiveChannelItem, date);
+        if (liveEpg == null) {
+            mEpgItemView.setVisibility(View.GONE);
+            no_epg.setVisibility(View.VISIBLE);
+            return;
+        }else {
+            mEpgItemView.setVisibility(View.VISIBLE);
+            no_epg.setVisibility(View.GONE);
+        }
         List<LiveEpgItem> epgItems = liveEpg.getEpgItems();
         liveEpgItemAdapter.setNewData(epgItems);
         if (selectedData != null && selectedData.currentEpgDate.equals(date)) {

@@ -392,10 +392,11 @@ public class ApiConfig {
                 return liveEpg;
             }
         }
-        LiveEpg liveEpg = new LiveEpg();
-        liveEpg.setName(item.getChannelName());
-        liveEpg.setEpgItems(Collections.singletonList(new LiveEpgItem(TimeUtil.getTime(-10), "00:00", "23:59", "暂无信息", -1)));
-        return liveEpg;
+//        LiveEpg liveEpg = new LiveEpg();
+//        liveEpg.setName(item.getChannelName());
+//        liveEpg.setEpgItems(Collections.singletonList(new LiveEpgItem(TimeUtil.getTime(-10), "00:00", "23:59", "暂无信息", -1)));
+//        return liveEpg;
+        return null;
     }
 
     //EPG日期

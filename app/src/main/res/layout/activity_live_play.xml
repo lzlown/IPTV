@@ -297,5 +297,14 @@
                 android:fadeScrollbars="false"
                 android:padding="@dimen/vs_5"
                 android:scrollbars="none"/>
+        <TextView
+                android:text="暂无信息"
+                android:layout_width="@dimen/vs_420"
+                android:layout_height="match_parent"
+                android:textColor="@color/color_FFFFFF"
+                android:id="@+id/no_epg"
+                android:gravity="center"
+                android:textSize="@dimen/ts_20"/>
+
     </LinearLayout>
 </FrameLayout>
