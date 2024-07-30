@@ -1,6 +1,5 @@
 package com.lzlown.iptv.api;
 
-
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.lzlown.iptv.bean.*;
@@ -21,12 +20,14 @@ public class ApiConfig {
     private static ApiConfig instance;
     private List<LiveChannelGroup> liveChannelGroupList = new ArrayList<>();
     private List<LiveChannelItem> liveChannelList = new ArrayList<>();
-    private static final Map<String, Map<String, LiveEpg>> liveEpgMap = new HashMap<>();
-    private HashMap<String, List<IjkOption>> ijkOptions = new HashMap<>();
+    private final Map<String, Map<String, LiveEpg>> liveEpgMap = new HashMap<>();
+    private final Map<String, Map<String, LiveEpg>> defaultliveEpgMap = new HashMap<>();
+    private final HashMap<String, List<IjkOption>> ijkOptions = new HashMap<>();
     private String date;
     private final List<LiveEpgDate> epgDateList = new ArrayList<>();
     private final String userAgent = "okhttp/3.15";
     private final String requestAccept = "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9";
+    private final LiveEpgItem defaultLiveEpgItem = new LiveEpgItem(TimeUtil.getTime(), "00:00", "23:59", "暂无预告", 0);
 
     //EPG 地址
     private String epgAllUrl;
@@ -50,7 +51,7 @@ public class ApiConfig {
         list.add(new IjkOption(4, "start-on-prepared", "1"));
         list.add(new IjkOption(1, "http-detect-rangeupport", "0"));
         list.add(new IjkOption(2, "skip_loop_filter", "0"));
-        list.add(new IjkOption(4, "reconnect", "10"));
+        list.add(new IjkOption(4, "reconnect", "5"));
         list.add(new IjkOption(4, "fast", "1"));
         list.add(new IjkOption(1, "fflags", "fastseek"));
         list.add(new IjkOption(4, "enable-accurate-seek", "1"));
@@ -120,7 +121,6 @@ public class ApiConfig {
                 .execute(new AbsCallback<String>() {
                     @Override
                     public void onSuccess(Response<String> response) {
-                        ijkOptions = new HashMap<>();
                         ijkOptions.put("default", defaultIJK());
                         try {
                             JSONObject parse = JSONObject.parse(response.getRawResponse().body().string());
@@ -183,7 +183,9 @@ public class ApiConfig {
                                             socurls.add(splitsoc[2]);
                                         }
                                         if (splitsoc.length > 1) {
-                                            liveChannelItem.setChannelCh(splitsoc[0]);
+                                            if (StringUtils.isNotEmpty(splitsoc[0])) {
+                                                liveChannelItem.setChannelCh(splitsoc[0]);
+                                            }
                                             socname.add(splitsoc[1]);
                                         } else {
                                             socname.add(splitsoc[0]);
@@ -271,70 +273,7 @@ public class ApiConfig {
                 });
     }
 
-    //左列表使用
-    public LiveEpgItem getLiveEpgItem(String key) {
-        if (!StringUtils.isEmpty(key)) {
-            String time = TimeUtil.getTime();
-            LiveEpg liveEpg = getLiveEpg(key, time);
-            if (null != liveEpg) {
-                try {
-                    List<LiveEpgItem> arrayList = liveEpg.getEpgItems();
-                    if (arrayList != null && !arrayList.isEmpty()) {
-                        int size = arrayList.size() - 1;
-                        while (size >= 0) {
-                            if (new Date().compareTo(TimeUtil.getEpgTime(time + ((LiveEpgItem) arrayList.get(size)).start)) >= 0) {
-                                return arrayList.get(size);
-                            } else {
-                                size--;
-                            }
-                        }
-                    }
-                } catch (Exception ignored) {
-                }
-            }
-        }
-        return new LiveEpgItem(TimeUtil.getTime(), "", "", "暂无预告", 0);
-    }
-
-    //中间使用
-    public Map<String, LiveEpgItem> getLiveEpgItemForMap(String key) {
-        Map<String, LiveEpgItem> map = new HashMap<>();
-        if (!StringUtils.isEmpty(key)) {
-            String time = TimeUtil.getTime();
-            LiveEpg liveEpg = getLiveEpg(key, TimeUtil.getTime());
-            if (null != liveEpg) {
-                List<LiveEpgItem> arrayList = liveEpg.getEpgItems();
-                if (arrayList != null && !arrayList.isEmpty()) {
-                    for (int i = 0; i < arrayList.size(); i++) {
-                        if (new Date().compareTo(TimeUtil.getEpgTime(time + ((LiveEpgItem) arrayList.get(i)).start)) >= 0) {
-                            map.put("c", arrayList.get(i));
-                            if (i < arrayList.size() - 1) {
-                                map.put("n", arrayList.get(i + 1));
-                            } else {
-                                map.put("n", getLiveEpgItemNext(key));
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return map;
-    }
-
-    private LiveEpgItem getLiveEpgItemNext(String key) {
-        LiveEpg liveEpg = getLiveEpg(key, TimeUtil.getTime(1));
-        if (null != liveEpg) {
-            List<LiveEpgItem> arrayList = liveEpg.getEpgItems();
-            if (arrayList != null && !arrayList.isEmpty()) {
-                return arrayList.get(0);
-            }
-        }
-        return null;
-    }
-
-    public LiveEpg getLiveEpg(String key, String time) {
-        if (StringUtils.isEmpty(key))
-            return null;
+    private LiveEpg getLiveEpg(String key, String time) {
         if (!liveEpgMap.containsKey(time)) {
             synchronized (this) {
                 if (!liveEpgMap.containsKey(time)) {
@@ -346,7 +285,7 @@ public class ApiConfig {
 
                         @Override
                         public void error(String msg) {
-                            liveEpgMap.put(time, new HashMap<>());
+
                         }
                     }, time);
                 }
@@ -376,6 +315,99 @@ public class ApiConfig {
         }
     }
 
+    //左列表使用
+    public LiveEpgItem getLiveEpgItem(LiveChannelItem item) {
+        String channelCh = item.getChannelCh();
+        if (StringUtils.isNotEmpty(channelCh)) {
+            String time = TimeUtil.getTime();
+            LiveEpg liveEpg = getLiveEpg(channelCh, time);
+            if (liveEpg != null && liveEpg.getEpgItems() != null && !liveEpg.getEpgItems().isEmpty()) {
+                List<LiveEpgItem> arrayList = liveEpg.getEpgItems();
+                int size = arrayList.size() - 1;
+                while (size >= 0) {
+                    if (new Date().compareTo(TimeUtil.getEpgTime(time + ((LiveEpgItem) arrayList.get(size)).start)) >= 0) {
+                        return arrayList.get(size);
+                    } else {
+                        size--;
+                    }
+                }
+            }
+        }
+        return defaultLiveEpgItem;
+    }
+
+    //中间使用
+    public Map<String, LiveEpgItem> getLiveEpgItemForMap(LiveChannelItem item) {
+        String key = item.getChannelCh();
+        Map<String, LiveEpgItem> map = new HashMap<>();
+        map.put("c", defaultLiveEpgItem);
+        map.put("n", defaultLiveEpgItem);
+        if (StringUtils.isNotEmpty(key)) {
+            String time = TimeUtil.getTime();
+            LiveEpg liveEpg = getLiveEpg(key, TimeUtil.getTime());
+            if (liveEpg != null && liveEpg.getEpgItems() != null && !liveEpg.getEpgItems().isEmpty()) {
+                List<LiveEpgItem> arrayList = liveEpg.getEpgItems();
+                for (int i = 0; i < arrayList.size(); i++) {
+                    if (new Date().compareTo(TimeUtil.getEpgTime(time + ((LiveEpgItem) arrayList.get(i)).start)) >= 0) {
+                        map.put("c", arrayList.get(i));
+                        if (i < arrayList.size() - 1) {
+                            map.put("n", arrayList.get(i + 1));
+                        } else {
+                            LiveEpg liveEpg1 = getLiveEpg(key, TimeUtil.getTime(1));
+                            if (null != liveEpg1) {
+                                List<LiveEpgItem> arrayList1 = liveEpg1.getEpgItems();
+                                if (arrayList1 != null && !arrayList1.isEmpty()) {
+                                    map.put("n", arrayList1.get(0));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return map;
+    }
+
+    //回放列表使用
+    public LiveEpg getLiveEpg(LiveChannelItem item, String time) {
+        String channelCh = item.getChannelCh();
+        if (StringUtils.isNotEmpty(channelCh)) {
+            LiveEpg liveEpg = getLiveEpg(channelCh, time);
+            if (liveEpg != null && liveEpg.getEpgItems() != null && !liveEpg.getEpgItems().isEmpty()) {
+                return liveEpg;
+            }
+        } else {
+            if (StringUtils.isNotEmpty(item.getSocUrls())) {
+                Map<String, LiveEpg> stringLiveEpgMap = defaultliveEpgMap.get(time);
+                if (stringLiveEpgMap != null) {
+                    LiveEpg liveEpg1 = stringLiveEpgMap.get(item.getChannelName());
+                    if (liveEpg1 != null && liveEpg1.getEpgItems() != null && !liveEpg1.getEpgItems().isEmpty()) {
+                        return liveEpg1;
+                    }
+                }
+                stringLiveEpgMap = new HashMap<>();
+                List<LiveEpgItem> epgItems = new ArrayList<>();
+                for (int i = 0; i < 23; i++) {
+                    String start = String.format("%02d:00", i);
+                    String end = String.format("%02d:00", i + 1);
+                    epgItems.add(new LiveEpgItem(date, start, end, item.getChannelName(), i));
+                }
+                epgItems.add(new LiveEpgItem(date, "23:00", "23:59", item.getChannelName(), 23));
+                LiveEpg liveEpg = new LiveEpg();
+                liveEpg.setName(item.getChannelName());
+                liveEpg.setEpgItems(epgItems);
+                stringLiveEpgMap.put(item.getChannelName(), liveEpg);
+                defaultliveEpgMap.put(time, stringLiveEpgMap);
+                return liveEpg;
+            }
+        }
+        LiveEpg liveEpg = new LiveEpg();
+        liveEpg.setName(item.getChannelName());
+        liveEpg.setEpgItems(Collections.singletonList(new LiveEpgItem(TimeUtil.getTime(-10), "00:00", "23:59", "暂无信息", -1)));
+        return liveEpg;
+    }
+
+    //EPG日期
     public List<LiveEpgDate> getEpgDateList() {
         if (!TimeUtil.getTime().equals(date)) {
             initEpgDate();

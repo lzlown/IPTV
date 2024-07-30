@@ -10,12 +10,12 @@ import com.lzlown.iptv.bean.LiveEpgDate;
 import java.util.ArrayList;
 
 
-public class LiveEpgDateAdapter extends BaseQuickAdapter<LiveEpgDate, BaseViewHolder> {
+public class LiveEpgGroupAdapter extends BaseQuickAdapter<LiveEpgDate, BaseViewHolder> {
 
     private int selectedIndex = -1;
     private int focusedIndex = -1;
 
-    public LiveEpgDateAdapter() {
+    public LiveEpgGroupAdapter() {
         super(R.layout.item_live_channel_group, new ArrayList<>());
     }
 
