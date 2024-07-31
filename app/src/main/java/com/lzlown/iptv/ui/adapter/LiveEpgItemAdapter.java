@@ -104,7 +104,7 @@ public class LiveEpgItemAdapter extends BaseQuickAdapter<LiveEpgItem, BaseViewHo
             notifyItemChanged(this.focusedIndex);
     }
 
-    public void setLiveEpgItemIndex(LiveEpgItem liveEpgItem) {
+    public void setLiveEpgItem(LiveEpgItem liveEpgItem) {
         this.liveEpgItem = liveEpgItem;
     }
 

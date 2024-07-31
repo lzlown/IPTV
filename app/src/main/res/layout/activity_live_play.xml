@@ -22,7 +22,7 @@
             android:paddingTop="5dp"
             android:paddingBottom="5dp"
             android:gravity="center"
-            android:id="@+id/backcontroller"
+            android:id="@+id/seekbar"
             android:background="@drawable/bg_channel"
             android:orientation="horizontal">
 
@@ -79,7 +79,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center|left"
                 android:orientation="vertical">
-            <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent" >
+            <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent">
                 <TextView
                         android:textSize="@dimen/ts_22"
                         android:textColor="@color/color_FFFFFF"
@@ -187,8 +187,7 @@
             android:layout_height="match_parent"
             android:layout_gravity="left"
             android:orientation="horizontal"
-            android:background="@drawable/bg_channel_left"
-            android:layout_marginRight="-430mm">
+            android:background="@drawable/bg_channel_left">
         <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -202,7 +201,7 @@
                     android:fadeScrollbars="false"
                     android:focusable="true"
                     android:focusableInTouchMode="false"
-                    android:padding="10dp"
+                    android:padding="@dimen/vs_10"
                     android:scrollbars="none"/>
 
         </LinearLayout>
@@ -218,7 +217,7 @@
                 android:fadeScrollbars="false"
                 android:focusable="true"
                 android:focusableInTouchMode="false"
-                android:padding="5dp"
+                android:padding="@dimen/vs_5"
                 android:scrollbars="none"/>
     </LinearLayout>
     <!--右侧设置-->
@@ -226,7 +225,6 @@
             android:id="@+id/tvRightSettingLayout"
             android:layout_width="@dimen/vs_361"
             android:layout_height="match_parent"
-            android:layout_marginRight="@dimen/vs_361_"
             android:layout_gravity="right"
             android:background="@drawable/bg_channel_right"
             android:gravity="center_vertical"
@@ -269,8 +267,7 @@
             android:fadeScrollbars="false"
             android:focusable="false"
             android:background="@drawable/bg_channel_left"
-            android:orientation="horizontal"
-            android:visibility="gone">
+            android:orientation="horizontal">
         <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
