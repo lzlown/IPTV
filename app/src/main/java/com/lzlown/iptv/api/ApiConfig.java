@@ -83,6 +83,10 @@ public class ApiConfig {
         return liveChannelGroupList;
     }
 
+    public List<LiveChannelItem> getLiveChannelList() {
+        return liveChannelList;
+    }
+
     private void loadIjkOptions(JSONObject jsonObject) {
         try {
             JSONArray ijk_options = jsonObject.getJSONArray("ijk");

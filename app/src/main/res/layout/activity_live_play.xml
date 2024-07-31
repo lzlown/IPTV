@@ -262,12 +262,28 @@
     <!--左侧回放-->
     <LinearLayout
             android:id="@+id/divEPG"
-            android:layout_width="560mm"
+            android:layout_width="930mm"
             android:layout_height="match_parent"
             android:fadeScrollbars="false"
             android:focusable="false"
             android:background="@drawable/bg_channel_left"
             android:orientation="horizontal">
+        <com.owen.tvrecyclerview.widget.TvRecyclerView
+                android:id="@+id/mEpgChannelView"
+                android:layout_width="@dimen/vs_300"
+                android:layout_height="match_parent"
+                android:divider="@null"
+                android:fadeScrollbars="false"
+                android:focusable="true"
+                android:focusableInTouchMode="false"
+                android:padding="@dimen/vs_5"
+                android:scrollbars="none"
+                />
+<!--        app:tv_selectedItemIsCentered="true"-->
+        <View
+                android:layout_width="@dimen/vs_1"
+                android:layout_height="match_parent"
+                android:background="@color/color_FFFFFF"/>
         <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -296,11 +312,11 @@
                 android:scrollbars="none"/>
         <TextView
                 android:text="暂无信息"
-                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:textColor="@color/color_FFFFFF"
                 android:id="@+id/no_epg"
                 android:gravity="center"
+                android:layout_width="match_parent"
                 android:textSize="@dimen/ts_20"/>
 
     </LinearLayout>
