@@ -43,7 +43,7 @@
                 android:progress="0"
                 android:progressDrawable="@drawable/seekbar_style"
                 android:minHeight="3dp"
-                android:thumb="@drawable/transparent"
+                android:thumb="@drawable/seekbar_thumb_normal"
                 android:thumbOffset="0dp"
                 android:layout_weight="1"
                 android:paddingStart="5dp"
