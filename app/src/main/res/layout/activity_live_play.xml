@@ -141,7 +141,7 @@
             android:text="tvName"
             android:textColor="@color/color_text_none"
             android:layout_marginTop="@dimen/vs_35"
-            android:layout_marginRight="@dimen/vs_10">
+            android:layout_marginEnd="@dimen/vs_10">
 
     </TextView>
     <TextView
@@ -150,7 +150,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="right"
             android:layout_marginTop="@dimen/vs_5"
-            android:layout_marginRight="@dimen/vs_10"
+            android:layout_marginEnd="@dimen/vs_10"
             android:background="@android:color/transparent"
             android:gravity="center"
             android:text="tvTime"
@@ -162,7 +162,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|right"
             android:layout_marginBottom="@dimen/vs_5"
-            android:layout_marginRight="@dimen/vs_10"
+            android:layout_marginEnd="@dimen/vs_10"
             android:background="@android:color/transparent"
             android:gravity="center"
             android:text="tvSpeed"
@@ -174,7 +174,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|right"
             android:layout_marginBottom="@dimen/vs_30"
-            android:layout_marginRight="@dimen/vs_30"
+            android:layout_marginEnd="@dimen/vs_30"
             android:background="@android:color/transparent"
             android:gravity="center"
             android:textColor="@color/color_text_none"
