@@ -29,8 +29,8 @@ public class LiveEpgChannelItemAdapter extends BaseQuickAdapter<LiveChannelItem,
         tvChannelEpg.setVisibility(View.GONE);
         int channelIndex = item.getChannelNum()-1;
         if (channelIndex == selectedChannelIndex && channelIndex != focusedChannelIndex) {
-            tvChannel.setTextColor(mContext.getResources().getColor(R.color.color_00bfff));
-            tvChannelEpg.setTextColor(mContext.getResources().getColor(R.color.color_00bfff));
+            tvChannel.setTextColor(mContext.getResources().getColor(R.color.color_selected));
+            tvChannelEpg.setTextColor(mContext.getResources().getColor(R.color.color_selected));
         } else {
             tvChannel.setTextColor(Color.WHITE);
             tvChannelEpg.setTextColor(Color.WHITE);

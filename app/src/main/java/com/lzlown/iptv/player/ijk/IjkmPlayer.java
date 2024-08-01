@@ -36,7 +36,8 @@ public class IjkmPlayer extends IjkPlayer {
     @Override
     public void setDataSource(String path, Map<String, String> headers) {
         url = path;
-        if (path.contains("socket=true")) {
+        if (path.startsWith("proxy")) {
+            path=path.replace("proxy","http");
             mMediaPlayer.setOption(1, "infbuf", 1);
             path = App.getProxy().getProxyUrl(path);
         }

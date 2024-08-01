@@ -35,8 +35,8 @@ public class LiveChannelItemAdapter extends BaseQuickAdapter<LiveChannelItem, Ba
         }
         int channelIndex = item.getChannelIndex();
         if (channelIndex == selectedChannelIndex && channelIndex != focusedChannelIndex) {
-            tvChannel.setTextColor(mContext.getResources().getColor(R.color.color_00bfff));
-            tvChannelEpg.setTextColor(mContext.getResources().getColor(R.color.color_00bfff));
+            tvChannel.setTextColor(mContext.getResources().getColor(R.color.color_selected));
+            tvChannelEpg.setTextColor(mContext.getResources().getColor(R.color.color_selected));
         } else {
             tvChannel.setTextColor(Color.WHITE);
             tvChannelEpg.setTextColor(Color.WHITE);

@@ -139,7 +139,7 @@
             android:layout_height="wrap_content"
             android:textSize="@dimen/ts_26"
             android:text="tvName"
-            android:textColor="@android:color/white"
+            android:textColor="@color/color_text_none"
             android:layout_marginTop="@dimen/vs_35"
             android:layout_marginRight="@dimen/vs_10">
 
@@ -154,7 +154,7 @@
             android:background="@android:color/transparent"
             android:gravity="center"
             android:text="tvTime"
-            android:textColor="@android:color/white"
+            android:textColor="@color/color_text_none"
             android:textSize="@dimen/ts_22"/>
     <TextView
             android:id="@+id/tvSpeed"
@@ -166,7 +166,7 @@
             android:background="@android:color/transparent"
             android:gravity="center"
             android:text="tvSpeed"
-            android:textColor="@android:color/white"
+            android:textColor="@color/color_text_none"
             android:textSize="@dimen/ts_22"/>
     <TextView
             android:id="@+id/tvBack"
@@ -177,7 +177,7 @@
             android:layout_marginRight="@dimen/vs_30"
             android:background="@android:color/transparent"
             android:gravity="center"
-            android:textColor="@android:color/white"
+            android:textColor="@color/color_text_none"
             android:textSize="@dimen/ts_22"
             android:text="回放"/>
     <!--左侧节目-->
@@ -313,11 +313,11 @@
         <TextView
                 android:text="暂无信息"
                 android:layout_height="match_parent"
-                android:textColor="@color/color_FFFFFF"
+                android:textColor="@color/color_text_none"
                 android:id="@+id/no_epg"
                 android:gravity="center"
                 android:layout_width="match_parent"
-                android:textSize="@dimen/ts_20"/>
+                android:textSize="@dimen/ts_26"/>
 
     </LinearLayout>
 </FrameLayout>

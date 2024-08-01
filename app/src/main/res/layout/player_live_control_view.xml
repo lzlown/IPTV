@@ -73,6 +73,6 @@
                 android:layout_height="@dimen/vs_40"
                 android:indeterminateBehavior="repeat"
                 android:layout_centerInParent="true"
-                android:indeterminateTint="@color/color_00bfff"/>
+                android:indeterminateTint="@color/color_selected"/>
     </RelativeLayout>
 </FrameLayout>

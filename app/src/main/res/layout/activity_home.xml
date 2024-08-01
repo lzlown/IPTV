@@ -18,7 +18,7 @@
                 android:layout_alignParentBottom="true"
                 android:layout_marginBottom="@dimen/vs_8"
                 android:layout_marginRight="@dimen/vs_20"
-                android:indeterminateTint="@color/color_00bfff"
+                android:indeterminateTint="@color/color_selected"
                 android:visibility="visible"/>
         <TextView
                 android:text="加载失败"

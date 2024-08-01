@@ -35,6 +35,14 @@
     <color name="color_59353744">#59353744</color>
     <color name="color_80FF0057">#66FF0057</color>
     <color name="color_000000_60">#99000000</color>
-    <color name="color_00bfff">#00bfff</color>
+
+    <color name="color_selected">#00bfff</color>
+
+    <color name="color_text_none">#C0C4CC</color>
+
+    <color name="color_epg_current">#E6A23C</color>
+    <color name="color_epg_back_ing">#F56C6C</color>
+    <color name="color_epg_none">#909399</color>
+    <color name="color_epg_back_can">#409EFF</color>
 
 </resources>

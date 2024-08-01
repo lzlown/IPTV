@@ -28,24 +28,29 @@ public class LiveEpgItemAdapter extends BaseQuickAdapter<LiveEpgItem, BaseViewHo
         TextView time = holder.getView(R.id.tv_epg_time);
         TextView back = holder.getView(R.id.goback);
         if (value.index == selectedIndex && value.index != focusedIndex&& value.index != -1) {
-            name.setTextColor(mContext.getResources().getColor(R.color.color_1890FF));
-            time.setTextColor(mContext.getResources().getColor(R.color.color_1890FF));
+            int color = mContext.getResources().getColor(R.color.color_1890FF);
+            name.setTextColor(color);
+            time.setTextColor(color);
         } else {
             name.setTextColor(Color.WHITE);
             time.setTextColor(Color.WHITE);
         }
+        int color_epg_current = mContext.getResources().getColor(R.color.color_epg_current);
+        int color_epg_none = mContext.getResources().getColor(R.color.color_epg_none);
+        int color_epg_back_ing = mContext.getResources().getColor(R.color.color_epg_back_ing);
+        int color_epg_back_can = mContext.getResources().getColor(R.color.color_epg_back_can);
         name.setText(value.title);
         time.setText(String.format("%s--%s", value.start, value.end));
         Date date = new Date();
         Date epgStartTime = TimeUtil.getEpgTime(value.currentEpgDate + value.start);
         if (date.compareTo(epgStartTime) < 0) {
             back.setVisibility(View.VISIBLE);
-            back.setBackgroundColor(Color.GRAY);
+            back.setBackgroundColor(color_epg_none);
             back.setTextColor(Color.WHITE);
             back.setText("预告");
         } else if (TimeUtil.getTimeToDate(-7).compareTo(epgStartTime) > 0) {
             back.setVisibility(View.VISIBLE);
-            back.setBackgroundColor(Color.GRAY);
+            back.setBackgroundColor(color_epg_none);
             back.setTextColor(Color.WHITE);
             back.setText("回看");
             if (value.index == -1) {
@@ -53,19 +58,19 @@ public class LiveEpgItemAdapter extends BaseQuickAdapter<LiveEpgItem, BaseViewHo
             }
         } else if (date.compareTo(epgStartTime) > 0 && date.compareTo(TimeUtil.getEpgTime(value.currentEpgDate + value.end)) < 0) {
             back.setVisibility(View.VISIBLE);
-            back.setBackgroundColor(Color.YELLOW);
+            back.setBackgroundColor(color_epg_current);
             back.setText("直播中");
-            back.setTextColor(Color.RED);
+            back.setTextColor(Color.WHITE);
         } else {
             if (value.equals(liveEpgItem)) {
                 back.setVisibility(View.VISIBLE);
-                back.setBackgroundColor(Color.YELLOW);
+                back.setBackgroundColor(color_epg_back_ing);
                 back.setText("回看中");
-                back.setTextColor(Color.RED);
+                back.setTextColor(Color.WHITE);
                 return;
             }
             back.setVisibility(View.VISIBLE);
-            back.setBackgroundColor(Color.BLUE);
+            back.setBackgroundColor(color_epg_back_can);
             back.setTextColor(Color.WHITE);
             back.setText("回看");
             if (!isCanBack){
