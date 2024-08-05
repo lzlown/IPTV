@@ -2,17 +2,14 @@ package com.lzlown.iptv.ui.activity;
 
 import android.content.Context;
 import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.SeekBar;
 import android.widget.TextView;
 import com.lzlown.iptv.R;
 import com.lzlown.iptv.api.ApiConfig;
 import com.lzlown.iptv.base.BaseActivity;
 import com.lzlown.iptv.util.AppManager;
-import org.greenrobot.eventbus.EventBus;
 
 public class HomeActivity extends BaseActivity {
     public static Context context;
@@ -47,7 +44,6 @@ public class HomeActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        EventBus.getDefault().unregister(this);
         AppManager.getInstance().appExit(0);
         finish();
     }
