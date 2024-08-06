@@ -63,9 +63,9 @@ public class HttpUrlSource implements Source {
 
     @Override
     public synchronized long length() throws ProxyCacheException {
-        if (sourceInfo.length == Integer.MIN_VALUE) {
-            fetchContentInfo();
-        }
+//        if (sourceInfo.length == Integer.MIN_VALUE) {
+//            fetchContentInfo();
+//        }
         return sourceInfo.length;
     }
 
@@ -211,9 +211,9 @@ public class HttpUrlSource implements Source {
     }
 
     public synchronized String getMime() throws ProxyCacheException {
-        if (TextUtils.isEmpty(sourceInfo.mime)) {
-            fetchContentInfo();
-        }
+//        if (TextUtils.isEmpty(sourceInfo.mime)) {
+//            fetchContentInfo();
+//        }
         return sourceInfo.mime;
     }
 
