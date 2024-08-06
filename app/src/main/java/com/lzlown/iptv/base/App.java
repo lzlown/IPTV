@@ -19,7 +19,7 @@ public class App extends MultiDexApplication implements HeaderInjector {
     public static final String auth_str = "lzlown_proxy_auth=auth";
     public static final String auth_key = "lzlown-auth";
     public static final String auth_value = "lzlown";
-    public static final String userAgent = "default-lzlown";
+    public static final String userAgent = "lzlown-tv";
     public static final String requestAccept = "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9";
 
     public static HttpProxyCacheServer getProxy() {

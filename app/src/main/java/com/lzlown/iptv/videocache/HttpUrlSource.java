@@ -159,6 +159,7 @@ public class HttpUrlSource implements Source {
             if(decode.contains(App.auth_str)){
                 String lzlown_proxy_time=String.valueOf(System.currentTimeMillis()).substring(0,10);
                 String auth = App.auth_key+App.auth_value + lzlown_proxy_time + "lzlown_proxy_auth_lzlown";
+                String authValue="";
                 try {
                     MessageDigest md = MessageDigest.getInstance("MD5");
                     md.update(auth.getBytes());
@@ -167,13 +168,15 @@ public class HttpUrlSource implements Source {
                     for (byte b : digest) {
                         sb.append(String.format("%02x", b & 0xff));
                     }
-                    decode=decode.replaceFirst(App.auth_str,"lzlown_proxy_auth="+sb);
+                    authValue = sb.toString();
+                    decode=decode.replaceFirst(App.auth_str,"");
                 } catch (Exception ignored) {
 
                 }
                 connection = (HttpURLConnection) new URL(decode).openConnection();
                 connection.setRequestProperty(App.auth_key,App.auth_value);
                 connection.setRequestProperty("lzlown-proxy-time", lzlown_proxy_time);
+                connection.setRequestProperty("lzlown-proxy-auth", authValue);
                 Log.d(TAG,"Open connection  to " + decode);
             }else {
                 connection = (HttpURLConnection) new URL(url).openConnection();
