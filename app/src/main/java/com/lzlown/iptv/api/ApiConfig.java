@@ -1,5 +1,6 @@
 package com.lzlown.iptv.api;
 
+import android.util.Log;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.lzlown.iptv.base.App;
@@ -30,7 +31,7 @@ public class ApiConfig {
     private final LiveEpgItem defaultLiveEpgItem = new LiveEpgItem(TimeUtil.getTime(), "00:00", "23:59", "暂无预告", 0);
 
     //EPG 地址
-    private String epgAllUrl;
+    private String epgUrl;
     //直播源 地址
     private String liveUrl;
 
@@ -69,6 +70,23 @@ public class ApiConfig {
         list.add(new IjkOption(4, "mediacodec-auto-rotate", "1"));
         list.add(new IjkOption(4, "mediacodec-handle-resolution-change", "1"));
         return list;
+    }
+
+    private void initEpgDate() {
+        epgDateList.clear();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        SimpleDateFormat datePresentFormat = new SimpleDateFormat("MM-dd");
+        calendar.add(Calendar.DAY_OF_MONTH, -7);
+        for (int i = 0; i < 9; i++) {
+            Date dateIns = calendar.getTime();
+            LiveEpgDate epgDate = new LiveEpgDate();
+            epgDate.setIndex(i);
+            epgDate.setDatePresented(datePresentFormat.format(dateIns));
+            epgDate.setDateParamVal(dateIns);
+            epgDateList.add(epgDate);
+            calendar.add(Calendar.DAY_OF_MONTH, 1);
+        }
     }
 
     public static ApiConfig get() {
@@ -129,7 +147,7 @@ public class ApiConfig {
                 try {
                     JSONObject parse = JSONObject.parse(response.getRawResponse().body().string());
                     liveUrl = parse.getString("live");
-                    epgAllUrl = parse.getString("epgAll");
+                    epgUrl = parse.getString("epg");
                     loadIjkOptions(parse);
                     callback.success();
                 } catch (Exception e) {
@@ -220,58 +238,65 @@ public class ApiConfig {
     }
 
     //获取EPG
-    private void getEpgAll(LoadCallback callback, String time) {
-        Map<String, LiveEpg> epgMap = new HashMap<>();
-        liveEpgMap.put(time, epgMap);
-        getOkGo(epgAllUrl)
-                .params("date", time)
-                .execute(new AbsCallback<String>() {
-                    @Override
-                    public void onSuccess(Response<String> response) {
-                        try {
-                            JSONArray jsonarray = JSONObject.parse(response.getRawResponse().body().string()).getJSONArray(time);
-                            for (int i = 0; i < jsonarray.size(); i++) {
-                                JSONObject parse1 = jsonarray.getJSONObject(i);
-                                String cc = parse1.getString("cc");
-                                JSONArray epgs = parse1.getJSONArray("epg");
-                                LiveEpg liveEpg = new LiveEpg();
-                                liveEpg.setName(cc);
-                                ArrayList<LiveEpgItem> liveEpgItems = new ArrayList<>();
-                                int num = 0;
-                                for (int i1 = 0; i1 < epgs.size(); i1++) {
-                                    JSONObject epg = epgs.getJSONObject(i1);
-                                    String start = epg.getString("start");
-                                    String end = epg.getString("end");
-                                    String title = epg.getString("title");
-                                    LiveEpgItem liveEpgItem = new LiveEpgItem(time, start, end, title, num);
-                                    liveEpgItems.add(liveEpgItem);
-                                    num++;
-                                }
-                                liveEpg.setEpgItems(liveEpgItems);
-                                epgMap.put(cc, liveEpg);
+    private void getEpg(LoadCallback callback, String time) {
+        GetRequest<String> okGo = getOkGo(epgUrl);
+        if (StringUtils.isNotEmpty(time)) {
+            liveEpgMap.put(time, new HashMap<>());
+            okGo.params("date", time);
+        }
+        okGo.execute(new AbsCallback<String>() {
+            @Override
+            public void onSuccess(Response<String> response) {
+                try {
+                    JSONObject jsonObject = JSONObject.parse(response.getRawResponse().body().string());
+                    Set<String> keys = jsonObject.keySet();
+                    for (String key : keys) {
+                        Map<String, LiveEpg> epgMap = new HashMap<>();
+                        JSONArray jsonArray = jsonObject.getJSONArray(key);
+                        for (int i = 0; i < jsonArray.size(); i++) {
+                            JSONObject parse1 = jsonArray.getJSONObject(i);
+                            String cc = parse1.getString("cc");
+                            JSONArray epgs = parse1.getJSONArray("epg");
+                            LiveEpg liveEpg = new LiveEpg();
+                            liveEpg.setName(cc);
+                            ArrayList<LiveEpgItem> liveEpgItems = new ArrayList<>();
+                            int num = 0;
+                            for (int i1 = 0; i1 < epgs.size(); i1++) {
+                                JSONObject epg = epgs.getJSONObject(i1);
+                                String start = epg.getString("start");
+                                String end = epg.getString("end");
+                                String title = epg.getString("title");
+                                LiveEpgItem liveEpgItem = new LiveEpgItem(key, start, end, title, num);
+                                liveEpgItems.add(liveEpgItem);
+                                num++;
                             }
-                            callback.success();
-                        } catch (Exception e) {
-                            callback.error("EPG解析失败");
+                            liveEpg.setEpgItems(liveEpgItems);
+                            epgMap.put(cc, liveEpg);
                         }
+                        liveEpgMap.put(key, epgMap);
                     }
+                    callback.success();
+                } catch (Exception e) {
+                    callback.error("EPG解析失败");
+                }
+            }
 
-                    @Override
-                    public void onError(Response<String> response) {
-                        callback.error("EPG获取失败");
-                    }
+            @Override
+            public void onError(Response<String> response) {
+                callback.error("EPG获取失败");
+            }
 
-                    public String convertResponse(okhttp3.Response response) throws Throwable {
-                        return "";
-                    }
-                });
+            public String convertResponse(okhttp3.Response response) throws Throwable {
+                return "";
+            }
+        });
     }
 
     private LiveEpg getLiveEpg(String key, String time) {
         if (!liveEpgMap.containsKey(time)) {
             synchronized (this) {
                 if (!liveEpgMap.containsKey(time)) {
-                    getEpgAll(new LoadCallback() {
+                    getEpg(new LoadCallback() {
                         @Override
                         public void success() {
 
@@ -290,23 +315,6 @@ public class ApiConfig {
             return epgMap.get(key);
         }
         return null;
-    }
-
-    private void initEpgDate() {
-        epgDateList.clear();
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Date());
-        SimpleDateFormat datePresentFormat = new SimpleDateFormat("MM-dd");
-        calendar.add(Calendar.DAY_OF_MONTH, -7);
-        for (int i = 0; i < 9; i++) {
-            Date dateIns = calendar.getTime();
-            LiveEpgDate epgDate = new LiveEpgDate();
-            epgDate.setIndex(i);
-            epgDate.setDatePresented(datePresentFormat.format(dateIns));
-            epgDate.setDateParamVal(dateIns);
-            epgDateList.add(epgDate);
-            calendar.add(Calendar.DAY_OF_MONTH, 1);
-        }
     }
 
     //左列表使用
@@ -395,10 +403,6 @@ public class ApiConfig {
                 return liveEpg;
             }
         }
-//        LiveEpg liveEpg = new LiveEpg();
-//        liveEpg.setName(item.getChannelName());
-//        liveEpg.setEpgItems(Collections.singletonList(new LiveEpgItem(TimeUtil.getTime(-10), "00:00", "23:59", "暂无信息", -1)));
-//        return liveEpg;
         return null;
     }
 
@@ -413,7 +417,6 @@ public class ApiConfig {
 
     //初始化 逻辑
     public void loadData(LoadCallback callback) {
-        CountDownLatch countDownLatch = new CountDownLatch(getEpgDateList().size());
         getCfg(new LoadCallback() {
             @Override
             public void success() {
@@ -421,25 +424,17 @@ public class ApiConfig {
                     @Override
                     public void success() {
                         if (Hawk.get(HawkConfig.LIVE_SHOW_EPG, false)) {
-                            for (LiveEpgDate liveEpgDate : getEpgDateList()) {
-                                getEpgAll(new LoadCallback() {
-                                    @Override
-                                    public void success() {
-                                        countDownLatch.countDown();
-                                        if (countDownLatch.getCount() == 0) {
-                                            callback.success();
-                                        }
-                                    }
+                            getEpg(new LoadCallback() {
+                                @Override
+                                public void success() {
+                                    callback.success();
+                                }
 
-                                    @Override
-                                    public void error(String msg) {
-                                        countDownLatch.countDown();
-                                        if (countDownLatch.getCount() == 0) {
-                                            callback.success();
-                                        }
-                                    }
-                                }, TimeUtil.timeFormat.format(liveEpgDate.getDateParamVal()));
-                            }
+                                @Override
+                                public void error(String msg) {
+                                    callback.success();
+                                }
+                            }, null);
                         } else {
                             callback.success();
                         }
