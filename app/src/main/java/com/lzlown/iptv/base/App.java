@@ -43,7 +43,7 @@ public class App extends MultiDexApplication implements HeaderInjector {
         Hawk.put(HawkConfig.PLAY_TYPE, 0);
         Hawk.put(HawkConfig.PLAY_SCALE, 0);
         Hawk.put(HawkConfig.LIVE_CROSS_GROUP, true);
-        Hawk.put(HawkConfig.API_URL, "https://lzlown.com:9060/6e082dd89e717324/v2/tvcfg.json");
+        Hawk.put(HawkConfig.API_URL, "https://lzlown.com:9090/6e082dd89e717324/v2/tvcfg.json");
         if (!Hawk.contains(HawkConfig.LIVE_CONNECT_TIMEOUT)) {
             Hawk.put(HawkConfig.LIVE_CONNECT_TIMEOUT, 5);
         }
