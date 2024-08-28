@@ -8,6 +8,7 @@ import java.util.TimeZone;
 
 public class TimeUtil {
     public static SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd");
+    public static SimpleDateFormat epgFormat = new SimpleDateFormat("yyyy-MM-ddHH:mm");
 
     public static String getTime() {
         return timeFormat.format(new Date());
@@ -15,6 +16,13 @@ public class TimeUtil {
     public static Date getTime(String date) {
         try {
             return timeFormat.parse(date);
+        } catch (ParseException e) {
+            return new Date();
+        }
+    }
+    public static Date getEpgTime(String date) {
+        try {
+            return epgFormat.parse(date);
         } catch (ParseException e) {
             return new Date();
         }
@@ -67,5 +75,20 @@ public class TimeUtil {
         }
         return f.format(new Date());
     }
-
+    public static long getTime(String startTime, String endTime) {
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        long eTime = 0;
+        try {
+            eTime = df.parse(endTime).getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        long sTime = 0;
+        try {
+            sTime = df.parse(startTime).getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return (eTime - sTime) / 1000;
+    }
 }

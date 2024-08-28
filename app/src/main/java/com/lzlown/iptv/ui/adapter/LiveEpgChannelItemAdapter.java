@@ -6,6 +6,8 @@ import android.widget.TextView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.lzlown.iptv.R;
+import com.lzlown.iptv.api.ApiConfig;
+import com.lzlown.iptv.base.App;
 import com.lzlown.iptv.bean.LiveChannelItem;
 import com.lzlown.iptv.ui.tv.widget.MarqueeTextView;
 
@@ -23,13 +25,15 @@ public class LiveEpgChannelItemAdapter extends BaseQuickAdapter<LiveChannelItem,
     protected void convert(BaseViewHolder holder, LiveChannelItem item) {
         TextView tvChannel = holder.getView(R.id.tvChannelName);
         MarqueeTextView tvChannelEpg = holder.getView(R.id.tvChannelEpg);
-        tvChannel.setText(String.format("%03d %s", item.getChannelNum(),item.getChannelName()));
+        tvChannel.setText(String.format("%03d", item.getChannelNum()) + "  " + item.getChannelName());
         tvChannelEpg.setVisibility(View.GONE);
         int channelIndex = item.getChannelNum()-1;
         if (channelIndex == selectedChannelIndex && channelIndex != focusedChannelIndex) {
-            tvChannel.setTextColor(mContext.getResources().getColor(R.color.color_00bfff));
+            tvChannel.setTextColor(mContext.getResources().getColor(R.color.color_selected));
+            tvChannelEpg.setTextColor(mContext.getResources().getColor(R.color.color_selected));
         } else {
             tvChannel.setTextColor(Color.WHITE);
+            tvChannelEpg.setTextColor(Color.WHITE);
         }
     }
 

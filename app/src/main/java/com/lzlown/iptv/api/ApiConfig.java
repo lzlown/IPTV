@@ -1,8 +1,9 @@
 package com.lzlown.iptv.api;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
+import android.util.Log;
+import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONObject;
+import com.lzlown.iptv.base.App;
 import com.lzlown.iptv.bean.*;
 import com.lzlown.iptv.util.HawkConfig;
 import com.lzlown.iptv.util.StringUtils;
@@ -11,6 +12,7 @@ import com.lzlown.iptv.util.live.TxtSubscribe;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.AbsCallback;
 import com.lzy.okgo.model.Response;
+import com.lzy.okgo.request.GetRequest;
 import com.orhanobut.hawk.Hawk;
 
 import java.text.SimpleDateFormat;
@@ -21,19 +23,26 @@ public class ApiConfig {
     private static ApiConfig instance;
     private List<LiveChannelGroup> liveChannelGroupList = new ArrayList<>();
     private List<LiveChannelItem> liveChannelList = new ArrayList<>();
-    private static final Map<String, Map<String, LiveEpg>> liveEpgMap = new HashMap<>();
-    private HashMap<String, List<IjkOption>> ijkOptions = new HashMap<>();
+    private final Map<String, Map<String, LiveEpg>> liveEpgMap = new HashMap<>();
+    private final Map<String, Map<String, LiveEpg>> defaultliveEpgMap = new HashMap<>();
+    private final HashMap<String, List<IjkOption>> ijkOptions = new HashMap<>();
     private String date;
     private final List<LiveEpgDate> epgDateList = new ArrayList<>();
-    private final String userAgent = "okhttp/3.15";
-    private final String requestAccept = "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9";
+    private final LiveEpgItem defaultLiveEpgItem = new LiveEpgItem(TimeUtil.getTime(), "00:00", "23:59", "暂无预告", 0);
 
     //EPG 地址
-    private String epgAllUrl;
+    private String epgUrl;
     //直播源 地址
     private String liveUrl;
 
     private ApiConfig() {
+    }
+
+    private GetRequest<String> getOkGo(String url) {
+        return OkGo.<String>get(url)
+                .headers("User-Agent", App.userAgent)
+                .headers("Accept", App.requestAccept)
+                .headers(App.auth_key, App.auth_value);
     }
 
     //HTTP请求的回调
@@ -50,7 +59,7 @@ public class ApiConfig {
         list.add(new IjkOption(4, "start-on-prepared", "1"));
         list.add(new IjkOption(1, "http-detect-rangeupport", "0"));
         list.add(new IjkOption(2, "skip_loop_filter", "0"));
-        list.add(new IjkOption(4, "reconnect", "10"));
+        list.add(new IjkOption(4, "reconnect", "5"));
         list.add(new IjkOption(4, "fast", "1"));
         list.add(new IjkOption(1, "fflags", "fastseek"));
         list.add(new IjkOption(4, "enable-accurate-seek", "1"));
@@ -61,6 +70,23 @@ public class ApiConfig {
         list.add(new IjkOption(4, "mediacodec-auto-rotate", "1"));
         list.add(new IjkOption(4, "mediacodec-handle-resolution-change", "1"));
         return list;
+    }
+
+    private void initEpgDate() {
+        epgDateList.clear();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        SimpleDateFormat datePresentFormat = new SimpleDateFormat("MM-dd");
+        calendar.add(Calendar.DAY_OF_MONTH, -7);
+        for (int i = 0; i < 9; i++) {
+            Date dateIns = calendar.getTime();
+            LiveEpgDate epgDate = new LiveEpgDate();
+            epgDate.setIndex(i);
+            epgDate.setDatePresented(datePresentFormat.format(dateIns));
+            epgDate.setDateParamVal(dateIns);
+            epgDateList.add(epgDate);
+            calendar.add(Calendar.DAY_OF_MONTH, 1);
+        }
     }
 
     public static ApiConfig get() {
@@ -86,20 +112,22 @@ public class ApiConfig {
         return liveChannelList;
     }
 
-    private void loadIjkOptions(JsonElement jsonElement) {
+    private void loadIjkOptions(JSONObject jsonObject) {
         try {
-            JsonArray ijk_options = jsonElement.getAsJsonObject().getAsJsonArray("ijk");
-            for (JsonElement option : ijk_options) {
-                String group = option.getAsJsonObject().get("group").getAsString();
+            JSONArray ijk_options = jsonObject.getJSONArray("ijk");
+            for (int i = 0; i < ijk_options.size(); i++) {
+                JSONObject ijk_option = ijk_options.getJSONObject(i);
+                String group = ijk_option.getString("group");
                 List<IjkOption> optionList = ApiConfig.this.ijkOptions.get(group);
                 if (null == optionList) {
                     optionList = new ArrayList<>();
                 }
-                JsonArray rules = option.getAsJsonObject().getAsJsonArray("options");
-                for (JsonElement item : rules) {
-                    int category = item.getAsJsonObject().get("category").getAsInt();
-                    String name = item.getAsJsonObject().get("name").getAsString();
-                    String value = item.getAsJsonObject().get("value").getAsString();
+                JSONArray options = ijk_option.getJSONArray("options");
+                for (int i1 = 0; i1 < options.size(); i1++) {
+                    JSONObject itemJson = options.getJSONObject(i1);
+                    int category = itemJson.getIntValue("category");
+                    String name = itemJson.getString("name");
+                    String value = itemJson.getString("value");
                     IjkOption ijkOption = new IjkOption(category, name, value);
                     optionList.add(ijkOption);
                 }
@@ -112,235 +140,163 @@ public class ApiConfig {
 
     //获取配置文件
     private void getCfg(LoadCallback callback) {
-        OkGo.<String>get(Hawk.get(HawkConfig.API_URL))
-                .headers("User-Agent", userAgent)
-                .headers("Accept", requestAccept)
-                .execute(new AbsCallback<String>() {
-                    @Override
-                    public void onSuccess(Response<String> response) {
-                        ijkOptions = new HashMap<>();
-                        ijkOptions.put("default", defaultIJK());
-                        try {
-                            JsonElement jsonElement = JsonParser.parseString(response.getRawResponse().body().string());
-                            liveUrl = jsonElement.getAsJsonObject().get("live").getAsString();
-                            epgAllUrl = jsonElement.getAsJsonObject().get("epgAll").getAsString();
-                            loadIjkOptions(jsonElement);
-                            callback.success();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            callback.error("配置文件解析失败");
-                        }
-                    }
+        getOkGo(Hawk.get(HawkConfig.API_URL)).execute(new AbsCallback<String>() {
+            @Override
+            public void onSuccess(Response<String> response) {
+                ijkOptions.put("default", defaultIJK());
+                try {
+                    JSONObject parse = JSONObject.parse(response.getRawResponse().body().string());
+                    liveUrl = parse.getString("live");
+                    epgUrl = parse.getString("epg");
+                    loadIjkOptions(parse);
+                    callback.success();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    callback.error("配置文件解析失败");
+                }
+            }
 
-                    @Override
-                    public void onError(Response<String> response) {
-                        super.onError(response);
-                        callback.error("配置文件获取失败");
-                    }
+            @Override
+            public void onError(Response<String> response) {
+                super.onError(response);
+                callback.error("配置文件获取失败");
+            }
 
-                    public String convertResponse(okhttp3.Response response) throws Throwable {
-                        return "";
-                    }
-                });
+            public String convertResponse(okhttp3.Response response) throws Throwable {
+                return "";
+            }
+        });
     }
 
     //获取直播源
     private void getLive(String liveUrl, LoadCallback callback) {
-        OkGo.<String>get(liveUrl)
-                .headers("User-Agent", userAgent)
-                .headers("Accept", requestAccept)
-                .execute(new AbsCallback<String>() {
-                    @Override
-                    public void onSuccess(Response<String> response) {
-                        liveChannelGroupList = new ArrayList<>();
-                        try {
-                            LinkedHashMap<String, LinkedHashMap<String, ArrayList<String>>> tvMap = new LinkedHashMap<>();
-                            TxtSubscribe.parse(tvMap, response.getRawResponse().body().string());
-                            int sum = 0;
-                            for (Map.Entry entry : tvMap.entrySet()) {
-                                LinkedHashMap<String, ArrayList<String>> item = (LinkedHashMap<String, ArrayList<String>>) entry.getValue();
-                                LiveChannelGroup liveChannelGroup = new LiveChannelGroup();
-                                liveChannelGroup.setGroupIndex(liveChannelGroupList.size());
-                                liveChannelGroup.setGroupName(entry.getKey().toString());
-                                ArrayList<LiveChannelItem> liveChannelItems = new ArrayList<>();
-                                for (Map.Entry entry2 : item.entrySet()) {
-                                    sum++;
-                                    LiveChannelItem liveChannelItem = new LiveChannelItem();
-                                    liveChannelItem.setChannelIndex(liveChannelItems.size());
-                                    liveChannelItem.setChannelNum(sum);
-                                    liveChannelItem.setChannelName(entry2.getKey().toString());
-                                    ArrayList<String> socname = new ArrayList<>();
-                                    ArrayList<String> urls = new ArrayList<>();
-                                    ArrayList<String> socurls = new ArrayList<>();
-                                    for (int i = 0; i < ((ArrayList<?>) entry2.getValue()).size(); i++) {
-                                        String url = ((ArrayList<?>) entry2.getValue()).get(i).toString();
-                                        String[] split = url.split("#");
-                                        urls.add(split[1]);
-                                        String[] splitsoc = split[0].split("&");
-                                        if (splitsoc.length > 2) {
-                                            socurls.add(splitsoc[2]);
-                                        }
-                                        if (splitsoc.length > 1) {
-                                            liveChannelItem.setChannelCh(splitsoc[0]);
-                                            socname.add(splitsoc[1]);
-                                        } else {
-                                            socname.add(splitsoc[0]);
-                                        }
-
-                                    }
-                                    liveChannelItem.setChannelSourceNames(socname);
-                                    liveChannelItem.setChannelUrls(urls);
-                                    liveChannelItem.setSocUrls(socurls);
-                                    liveChannelItems.add(liveChannelItem);
+        getOkGo(liveUrl).execute(new AbsCallback<String>() {
+            @Override
+            public void onSuccess(Response<String> response) {
+                liveChannelGroupList = new ArrayList<>();
+                try {
+                    LinkedHashMap<String, LinkedHashMap<String, ArrayList<String>>> tvMap = new LinkedHashMap<>();
+                    TxtSubscribe.parse(tvMap, response.getRawResponse().body().string());
+                    int sum = 0;
+                    for (Map.Entry entry : tvMap.entrySet()) {
+                        LinkedHashMap<String, ArrayList<String>> item = (LinkedHashMap<String, ArrayList<String>>) entry.getValue();
+                        LiveChannelGroup liveChannelGroup = new LiveChannelGroup();
+                        liveChannelGroup.setGroupIndex(liveChannelGroupList.size());
+                        liveChannelGroup.setGroupName(entry.getKey().toString());
+                        ArrayList<LiveChannelItem> liveChannelItems = new ArrayList<>();
+                        for (Map.Entry entry2 : item.entrySet()) {
+                            sum++;
+                            LiveChannelItem liveChannelItem = new LiveChannelItem();
+                            liveChannelItem.setChannelIndex(liveChannelItems.size());
+                            liveChannelItem.setChannelNum(sum);
+                            liveChannelItem.setChannelName(entry2.getKey().toString());
+                            List<LiveChannelItemSource> sources = new ArrayList<>();
+                            for (int i = 0; i < ((ArrayList<?>) entry2.getValue()).size(); i++) {
+                                LiveChannelItemSource liveChannelItemSource = new LiveChannelItemSource();
+                                String url = ((ArrayList<?>) entry2.getValue()).get(i).toString();
+                                String[] split = url.split("#");
+                                liveChannelItemSource.setUrl(split[1]);
+                                String[] splitsoc = split[0].split("&");
+                                if (splitsoc.length > 2) {
+                                    liveChannelItemSource.setBackUrl(splitsoc[2]);
                                 }
-                                liveChannelGroup.setLiveChannels(liveChannelItems);
-                                liveChannelGroupList.add(liveChannelGroup);
+                                if (splitsoc.length > 1) {
+                                    liveChannelItemSource.setCc(splitsoc[0]);
+                                    liveChannelItemSource.setName(splitsoc[1]);
+                                } else {
+                                    liveChannelItemSource.setName(splitsoc[0]);
+                                }
+                                sources.add(liveChannelItemSource);
                             }
-                            liveChannelList.clear();
-                            for (LiveChannelGroup liveChannelGroup : liveChannelGroupList) {
-                                liveChannelList.addAll(liveChannelGroup.getLiveChannels());
-                            }
-                            callback.success();
-                        } catch (Throwable th) {
-                            th.printStackTrace();
-                            callback.error("直播源解析失败");
+                            liveChannelItem.setLiveChannelItemSources(sources);
+                            liveChannelItems.add(liveChannelItem);
                         }
+                        liveChannelGroup.setLiveChannels(liveChannelItems);
+                        liveChannelGroupList.add(liveChannelGroup);
                     }
+                    liveChannelList.clear();
+                    for (LiveChannelGroup liveChannelGroup : liveChannelGroupList) {
+                        liveChannelList.addAll(liveChannelGroup.getLiveChannels());
+                    }
+                    callback.success();
+                } catch (Throwable th) {
+                    th.printStackTrace();
+                    callback.error("直播源解析失败");
+                }
+            }
 
-                    @Override
-                    public void onError(Response<String> response) {
-                        super.onError(response);
-                        callback.error("直播源获取失败");
-                    }
+            @Override
+            public void onError(Response<String> response) {
+                super.onError(response);
+                callback.error("直播源获取失败");
+            }
 
-                    public String convertResponse(okhttp3.Response response) throws Throwable {
-                        return "";
-                    }
-                });
+            public String convertResponse(okhttp3.Response response) throws Throwable {
+                return "";
+            }
+        });
     }
 
     //获取EPG
-    private void getEpgAll(LoadCallback callback, String time) {
-//        Set<String> epgKeys = liveEpgMap.keySet();
-//        List<String> dates = Arrays.asList(TimeUtil.getTimeBef(), TimeUtil.getTime(), TimeUtil.getTimeNext());
-//        for (String key : epgKeys) {
-//            if (!dates.contains(key)) {
-//                liveEpgMap.remove(key);
-//            }
-//        }
-        Map<String, LiveEpg> epgMap = new HashMap<>();
-        liveEpgMap.put(time, epgMap);
-        OkGo.<String>get(epgAllUrl)
-                .headers("User-Agent", userAgent)
-                .headers("Accept", requestAccept)
-                .params("date", time)
-                .execute(new AbsCallback<String>() {
-                    @Override
-                    public void onSuccess(Response<String> response) {
-                        try {
-                            JsonElement jsonElement = JsonParser.parseString(response.getRawResponse().body().string());
-                            JsonArray jsonArray = jsonElement.getAsJsonObject().getAsJsonArray(time);
-                            for (JsonElement element : jsonArray) {
-                                String cc = element.getAsJsonObject().get("cc").getAsString();
-                                JsonArray asJsonArray = element.getAsJsonObject().get("epg").getAsJsonArray();
-                                LiveEpg liveEpg = new LiveEpg();
-                                liveEpg.setName(cc);
-                                ArrayList<LiveEpgItem> liveEpgItems = new ArrayList<>();
-                                Integer num = 0;
-                                for (JsonElement obj : asJsonArray) {
-                                    String start = obj.getAsJsonObject().get("start").getAsString();
-                                    String end = obj.getAsJsonObject().get("end").getAsString();
-                                    String title = obj.getAsJsonObject().get("title").getAsString();
-                                    LiveEpgItem liveEpgItem = new LiveEpgItem(TimeUtil.getTime(time), start, end, title, num);
-                                    liveEpgItems.add(liveEpgItem);
-                                    num++;
-                                }
-                                liveEpg.setEpgItems(liveEpgItems);
-                                epgMap.put(cc, liveEpg);
-                            }
-                            callback.success();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            callback.error("EPG解析失败");
-                        }
-                    }
-
-                    @Override
-                    public void onError(Response<String> response) {
-                        super.onError(response);
-                        callback.error("EPG获取失败");
-                    }
-
-                    public String convertResponse(okhttp3.Response response) throws Throwable {
-                        return "";
-                    }
-                });
-    }
-
-    //左列表使用
-    public LiveEpgItem getLiveEpgItem(String key) {
-        if (!StringUtils.isEmpty(key)) {
-            LiveEpg liveEpg = getLiveEpg(key, TimeUtil.getTime());
-            if (null != liveEpg) {
+    private void getEpg(LoadCallback callback, String time) {
+        GetRequest<String> okGo = getOkGo(epgUrl);
+        if (StringUtils.isNotEmpty(time)) {
+            liveEpgMap.put(time, new HashMap<>());
+            okGo.params("date", time);
+        }
+        okGo.execute(new AbsCallback<String>() {
+            @Override
+            public void onSuccess(Response<String> response) {
                 try {
-                    List<LiveEpgItem> arrayList = liveEpg.getEpgItems();
-                    if (arrayList != null && !arrayList.isEmpty()) {
-                        int size = arrayList.size() - 1;
-                        while (size >= 0) {
-                            if (new Date().compareTo(((LiveEpgItem) arrayList.get(size)).startdateTime) >= 0) {
-                                return arrayList.get(size);
-                            } else {
-                                size--;
+                    JSONObject jsonObject = JSONObject.parse(response.getRawResponse().body().string());
+                    Set<String> keys = jsonObject.keySet();
+                    for (String key : keys) {
+                        Map<String, LiveEpg> epgMap = new HashMap<>();
+                        JSONArray jsonArray = jsonObject.getJSONArray(key);
+                        for (int i = 0; i < jsonArray.size(); i++) {
+                            JSONObject parse1 = jsonArray.getJSONObject(i);
+                            String cc = parse1.getString("cc");
+                            JSONArray epgs = parse1.getJSONArray("epg");
+                            LiveEpg liveEpg = new LiveEpg();
+                            liveEpg.setName(cc);
+                            ArrayList<LiveEpgItem> liveEpgItems = new ArrayList<>();
+                            int num = 0;
+                            for (int i1 = 0; i1 < epgs.size(); i1++) {
+                                JSONObject epg = epgs.getJSONObject(i1);
+                                String start = epg.getString("start");
+                                String end = epg.getString("end");
+                                String title = epg.getString("title");
+                                LiveEpgItem liveEpgItem = new LiveEpgItem(key, start, end, title, num);
+                                liveEpgItems.add(liveEpgItem);
+                                num++;
                             }
+                            liveEpg.setEpgItems(liveEpgItems);
+                            epgMap.put(cc, liveEpg);
                         }
+                        liveEpgMap.put(key, epgMap);
                     }
-                } catch (Exception ignored) {
+                    callback.success();
+                } catch (Exception e) {
+                    callback.error("EPG解析失败");
                 }
             }
-        }
-        return new LiveEpgItem(new Date(), "", "", "暂无预告", 0);
-    }
 
-    //中间使用
-    public Map<String, LiveEpgItem> getLiveEpgItemForMap(String key) {
-        Map<String, LiveEpgItem> map = new HashMap<>();
-        if (!StringUtils.isEmpty(key)) {
-            LiveEpg liveEpg = getLiveEpg(key, TimeUtil.getTime());
-            if (null != liveEpg) {
-                List<LiveEpgItem> arrayList = liveEpg.getEpgItems();
-                if (arrayList != null && !arrayList.isEmpty()) {
-                    for (int i = 0; i < arrayList.size(); i++) {
-                        if (new Date().compareTo(((LiveEpgItem) arrayList.get(i)).startdateTime) >= 0) {
-                            map.put("c", arrayList.get(i));
-                            if (i < arrayList.size() - 1) {
-                                map.put("n", arrayList.get(i + 1));
-                            } else {
-                                map.put("n", getLiveEpgItemNext(key));
-                            }
-                        }
-                    }
-                }
+            @Override
+            public void onError(Response<String> response) {
+                callback.error("EPG获取失败");
             }
-        }
-        return map;
-    }
 
-    private LiveEpgItem getLiveEpgItemNext(String key) {
-        LiveEpg liveEpg = getLiveEpg(key, TimeUtil.getTime(1));
-        if (null != liveEpg) {
-            List<LiveEpgItem> arrayList = liveEpg.getEpgItems();
-            if (arrayList != null && !arrayList.isEmpty()) {
-                return arrayList.get(0);
+            public String convertResponse(okhttp3.Response response) throws Throwable {
+                return "";
             }
-        }
-        return null;
+        });
     }
 
-    public LiveEpg getLiveEpg(String key, String time) {
+    private LiveEpg getLiveEpg(String key, String time) {
         if (!liveEpgMap.containsKey(time)) {
             synchronized (this) {
                 if (!liveEpgMap.containsKey(time)) {
-                    getEpgAll(new LoadCallback() {
+                    getEpg(new LoadCallback() {
                         @Override
                         public void success() {
 
@@ -348,7 +304,7 @@ public class ApiConfig {
 
                         @Override
                         public void error(String msg) {
-                            liveEpgMap.put(time, new HashMap<>());
+
                         }
                     }, time);
                 }
@@ -361,23 +317,96 @@ public class ApiConfig {
         return null;
     }
 
-    private void initEpgDate() {
-        epgDateList.clear();
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Date());
-        SimpleDateFormat datePresentFormat = new SimpleDateFormat("MM-dd");
-        calendar.add(Calendar.DAY_OF_MONTH, -6);
-        for (int i = 0; i < 8; i++) {
-            Date dateIns = calendar.getTime();
-            LiveEpgDate epgDate = new LiveEpgDate();
-            epgDate.setIndex(i);
-            epgDate.setDatePresented(datePresentFormat.format(dateIns));
-            epgDate.setDateParamVal(dateIns);
-            epgDateList.add(epgDate);
-            calendar.add(Calendar.DAY_OF_MONTH, 1);
+    //左列表使用
+    public LiveEpgItem getLiveEpgItem(LiveChannelItem item) {
+        String channelCh = item.getChannelCh();
+        if (StringUtils.isNotEmpty(channelCh)) {
+            String time = TimeUtil.getTime();
+            LiveEpg liveEpg = getLiveEpg(channelCh, time);
+            if (liveEpg != null && liveEpg.getEpgItems() != null && !liveEpg.getEpgItems().isEmpty()) {
+                List<LiveEpgItem> arrayList = liveEpg.getEpgItems();
+                int size = arrayList.size() - 1;
+                while (size >= 0) {
+                    if (new Date().compareTo(TimeUtil.getEpgTime(time + ((LiveEpgItem) arrayList.get(size)).start)) >= 0) {
+                        return arrayList.get(size);
+                    } else {
+                        size--;
+                    }
+                }
+            }
         }
+        return defaultLiveEpgItem;
     }
 
+    //中间使用
+    public Map<String, LiveEpgItem> getLiveEpgItemForMap(LiveChannelItem item) {
+        String key = item.getChannelCh();
+        Map<String, LiveEpgItem> map = new HashMap<>();
+        map.put("c", defaultLiveEpgItem);
+        map.put("n", defaultLiveEpgItem);
+        if (StringUtils.isNotEmpty(key)) {
+            String time = TimeUtil.getTime();
+            LiveEpg liveEpg = getLiveEpg(key, TimeUtil.getTime());
+            if (liveEpg != null && liveEpg.getEpgItems() != null && !liveEpg.getEpgItems().isEmpty()) {
+                List<LiveEpgItem> arrayList = liveEpg.getEpgItems();
+                for (int i = 0; i < arrayList.size(); i++) {
+                    if (new Date().compareTo(TimeUtil.getEpgTime(time + ((LiveEpgItem) arrayList.get(i)).start)) >= 0) {
+                        map.put("c", arrayList.get(i));
+                        if (i < arrayList.size() - 1) {
+                            map.put("n", arrayList.get(i + 1));
+                        } else {
+                            LiveEpg liveEpg1 = getLiveEpg(key, TimeUtil.getTime(1));
+                            if (null != liveEpg1) {
+                                List<LiveEpgItem> arrayList1 = liveEpg1.getEpgItems();
+                                if (arrayList1 != null && !arrayList1.isEmpty()) {
+                                    map.put("n", arrayList1.get(0));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return map;
+    }
+
+    //回放列表使用
+    public LiveEpg getLiveEpg(LiveChannelItem item, String time) {
+        String channelCh = item.getChannelCh();
+        if (StringUtils.isNotEmpty(channelCh)) {
+            LiveEpg liveEpg = getLiveEpg(channelCh, time);
+            if (liveEpg != null && liveEpg.getEpgItems() != null && !liveEpg.getEpgItems().isEmpty()) {
+                return liveEpg;
+            }
+        } else {
+            if (StringUtils.isNotEmpty(item.getSocUrls())) {
+                Map<String, LiveEpg> stringLiveEpgMap = defaultliveEpgMap.get(time);
+                if (stringLiveEpgMap != null) {
+                    LiveEpg liveEpg1 = stringLiveEpgMap.get(item.getChannelName());
+                    if (liveEpg1 != null && liveEpg1.getEpgItems() != null && !liveEpg1.getEpgItems().isEmpty()) {
+                        return liveEpg1;
+                    }
+                }
+                stringLiveEpgMap = new HashMap<>();
+                List<LiveEpgItem> epgItems = new ArrayList<>();
+                for (int i = 0; i < 23; i++) {
+                    String start = String.format("%02d:00", i);
+                    String end = String.format("%02d:00", i + 1);
+                    epgItems.add(new LiveEpgItem(date, start, end, item.getChannelName(), i));
+                }
+                epgItems.add(new LiveEpgItem(date, "23:00", "23:59", item.getChannelName(), 23));
+                LiveEpg liveEpg = new LiveEpg();
+                liveEpg.setName(item.getChannelName());
+                liveEpg.setEpgItems(epgItems);
+                stringLiveEpgMap.put(item.getChannelName(), liveEpg);
+                defaultliveEpgMap.put(time, stringLiveEpgMap);
+                return liveEpg;
+            }
+        }
+        return null;
+    }
+
+    //EPG日期
     public List<LiveEpgDate> getEpgDateList() {
         if (!TimeUtil.getTime().equals(date)) {
             initEpgDate();
@@ -388,31 +417,26 @@ public class ApiConfig {
 
     //初始化 逻辑
     public void loadData(LoadCallback callback) {
-        CountDownLatch countDownLatch = new CountDownLatch(getEpgDateList().size());
         getCfg(new LoadCallback() {
             @Override
             public void success() {
                 getLive(liveUrl, new LoadCallback() {
                     @Override
                     public void success() {
-                        for (LiveEpgDate liveEpgDate : getEpgDateList()) {
-                            getEpgAll(new LoadCallback() {
+                        if (Hawk.get(HawkConfig.LIVE_SHOW_EPG, false)) {
+                            getEpg(new LoadCallback() {
                                 @Override
                                 public void success() {
-                                   countDownLatch.countDown();
-                                   if (countDownLatch.getCount() == 0) {
-                                       callback.success();
-                                   }
+                                    callback.success();
                                 }
 
                                 @Override
                                 public void error(String msg) {
-                                    countDownLatch.countDown();
-                                    if (countDownLatch.getCount() == 0) {
-                                        callback.success();
-                                    }
+                                    callback.success();
                                 }
-                            }, TimeUtil.timeFormat.format(liveEpgDate.getDateParamVal()));
+                            }, null);
+                        } else {
+                            callback.success();
                         }
                     }
 

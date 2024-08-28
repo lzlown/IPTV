@@ -8,7 +8,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/ll_loading"
-            android:background="@drawable/l_bg"
+            android:background="@drawable/home_bg"
             android:visibility="invisible">
         <ProgressBar
                 android:id="@+id/loadingBar"
@@ -18,7 +18,7 @@
                 android:layout_alignParentBottom="true"
                 android:layout_marginBottom="@dimen/vs_8"
                 android:layout_marginRight="@dimen/vs_20"
-                android:indeterminateTint="@color/color_00bfff"
+                android:indeterminateTint="@color/color_selected"
                 android:visibility="visible"/>
         <TextView
                 android:text="加载失败"
