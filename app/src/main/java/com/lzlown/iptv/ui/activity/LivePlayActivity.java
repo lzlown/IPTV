@@ -112,6 +112,8 @@ public class LivePlayActivity extends BaseActivity {
 
     @Override
     protected void init() {
+        currentChannelGroupIndex = 0;
+        currentLiveChannelIndex = -1;
         context = this;
         initView();
     }
@@ -120,14 +122,10 @@ public class LivePlayActivity extends BaseActivity {
         mVideoView = findViewById(R.id.mVideoView);
         loadEnd = false;
         //todo 睡眠处理
-//        mVideoView.release();
-//        if (currentLiveChannelItem != null) {
-//            mVideoView.setUrl(currentLiveChannelItem.getUrl());
-//        } else {
-//            mVideoView.setUrl(ApiConfig.get().getChannelGroupList().get(0).getLiveChannels().get(0).getUrl());
-//        }
-//        mVideoView.start();
-//        mVideoView.setScreenScaleType(0);
+        mVideoView.release();
+        mVideoView.setUrl(ApiConfig.get().getChannelGroupList().get(0).getLiveChannels().get(0).getUrl());
+        mVideoView.start();
+        mVideoView.setScreenScaleType(0);
 
         //界面 view
         tvLeftChannelListLayout = findViewById(R.id.tvLeftChannnelListLayout);
@@ -309,8 +307,7 @@ public class LivePlayActivity extends BaseActivity {
         super.onResume();
         if (mVideoView != null && loadEnd) {
             //todo 睡眠处理
-            mVideoView.release();
-            mVideoView.start();
+            jumpActivity(LivePlayActivity.class);
         }
     }
 

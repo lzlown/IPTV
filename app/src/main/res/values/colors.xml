@@ -38,9 +38,9 @@
 
     <color name="color_selected">#409EFF</color>
     <color name="color_text_none">#C0C4CC</color>
-    <color name="color_epg_current">#99E6A23C</color>
-    <color name="color_epg_back_ing">#99F56C6C</color>
-    <color name="color_epg_none">#99909399</color>
-    <color name="color_epg_back_can">#9967C23A</color>
+    <color name="color_epg_current">#E6A23C</color>
+    <color name="color_epg_back_ing">#F56C6C</color>
+    <color name="color_epg_none">#909399</color>
+    <color name="color_epg_back_can">#67C23A</color>
 
 </resources>

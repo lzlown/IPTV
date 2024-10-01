@@ -1,8 +1,9 @@
 package com.lzlown.iptv.api;
 
 import android.util.Log;
-import com.alibaba.fastjson2.JSONArray;
-import com.alibaba.fastjson2.JSONObject;
+//import com.alibaba.fastjson2.JSONArray;
+//import com.alibaba.fastjson2.JSONObject;
+import com.google.gson.*;
 import com.lzlown.iptv.base.App;
 import com.lzlown.iptv.bean.*;
 import com.lzlown.iptv.util.HawkConfig;
@@ -13,6 +14,7 @@ import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.AbsCallback;
 import com.lzy.okgo.model.Response;
 import com.lzy.okgo.request.GetRequest;
+import com.orhanobut.hawk.GsonParser;
 import com.orhanobut.hawk.Hawk;
 
 import java.text.SimpleDateFormat;
@@ -112,28 +114,26 @@ public class ApiConfig {
         return liveChannelList;
     }
 
-    private void loadIjkOptions(JSONObject jsonObject) {
+    private void loadIjkOptions(JsonElement jsonElement) {
         try {
-            JSONArray ijk_options = jsonObject.getJSONArray("ijk");
-            for (int i = 0; i < ijk_options.size(); i++) {
-                JSONObject ijk_option = ijk_options.getJSONObject(i);
-                String group = ijk_option.getString("group");
+            JsonArray ijk_options = jsonElement.getAsJsonObject().getAsJsonArray("ijk");
+            for (JsonElement option : ijk_options) {
+                String group = option.getAsJsonObject().get("group").getAsString();
                 List<IjkOption> optionList = ApiConfig.this.ijkOptions.get(group);
                 if (null == optionList) {
                     optionList = new ArrayList<>();
                 }
-                JSONArray options = ijk_option.getJSONArray("options");
-                for (int i1 = 0; i1 < options.size(); i1++) {
-                    JSONObject itemJson = options.getJSONObject(i1);
-                    int category = itemJson.getIntValue("category");
-                    String name = itemJson.getString("name");
-                    String value = itemJson.getString("value");
+                JsonArray rules = option.getAsJsonObject().getAsJsonArray("options");
+                for (JsonElement item : rules) {
+                    int category = item.getAsJsonObject().get("category").getAsInt();
+                    String name = item.getAsJsonObject().get("name").getAsString();
+                    String value = item.getAsJsonObject().get("value").getAsString();
                     IjkOption ijkOption = new IjkOption(category, name, value);
                     optionList.add(ijkOption);
                 }
                 ApiConfig.this.ijkOptions.put(group, optionList);
             }
-        } catch (Exception ignored) {
+        } catch (Exception e) {
         }
 
     }
@@ -145,10 +145,10 @@ public class ApiConfig {
             public void onSuccess(Response<String> response) {
                 ijkOptions.put("default", defaultIJK());
                 try {
-                    JSONObject parse = JSONObject.parse(response.getRawResponse().body().string());
-                    liveUrl = parse.getString("live");
-                    epgUrl = parse.getString("epg");
-                    loadIjkOptions(parse);
+                    JsonElement jsonElement = JsonParser.parseString(response.getRawResponse().body().string());
+                    liveUrl = jsonElement.getAsJsonObject().get("live").getAsString();
+                    epgUrl = jsonElement.getAsJsonObject().get("epg").getAsString();
+                    loadIjkOptions(jsonElement);
                     callback.success();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -248,24 +248,24 @@ public class ApiConfig {
             @Override
             public void onSuccess(Response<String> response) {
                 try {
-                    JSONObject jsonObject = JSONObject.parse(response.getRawResponse().body().string());
-                    Set<String> keys = jsonObject.keySet();
+                    JsonElement jsonElement = JsonParser.parseString(response.getRawResponse().body().string());
+                    Set<String> keys = jsonElement.getAsJsonObject().keySet();
                     for (String key : keys) {
                         Map<String, LiveEpg> epgMap = new HashMap<>();
-                        JSONArray jsonArray = jsonObject.getJSONArray(key);
-                        for (int i = 0; i < jsonArray.size(); i++) {
-                            JSONObject parse1 = jsonArray.getJSONObject(i);
-                            String cc = parse1.getString("cc");
-                            JSONArray epgs = parse1.getJSONArray("epg");
+                        JsonArray asJsonArray = jsonElement.getAsJsonObject().getAsJsonArray(key);
+                        for (int i = 0; i < asJsonArray.size(); i++) {
+                            JsonObject asJsonObject = asJsonArray.get(i).getAsJsonObject();
+                            String cc = asJsonObject.get("cc").getAsString();
+                            JsonArray epgs = asJsonObject.getAsJsonArray("epg");
                             LiveEpg liveEpg = new LiveEpg();
                             liveEpg.setName(cc);
                             ArrayList<LiveEpgItem> liveEpgItems = new ArrayList<>();
                             int num = 0;
                             for (int i1 = 0; i1 < epgs.size(); i1++) {
-                                JSONObject epg = epgs.getJSONObject(i1);
-                                String start = epg.getString("start");
-                                String end = epg.getString("end");
-                                String title = epg.getString("title");
+                                JsonObject epg = epgs.get(i1).getAsJsonObject();
+                                String start = epg.get("start").getAsString();
+                                String end = epg.get("end").getAsString();
+                                String title = epg.get("title").getAsString();
                                 LiveEpgItem liveEpgItem = new LiveEpgItem(key, start, end, title, num);
                                 liveEpgItems.add(liveEpgItem);
                                 num++;
