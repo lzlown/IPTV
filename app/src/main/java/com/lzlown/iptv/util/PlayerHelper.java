@@ -56,7 +56,27 @@ public class PlayerHelper {
             }
 
         } else {
-            playerFactory = AndroidMediaPlayerFactory.create();
+//            playerFactory = AndroidMediaPlayerFactory.create();
+            playerFactory = new PlayerFactory<IjkmPlayer>() {
+                @Override
+                public IjkmPlayer createPlayer(Context context) {
+                    return new IjkmPlayer(context);
+                }
+            };
+            try {
+                tv.danmaku.ijk.media.player.IjkMediaPlayer.loadLibrariesOnce(new IjkLibLoader() {
+                    @Override
+                    public void loadLibrary(String s) throws UnsatisfiedLinkError, SecurityException {
+                        try {
+                            System.loadLibrary(s);
+                        } catch (Throwable th) {
+                            th.printStackTrace();
+                        }
+                    }
+                });
+            } catch (Throwable th) {
+                th.printStackTrace();
+            }
         }
         RenderViewFactory renderViewFactory = null;
         switch (renderType) {
