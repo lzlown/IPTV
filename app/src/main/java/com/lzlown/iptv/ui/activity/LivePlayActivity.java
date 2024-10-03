@@ -493,7 +493,7 @@ public class LivePlayActivity extends BaseActivity {
             selectTime = 0;
             mHandler.removeCallbacks(backChange);
             showProgressBar(false);
-            showEpg();
+//            showEpg();
             mVideoView.release();
             mVideoView.setUrl(currentLiveChannelItem.getUrl());
             mVideoView.start();
@@ -1307,6 +1307,8 @@ public class LivePlayActivity extends BaseActivity {
     }
 
     private void setSelectedEpgChannel(int position, boolean focus) {
+        mHandler.removeCallbacks(mHideChannelListRun);
+        mHandler.postDelayed(mHideChannelListRun, showUiTime);
         if (focus) {
             liveEpgChannelItemAdapter.setFocusedChannelIndex(position);
             liveEpgDateAdapter.setFocusedIndex(-1);
@@ -1315,13 +1317,13 @@ public class LivePlayActivity extends BaseActivity {
             return;
         liveEpgChannelItemAdapter.setSelectedChannelIndex(position);
         epgSelectedChannelPos = position;
-        mHandler.removeCallbacks(mHideChannelListRun);
-        mHandler.postDelayed(mHideChannelListRun, showUiTime);
         mHandler.removeCallbacks(changeChannelEpg);
         mHandler.postDelayed(changeChannelEpg, 100);
     }
 
     private void setSelectedEpgDate(int position, boolean focus) {
+        mHandler.removeCallbacks(mHideChannelListRun);
+        mHandler.postDelayed(mHideChannelListRun, showUiTime);
         if (focus) {
             liveEpgChannelItemAdapter.setFocusedChannelIndex(-1);
             liveEpgDateAdapter.setFocusedIndex(position);
@@ -1332,11 +1334,11 @@ public class LivePlayActivity extends BaseActivity {
         liveEpgDateAdapter.setSelectedIndex(position);
         String format = TimeUtil.timeFormat.format(liveEpgDateAdapter.getData().get(position).getDateParamVal());
         changeEpg(epgSelectedChannel, format);
-        mHandler.removeCallbacks(mHideChannelListRun);
-        mHandler.postDelayed(mHideChannelListRun, showUiTime);
     }
 
     private void setSelectedEpgItem(int position, boolean focus) {
+        mHandler.removeCallbacks(mHideChannelListRun);
+        mHandler.postDelayed(mHideChannelListRun, showUiTime);
         if (focus) {
             liveEpgItemAdapter.setFocusedIndex(position);
             liveEpgDateAdapter.setFocusedIndex(-1);
@@ -1349,8 +1351,6 @@ public class LivePlayActivity extends BaseActivity {
             return;
         }
         playBack(epgItem);
-        mHandler.removeCallbacks(mHideChannelListRun);
-        mHandler.postDelayed(mHideChannelListRun, showUiTime);
     }
 
     private final Runnable changeChannelEpg = new Runnable() {

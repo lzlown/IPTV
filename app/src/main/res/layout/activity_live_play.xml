@@ -296,7 +296,8 @@
                     android:divider="@null"
                     android:fadeScrollbars="false"
                     android:padding="@dimen/vs_10"
-                    android:scrollbars="none"/>
+                    android:scrollbars="none"
+                    app:tv_verticalSpacingWithMargins="12mm"/>
         </LinearLayout>
         <LinearLayout
                 android:layout_width="@dimen/vs_1"
