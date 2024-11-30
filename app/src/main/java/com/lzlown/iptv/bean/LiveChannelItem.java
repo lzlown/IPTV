@@ -12,7 +12,6 @@ public class LiveChannelItem implements Cloneable {
     public int sourceIndex = 0;
     public int sourceNum = 0;
 
-
     public void setChannelIndex(int channelIndex) {
         this.channelIndex = channelIndex;
     }

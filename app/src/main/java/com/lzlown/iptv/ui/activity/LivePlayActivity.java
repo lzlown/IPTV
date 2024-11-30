@@ -19,7 +19,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.lzlown.iptv.R;
-import com.lzlown.iptv.api.ApiConfig;
+import com.lzlown.iptv.config.EpgConfig;
+import com.lzlown.iptv.config.LiveConfig;
 import com.lzlown.iptv.base.App;
 import com.lzlown.iptv.base.BaseActivity;
 import com.lzlown.iptv.bean.*;
@@ -59,7 +60,6 @@ public class LivePlayActivity extends BaseActivity {
     private LiveChannelItem epgBackChannel = null;
     private LiveChannelItem epgSelectedChannel = null;
     private int epgSelectedChannelPos = -1;
-
 
 
     //设置列表
@@ -123,7 +123,7 @@ public class LivePlayActivity extends BaseActivity {
         loadEnd = false;
         //todo 睡眠处理
         mVideoView.release();
-        mVideoView.setUrl(ApiConfig.get().getChannelGroupList().get(0).getLiveChannels().get(0).getUrl());
+        mVideoView.setUrl(LiveConfig.get().getLiveChannelGroupList().get(0).getLiveChannels().get(0).getUrl());
         mVideoView.start();
         mVideoView.setScreenScaleType(0);
 
@@ -227,6 +227,11 @@ public class LivePlayActivity extends BaseActivity {
         initEpgChannelView();
         initEpgDateView();
         initEpgListView();
+
+        showTime();
+        showSpeed();
+        mHandler.post(mUpdateTimeRun);
+        mHandler.post(mUpdateSpeedRun);
     }
 
     @Override
@@ -564,7 +569,7 @@ public class LivePlayActivity extends BaseActivity {
             public void changeSource(int direction) {
                 if (direction > 0) {
                     if (isCanBack && mVideoView.isPlaying()) {
-                        if (isListOrSettingLayoutVisible())return;
+                        if (isListOrSettingLayoutVisible()) return;
                         showProgressBar(true);
                     }
                 } else {
@@ -711,7 +716,7 @@ public class LivePlayActivity extends BaseActivity {
     }
 
     private void initLiveChannelList() {
-        List<LiveChannelGroup> list = ApiConfig.get().getChannelGroupList();
+        List<LiveChannelGroup> list = LiveConfig.get().getLiveChannelGroupList();
         if (list.isEmpty()) {
             Toast.makeText(App.getInstance(), "频道列表为空", Toast.LENGTH_SHORT).show();
             finish();
@@ -743,8 +748,6 @@ public class LivePlayActivity extends BaseActivity {
             lastChannelGroupIndex = 0;
             lastLiveChannelIndex = 0;
         }
-        showTime();
-        showSpeed();
         livePlayerManager.init(mVideoView);
         tvLeftChannelListLayout.setVisibility(View.INVISIBLE);
         tvRightSettingLayout.setVisibility(View.INVISIBLE);
@@ -777,10 +780,6 @@ public class LivePlayActivity extends BaseActivity {
             liveSettingGroup.setLiveSettingItems(liveSettingItemList);
             liveSettingGroupList.add(liveSettingGroup);
         }
-        loadLiveSettingGroupList();
-    }
-
-    private void loadLiveSettingGroupList() {
         liveSettingGroupList.get(2).getLiveSettingItems().get(0).setItemSelected(Hawk.get(HawkConfig.LIVE_SHOW_TIME, false));
         liveSettingGroupList.get(2).getLiveSettingItems().get(1).setItemSelected(Hawk.get(HawkConfig.LIVE_SHOW_SPEED, false));
         liveSettingGroupList.get(2).getLiveSettingItems().get(2).setItemSelected(Hawk.get(HawkConfig.LIVE_SHOW_EPG, false));
@@ -948,7 +947,7 @@ public class LivePlayActivity extends BaseActivity {
                         break;
                     case 3:
                         App.getInstance().cleanParams();
-                        loadLiveSettingGroupList();
+                        initLiveSettingGroupList();
                         Toast.makeText(App.getInstance(), "缓存清理完成", Toast.LENGTH_SHORT).show();
                         showSpeed();
                         showTime();
@@ -1109,7 +1108,7 @@ public class LivePlayActivity extends BaseActivity {
                 TextView tip_time2 = findViewById(R.id.tv_next_program_time);//底部EPG当下个节目信息
                 TextView tip_name1 = findViewById(R.id.tv_current_program_name);//底部EPG当前节目信息
                 TextView tip_name2 = findViewById(R.id.tv_next_program_name);//底部EPG当前节目信息
-                Map<String, LiveEpgItem> liveEpgItemForMap = ApiConfig.get().getLiveEpgItemForMap(currentLiveChannelItem);
+                Map<String, LiveEpgItem> liveEpgItemForMap = EpgConfig.get().getLiveEpgItemForMap(currentLiveChannelItem);
                 LiveEpgItem liveEpgItem = liveEpgItemForMap.get("c");
                 if (liveEpgItem != null) {
                     tip_time1.setText(liveEpgItem.getStart() + "-" + liveEpgItem.getEnd());
@@ -1136,20 +1135,16 @@ public class LivePlayActivity extends BaseActivity {
 
     private void showTime() {
         if (Hawk.get(HawkConfig.LIVE_SHOW_TIME, false)) {
-            mHandler.post(mUpdateTimeRun);
             tvTime.setVisibility(View.VISIBLE);
         } else {
-            mHandler.removeCallbacks(mUpdateTimeRun);
             tvTime.setVisibility(View.GONE);
         }
     }
 
     private void showSpeed() {
         if (Hawk.get(HawkConfig.LIVE_SHOW_SPEED, false)) {
-            mHandler.post(mUpdateSpeedRun);
             tvSpeed.setVisibility(View.VISIBLE);
         } else {
-            mHandler.removeCallbacks(mUpdateSpeedRun);
             tvSpeed.setVisibility(View.GONE);
         }
     }
@@ -1184,7 +1179,7 @@ public class LivePlayActivity extends BaseActivity {
 
     public void showProgressBar(boolean show) {
         if (show) {
-            if(tvBackLayout.getVisibility()==View.VISIBLE) {
+            if (tvBackLayout.getVisibility() == View.VISIBLE) {
                 countDownTimer.cancel();
                 countDownTimer.start();
             }
@@ -1228,7 +1223,7 @@ public class LivePlayActivity extends BaseActivity {
     //预告回放
     private void initEpgChannelView() {
         liveEpgChannelItemAdapter = new LiveEpgChannelItemAdapter();
-        liveEpgChannelItemAdapter.setNewData(ApiConfig.get().getLiveChannelList());
+        liveEpgChannelItemAdapter.setNewData(LiveConfig.get().getLiveChannelList());
         initTvRecyclerView(mEpgChannelView, liveEpgChannelItemAdapter, mHideChannelListRun);
         mEpgChannelView.setOnItemListener(new TvRecyclerView.OnItemListener() {
             @Override
@@ -1361,8 +1356,8 @@ public class LivePlayActivity extends BaseActivity {
     };
 
     private void changeChannelEpg(int selectedPos) {
-        epgSelectedChannel = ApiConfig.get().getLiveChannelList().get(selectedPos);
-        List<LiveEpgDate> epgDateList = ApiConfig.get().getEpgDateList();
+        epgSelectedChannel = LiveConfig.get().getLiveChannelList().get(selectedPos);
+        List<LiveEpgDate> epgDateList = EpgConfig.get().getEpgDateList();
         int pos = epgDateList.size() - 2;
         if (selectedEpgItem != null && epgBackChannel != null && epgBackChannel.getChannelNum() == epgSelectedChannel.getChannelNum()) {
             for (int i = 0; i < epgDateList.size(); i++) {
@@ -1379,8 +1374,8 @@ public class LivePlayActivity extends BaseActivity {
     }
 
     private void changeEpg(LiveChannelItem liveChannelItem, String date) {
-        LiveEpg liveEpg = ApiConfig.get().getLiveEpg(liveChannelItem, date);
-        if (liveEpg == null) {
+        LiveEpgGroup liveEpgGroup = EpgConfig.get().getLiveEpg(liveChannelItem, date);
+        if (liveEpgGroup == null) {
             mEpgItemView.setVisibility(View.GONE);
             no_epg.setVisibility(View.VISIBLE);
             return;
@@ -1388,7 +1383,7 @@ public class LivePlayActivity extends BaseActivity {
             mEpgItemView.setVisibility(View.VISIBLE);
             no_epg.setVisibility(View.GONE);
         }
-        List<LiveEpgItem> epgItems = liveEpg.getEpgItems();
+        List<LiveEpgItem> epgItems = liveEpgGroup.getEpgItems();
         liveEpgItemAdapter.setNewData(epgItems);
         if (selectedEpgItem != null && selectedEpgItem.currentEpgDate.equals(date) && epgBackChannel != null && epgBackChannel.getChannelNum() == liveChannelItem.getChannelNum()) {
             liveEpgItemAdapter.setSelectedIndex(selectedEpgItem.index);
@@ -1428,13 +1423,13 @@ public class LivePlayActivity extends BaseActivity {
                     epgSelectedChannel = currentLiveChannelItem;
                 }
                 int pos = epgSelectedChannel.getChannelNum() - 1;
-                liveEpgChannelItemAdapter.setNewData(ApiConfig.get().getLiveChannelList());
+                liveEpgChannelItemAdapter.setNewData(LiveConfig.get().getLiveChannelList());
                 mEpgChannelView.scrollToPosition(pos);
                 LinearLayoutManager layoutManager = (LinearLayoutManager) mEpgChannelView.getLayoutManager();
                 layoutManager.scrollToPositionWithOffset(pos, 0);
                 liveEpgChannelItemAdapter.setSelectedChannelIndex(pos);
                 mEpgChannelView.setSelection(pos);
-                List<LiveEpgDate> epgDateList = ApiConfig.get().getEpgDateList();
+                List<LiveEpgDate> epgDateList = EpgConfig.get().getEpgDateList();
                 liveEpgDateAdapter.setNewData(epgDateList);
                 changeChannelEpg(pos);
                 mHandler.postDelayed(mFocusAndShowEpgView, 100);
@@ -1560,7 +1555,7 @@ public class LivePlayActivity extends BaseActivity {
 
     //播放下一个回放
     private void playBackNext(LiveEpgItem epgItem) {
-        LiveEpg liveEpg = ApiConfig.get().getLiveEpg(epgBackChannel, epgItem.currentEpgDate);
+        LiveEpgGroup liveEpgGroup = EpgConfig.get().getLiveEpg(epgBackChannel, epgItem.currentEpgDate);
         boolean updateIndex = false;
         Date date = new Date();
         try {
@@ -1570,9 +1565,9 @@ public class LivePlayActivity extends BaseActivity {
             }
         } catch (Exception ignored) {
         }
-        for (int i = 0; i < liveEpg.getEpgItems().size(); i++) {
-            if (liveEpg.getEpgItems().get(i).equals(epgItem) && i + 1 < liveEpg.getEpgItems().size()) {
-                LiveEpgItem item = liveEpg.getEpgItems().get(i + 1);
+        for (int i = 0; i < liveEpgGroup.getEpgItems().size(); i++) {
+            if (liveEpgGroup.getEpgItems().get(i).equals(epgItem) && i + 1 < liveEpgGroup.getEpgItems().size()) {
+                LiveEpgItem item = liveEpgGroup.getEpgItems().get(i + 1);
                 Date epgStartTime = TimeUtil.getEpgTime(item.currentEpgDate + item.start);
                 if (date.compareTo(epgStartTime) > 0 && date.compareTo(TimeUtil.getEpgTime(item.currentEpgDate + item.end)) < 0) {
                     if (updateIndex) liveEpgItemAdapter.setSelectedIndex(item.index);
@@ -1587,10 +1582,10 @@ public class LivePlayActivity extends BaseActivity {
             liveEpgItemAdapter.setSelectedIndex(-1);
             updateIndex = false;
         }
-        List<LiveEpgDate> epgDateList = ApiConfig.get().getEpgDateList();
-        for (int i = 0; i < ApiConfig.get().getEpgDateList().size(); i++) {
+        List<LiveEpgDate> epgDateList = EpgConfig.get().getEpgDateList();
+        for (int i = 0; i < EpgConfig.get().getEpgDateList().size(); i++) {
             if (TimeUtil.timeFormat.format(epgDateList.get(i).getDateParamVal()).equals(epgItem.currentEpgDate)) {
-                LiveEpgItem item = ApiConfig.get().getLiveEpg(epgBackChannel, TimeUtil.timeFormat.format(epgDateList.get(i + 1).getDateParamVal())).getEpgItems().get(0);
+                LiveEpgItem item = EpgConfig.get().getLiveEpg(epgBackChannel, TimeUtil.timeFormat.format(epgDateList.get(i + 1).getDateParamVal())).getEpgItems().get(0);
                 try {
                     if (epgSelectedChannel.getChannelNum() == epgBackChannel.getChannelNum() &&
                             TimeUtil.timeFormat.format(liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex()).getDateParamVal()).equals(item.currentEpgDate)) {

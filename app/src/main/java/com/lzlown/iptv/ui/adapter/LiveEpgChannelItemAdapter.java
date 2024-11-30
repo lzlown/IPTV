@@ -6,8 +6,6 @@ import android.widget.TextView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.lzlown.iptv.R;
-import com.lzlown.iptv.api.ApiConfig;
-import com.lzlown.iptv.base.App;
 import com.lzlown.iptv.bean.LiveChannelItem;
 import com.lzlown.iptv.ui.tv.widget.MarqueeTextView;
 

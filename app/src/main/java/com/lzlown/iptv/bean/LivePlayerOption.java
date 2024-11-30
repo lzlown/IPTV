@@ -1,11 +1,11 @@
 package com.lzlown.iptv.bean;
 
-public class IjkOption {
+public class LivePlayerOption {
     int category;
     String name;
     String value;
 
-    public IjkOption(int category, String name, String value) {
+    public LivePlayerOption(int category, String name, String value) {
         this.category = category;
         this.name = name;
         this.value = value;

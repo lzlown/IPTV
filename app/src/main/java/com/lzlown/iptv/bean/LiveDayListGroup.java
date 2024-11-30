@@ -4,7 +4,6 @@ public class LiveDayListGroup {
     private int groupIndex;
     private String groupName;
 
-
     public int getGroupIndex() {
         return groupIndex;
     }

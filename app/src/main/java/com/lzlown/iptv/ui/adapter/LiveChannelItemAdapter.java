@@ -6,12 +6,10 @@ import android.widget.TextView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.lzlown.iptv.R;
-import com.lzlown.iptv.api.ApiConfig;
+import com.lzlown.iptv.config.EpgConfig;
 import com.lzlown.iptv.base.App;
 import com.lzlown.iptv.bean.LiveChannelItem;
 import com.lzlown.iptv.ui.tv.widget.MarqueeTextView;
-import com.lzlown.iptv.util.HawkConfig;
-import com.orhanobut.hawk.Hawk;
 
 import java.util.ArrayList;
 
@@ -29,7 +27,7 @@ public class LiveChannelItemAdapter extends BaseQuickAdapter<LiveChannelItem, Ba
         MarqueeTextView tvChannelEpg = holder.getView(R.id.tvChannelEpg);
         tvChannel.setText(String.format("%03d", item.getChannelNum()) + "  " + item.getChannelName());
         if (App.LIVE_SHOW_EPG) {
-            tvChannelEpg.setText(ApiConfig.get().getLiveEpgItem(item).getTitle());
+            tvChannelEpg.setText(EpgConfig.get().getLiveEpgItem(item).getTitle());
         } else {
             tvChannelEpg.setVisibility(View.GONE);
         }

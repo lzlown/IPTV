@@ -6,6 +6,7 @@ public class LiveEpgItem {
     public String end;
     public String title;
     public String currentEpgDate = null;
+
     public LiveEpgItem(String Date,String start, String end, String title, Integer num) {
         currentEpgDate = Date;
         this.start = start;

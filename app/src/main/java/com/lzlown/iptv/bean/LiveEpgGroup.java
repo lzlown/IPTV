@@ -2,8 +2,8 @@ package com.lzlown.iptv.bean;
 
 import java.util.List;
 
-public class LiveEpg {
-   private String name;
+public class LiveEpgGroup {
+    private String name;
     private List<LiveEpgItem> epgItems;
 
     public String getName() {

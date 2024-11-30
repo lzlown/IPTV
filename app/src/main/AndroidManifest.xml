@@ -49,11 +49,7 @@
                 android:name="com.lzlown.iptv.ui.activity.LivePlayActivity"
                 android:screenOrientation="sensorLandscape">
         </activity>
-        <receiver android:name="com.lzlown.iptv.receiver.CustomWebReceiver">
-            <intent-filter>
-                <action android:name="android.content.movie.custom.web.Action" />
-            </intent-filter>
-        </receiver>
+
 
         <provider
             android:name="androidx.core.content.FileProvider"
