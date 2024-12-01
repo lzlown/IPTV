@@ -4,9 +4,11 @@ import com.google.gson.JsonElement;
 import com.lzlown.iptv.bean.LiveChannelGroup;
 import com.lzlown.iptv.bean.LiveChannelItem;
 import com.lzlown.iptv.bean.LiveChannelItemSource;
+import com.lzlown.iptv.util.HawkConfig;
 import com.lzlown.iptv.util.live.TxtSubscribe;
 import com.lzy.okgo.callback.AbsCallback;
 import com.lzy.okgo.model.Response;
+import com.orhanobut.hawk.Hawk;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -17,6 +19,11 @@ public class LiveConfig implements Config {
     private static volatile LiveConfig instance;
     private List<LiveChannelGroup> liveChannelGroupList = new ArrayList<>();
     private List<LiveChannelItem> liveChannelList = new ArrayList<>();
+
+
+    private int currentChannelGroupIndex = 0;
+    private int currentLiveChannelIndex = -1;
+    private LiveChannelItem currentLiveChannelItem = null;
 
     private LiveConfig() {
 
@@ -39,6 +46,30 @@ public class LiveConfig implements Config {
 
     public List<LiveChannelItem> getLiveChannelList() {
         return liveChannelList;
+    }
+
+    public int getCurrentChannelGroupIndex() {
+        return currentChannelGroupIndex;
+    }
+
+    public int getCurrentLiveChannelIndex() {
+        return currentLiveChannelIndex;
+    }
+
+    public void setCurrentLiveChannelIndex(int currentLiveChannelIndex) {
+        this.currentLiveChannelIndex = currentLiveChannelIndex;
+    }
+
+    public void setCurrentChannelGroupIndex(int currentChannelGroupIndex) {
+        this.currentChannelGroupIndex = currentChannelGroupIndex;
+    }
+
+    public LiveChannelItem getCurrentLiveChannelItem() {
+        return currentLiveChannelItem;
+    }
+
+    public void setCurrentLiveChannelItem(LiveChannelItem currentLiveChannelItem) {
+        this.currentLiveChannelItem = currentLiveChannelItem;
     }
 
     @Override
@@ -109,5 +140,45 @@ public class LiveConfig implements Config {
                 return "";
             }
         });
+    }
+
+    public ArrayList<LiveChannelItem> getLiveChannels(int groupIndex) {
+        return LiveConfig.get().getLiveChannelGroupList().get(groupIndex).getLiveChannels();
+    }
+
+    public Integer[] getNextChannel(int direction) {
+        int channelGroupIndex = currentChannelGroupIndex;
+        int liveChannelIndex = currentLiveChannelIndex;
+        if (direction > 0) {
+            liveChannelIndex++;
+            if (liveChannelIndex >= getLiveChannels(channelGroupIndex).size()) {
+                liveChannelIndex = 0;
+                if (Hawk.get(HawkConfig.LIVE_CROSS_GROUP, true)) {
+                    do {
+                        channelGroupIndex++;
+                        if (channelGroupIndex >= LiveConfig.get().getLiveChannelGroupList().size()) {
+                            channelGroupIndex = 0;
+                        }
+                    } while (channelGroupIndex == currentChannelGroupIndex && channelGroupIndex != 0);
+                }
+            }
+        } else {
+            liveChannelIndex--;
+            if (liveChannelIndex < 0) {
+                if (Hawk.get(HawkConfig.LIVE_CROSS_GROUP, true)) {
+                    do {
+                        channelGroupIndex--;
+                        if (channelGroupIndex < 0)
+                            channelGroupIndex = LiveConfig.get().getLiveChannelGroupList().size() - 1;
+                    } while (channelGroupIndex == currentChannelGroupIndex);
+                }
+                liveChannelIndex = getLiveChannels(channelGroupIndex).size() - 1;
+            }
+        }
+
+        Integer[] groupChannelIndex = new Integer[2];
+        groupChannelIndex[0] = channelGroupIndex;
+        groupChannelIndex[1] = liveChannelIndex;
+        return groupChannelIndex;
     }
 }
