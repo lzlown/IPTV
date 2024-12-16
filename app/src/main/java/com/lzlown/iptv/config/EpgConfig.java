@@ -22,6 +22,9 @@ public class EpgConfig implements Config {
     private final List<LiveEpgDate> epgDateList = new ArrayList<>();
     private final LiveEpgItem defaultLiveEpgItem = new LiveEpgItem(TimeUtil.getTime(), "00:00", "23:59", "暂无预告", 0);
     private String epgUrl;
+    private LiveChannelItem epgSelectedChannel = null;
+    private LiveChannelItem epgBackChannel = null;
+    private int epgSelectedChannelPos = -1;
 
     private EpgConfig() {
 
@@ -240,5 +243,42 @@ public class EpgConfig implements Config {
         return epgDateList;
     }
 
+    public void setEpgSelectedChannel(LiveChannelItem epgSelectedChannel) {
+        this.epgSelectedChannel = epgSelectedChannel;
+    }
 
+    public LiveChannelItem getEpgSelectedChannel() {
+        return epgSelectedChannel;
+    }
+
+    public LiveChannelItem getEpgBackChannel() {
+        return epgBackChannel;
+    }
+
+    public void setEpgBackChannel(LiveChannelItem epgBackChannel) {
+        this.epgBackChannel = epgBackChannel;
+    }
+
+    public int getEpgSelectedChannelPos() {
+        return epgSelectedChannelPos;
+    }
+
+    public void setEpgSelectedChannelPos(int epgSelectedChannelPos) {
+        this.epgSelectedChannelPos = epgSelectedChannelPos;
+    }
+
+    public boolean isCanPlay(LiveEpgItem item) {
+        Date date = new Date();
+        Date epgStartTime = TimeUtil.getEpgTime(item.currentEpgDate + item.start);
+        if (date.compareTo(epgStartTime) < 0 || TimeUtil.getTimeToDate(-7).compareTo(epgStartTime) > 0
+                || epgSelectedChannel == null || StringUtils.isEmpty(epgSelectedChannel.getSocUrls())) {
+            return false;
+        } else return date.compareTo(epgStartTime) <= 0 || date.compareTo(TimeUtil.getEpgTime(item.currentEpgDate + item.end)) >= 0;
+    }
+
+    public void reSet() {
+        epgSelectedChannel = null;
+        epgBackChannel = null;
+        epgSelectedChannelPos = -1;
+    }
 }

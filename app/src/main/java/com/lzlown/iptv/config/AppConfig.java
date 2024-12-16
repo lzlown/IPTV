@@ -66,8 +66,8 @@ public class AppConfig implements Config {
             public void onSuccess(Response<String> response) {
                 try {
                     JsonElement jsonElement = JsonParser.parseString(response.getRawResponse().body().string());
-                    List<Config> configs = new ArrayList<>();
                     PlayerConfig playerConfig = PlayerConfig.get();
+                    List<Config> configs = new ArrayList<>();
                     configs.add(playerConfig);
                     LiveConfig liveConfig = LiveConfig.get();
                     configs.add(liveConfig);
@@ -75,6 +75,8 @@ public class AppConfig implements Config {
                         EpgConfig epgConfig = EpgConfig.get();
                         configs.add(epgConfig);
                     }
+                    SettingConfig settingConfig= SettingConfig.get();
+                    configs.add(settingConfig);
                     latch = new CountDownLatch(configs.size());
                     for (Config baseConfig : configs) {
                         baseConfig.init(jsonElement, loadCallback);
