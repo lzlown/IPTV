@@ -5,12 +5,21 @@ import java.util.List;
 
 
 public class LiveChannelItem implements Cloneable {
+    private int channelGroupIndex;
     private int channelIndex;
     private int channelNum;
     private String channelName;
     private List<LiveChannelItemSource> liveChannelItemSources;
     public int sourceIndex = 0;
     public int sourceNum = 0;
+
+    public int getChannelGroupIndex() {
+        return channelGroupIndex;
+    }
+
+    public void setChannelGroupIndex(int channelGroupIndex) {
+        this.channelGroupIndex = channelGroupIndex;
+    }
 
     public void setChannelIndex(int channelIndex) {
         this.channelIndex = channelIndex;

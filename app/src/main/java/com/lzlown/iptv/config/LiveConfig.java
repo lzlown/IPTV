@@ -19,10 +19,6 @@ public class LiveConfig implements Config {
     private static volatile LiveConfig instance;
     private List<LiveChannelGroup> liveChannelGroupList = new ArrayList<>();
     private List<LiveChannelItem> liveChannelList = new ArrayList<>();
-
-
-    private int currentChannelGroupIndex = 0;
-    private int currentLiveChannelIndex = -1;
     private LiveChannelItem currentLiveChannelItem = null;
 
     private LiveConfig() {
@@ -48,22 +44,6 @@ public class LiveConfig implements Config {
         return liveChannelList;
     }
 
-    public int getCurrentChannelGroupIndex() {
-        return currentChannelGroupIndex;
-    }
-
-    public int getCurrentLiveChannelIndex() {
-        return currentLiveChannelIndex;
-    }
-
-    public void setCurrentLiveChannelIndex(int currentLiveChannelIndex) {
-        this.currentLiveChannelIndex = currentLiveChannelIndex;
-    }
-
-    public void setCurrentChannelGroupIndex(int currentChannelGroupIndex) {
-        this.currentChannelGroupIndex = currentChannelGroupIndex;
-    }
-
     public LiveChannelItem getCurrentLiveChannelItem() {
         return currentLiveChannelItem;
     }
@@ -83,15 +63,18 @@ public class LiveConfig implements Config {
                     LinkedHashMap<String, LinkedHashMap<String, ArrayList<String>>> tvMap = new LinkedHashMap<>();
                     TxtSubscribe.parse(tvMap, response.getRawResponse().body().string());
                     int sum = 0;
+                    int groupIndex = -1;
                     for (Map.Entry entry : tvMap.entrySet()) {
                         LinkedHashMap<String, ArrayList<String>> item = (LinkedHashMap<String, ArrayList<String>>) entry.getValue();
                         LiveChannelGroup liveChannelGroup = new LiveChannelGroup();
                         liveChannelGroup.setGroupIndex(liveChannelGroupList.size());
                         liveChannelGroup.setGroupName(entry.getKey().toString());
+                        groupIndex++;
                         ArrayList<LiveChannelItem> liveChannelItems = new ArrayList<>();
                         for (Map.Entry entry2 : item.entrySet()) {
                             sum++;
                             LiveChannelItem liveChannelItem = new LiveChannelItem();
+                            liveChannelItem.setChannelGroupIndex(groupIndex);
                             liveChannelItem.setChannelIndex(liveChannelItems.size());
                             liveChannelItem.setChannelNum(sum);
                             liveChannelItem.setChannelName(entry2.getKey().toString());
@@ -147,8 +130,8 @@ public class LiveConfig implements Config {
     }
 
     public Integer[] getNextChannel(int direction) {
-        int channelGroupIndex = currentChannelGroupIndex;
-        int liveChannelIndex = currentLiveChannelIndex;
+        int channelGroupIndex = currentLiveChannelItem.getChannelGroupIndex();
+        int liveChannelIndex = currentLiveChannelItem.getChannelIndex();
         if (direction > 0) {
             liveChannelIndex++;
             if (liveChannelIndex >= getLiveChannels(channelGroupIndex).size()) {
@@ -159,7 +142,7 @@ public class LiveConfig implements Config {
                         if (channelGroupIndex >= LiveConfig.get().getLiveChannelGroupList().size()) {
                             channelGroupIndex = 0;
                         }
-                    } while (channelGroupIndex == currentChannelGroupIndex && channelGroupIndex != 0);
+                    } while (channelGroupIndex == currentLiveChannelItem.getChannelGroupIndex() && channelGroupIndex != 0);
                 }
             }
         } else {
@@ -170,12 +153,11 @@ public class LiveConfig implements Config {
                         channelGroupIndex--;
                         if (channelGroupIndex < 0)
                             channelGroupIndex = LiveConfig.get().getLiveChannelGroupList().size() - 1;
-                    } while (channelGroupIndex == currentChannelGroupIndex);
+                    } while (channelGroupIndex == currentLiveChannelItem.getChannelGroupIndex());
                 }
                 liveChannelIndex = getLiveChannels(channelGroupIndex).size() - 1;
             }
         }
-
         Integer[] groupChannelIndex = new Integer[2];
         groupChannelIndex[0] = channelGroupIndex;
         groupChannelIndex[1] = liveChannelIndex;
