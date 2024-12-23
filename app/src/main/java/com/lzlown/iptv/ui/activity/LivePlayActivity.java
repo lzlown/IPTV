@@ -244,7 +244,7 @@ public class LivePlayActivity extends BaseActivity {
         if (event.getAction() == KeyEvent.ACTION_DOWN) {
             int keyCode = event.getKeyCode();
             if (keyCode == KeyEvent.KEYCODE_MENU) {
-                showSettingGroup();
+                showSettingList();
             } else if (!isListOrSettingLayoutVisible()) {
                 switch (keyCode) {
                     case KeyEvent.KEYCODE_DPAD_UP:
@@ -262,7 +262,7 @@ public class LivePlayActivity extends BaseActivity {
                         }
                         break;
                     case KeyEvent.KEYCODE_DPAD_LEFT:
-                        showEpgMenu();
+                        showEpgList();
                         break;
                     case KeyEvent.KEYCODE_DPAD_RIGHT:
                         if (isCanBack && mVideoView.isPlaying()) {
@@ -412,7 +412,7 @@ public class LivePlayActivity extends BaseActivity {
 
             @Override
             public void longPress() {
-                showSettingGroup();
+                showSettingList();
             }
 
             @Override
@@ -445,7 +445,7 @@ public class LivePlayActivity extends BaseActivity {
                         showProgressBar(true);
                     }
                 } else {
-                    showEpgMenu();
+                    showEpgList();
                 }
             }
         });
@@ -858,7 +858,7 @@ public class LivePlayActivity extends BaseActivity {
         mHandler.postDelayed(mHideSettingLayoutRun, showUiTime);
     }
 
-    private void showSettingGroup() {
+    private void showSettingList() {
         if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE || tvEpgLayout.getVisibility() == View.VISIBLE) {
             mHandler.removeCallbacks(mHideChannelListRun);
             mHandler.post(mHideChannelListRun);
@@ -1321,7 +1321,7 @@ public class LivePlayActivity extends BaseActivity {
         }
     }
 
-    private void showEpgMenu() {
+    private void showEpgList() {
         if (App.LIVE_SHOW_EPG && !isListOrSettingLayoutVisible()) {
             LiveChannelItem epgBackChannel = epgConfig.getEpgBackChannel();
             if (epgBackChannel != null) {
