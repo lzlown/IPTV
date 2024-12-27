@@ -137,7 +137,7 @@
             android:id="@+id/tvName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/ts_26"
+            android:textSize="@dimen/ts_30"
             android:text="tvName"
             android:textColor="@color/color_text_none"
             android:layout_marginTop="@dimen/vs_35"
@@ -183,7 +183,7 @@
     <!--左侧节目-->
     <LinearLayout
             android:id="@+id/tvLeftChannnelListLayout"
-            android:layout_width="430mm"
+            android:layout_width="@dimen/vs_520"
             android:layout_height="match_parent"
             android:layout_gravity="left"
             android:orientation="horizontal"
@@ -195,7 +195,7 @@
                 android:orientation="horizontal">
             <com.owen.tvrecyclerview.widget.TvRecyclerView
                     android:id="@+id/mGroupGridView"
-                    android:layout_width="@dimen/vs_140"
+                    android:layout_width="@dimen/vs_180"
                     android:layout_height="wrap_content"
                     android:divider="@null"
                     android:fadeScrollbars="false"
@@ -203,7 +203,6 @@
                     android:focusableInTouchMode="false"
                     android:padding="@dimen/vs_10"
                     android:scrollbars="none"/>
-
         </LinearLayout>
         <LinearLayout
                 android:layout_width="@dimen/vs_1"

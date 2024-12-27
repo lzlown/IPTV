@@ -7,7 +7,7 @@
               android:paddingTop="@dimen/vs_1"
               android:paddingBottom="@dimen/vs_1"
               android:layout_width="match_parent"
-              android:layout_height="@dimen/vs_70"
+              android:layout_height="@dimen/vs_80"
               android:orientation="vertical">
 
     <LinearLayout
@@ -23,13 +23,13 @@
                 android:marqueeRepeatLimit="marquee_forever"
                 android:singleLine="true"
                 android:textColor="@android:color/white"
-                android:textSize="@dimen/ts_26"/>
+                android:textSize="@dimen/ts_28"/>
         <com.lzlown.iptv.ui.tv.widget.MarqueeTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/tvChannelEpg"
                 android:textColor="@android:color/white"
-                android:textSize="@dimen/ts_18"
-                android:layout_marginStart="@dimen/vs_60"/>
+                android:textSize="@dimen/ts_20"
+                android:layout_marginStart="@dimen/vs_65"/>
     </LinearLayout>
 </LinearLayout>

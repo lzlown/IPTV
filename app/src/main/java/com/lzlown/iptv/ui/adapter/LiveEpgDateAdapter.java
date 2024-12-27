@@ -16,7 +16,7 @@ public class LiveEpgDateAdapter extends BaseQuickAdapter<LiveEpgDate, BaseViewHo
     private int focusedIndex = -1;
 
     public LiveEpgDateAdapter() {
-        super(R.layout.item_live_channel_group, new ArrayList<>());
+        super(R.layout.item_epg_date, new ArrayList<>());
     }
 
     @Override

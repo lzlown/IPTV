@@ -9,7 +9,7 @@
     <TextView
             android:id="@+id/tvChannelGroupName"
             android:layout_width="0mm"
-            android:layout_height="@dimen/vs_70"
+            android:layout_height="@dimen/vs_60"
             android:layout_weight="1"
             android:ellipsize="marquee"
             android:gravity="center"

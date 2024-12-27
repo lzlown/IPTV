@@ -16,14 +16,14 @@
             android:gravity="center"
             android:layout_weight="1">
         <TextView
-                android:textSize="@dimen/ts_18"
+                android:textSize="@dimen/ts_20"
                 android:id="@+id/tv_epg_time"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@android:color/white"/>
 
         <com.lzlown.iptv.ui.tv.widget.MarqueeTextView
-                android:textSize="@dimen/ts_20"
+                android:textSize="@dimen/ts_24"
                 android:ellipsize="marquee"
                 android:singleLine="true"
                 android:marqueeRepeatLimit="marquee_forever"
@@ -44,7 +44,7 @@
             android:layout_gravity="center_vertical"
             android:text="回看"
             android:textColor="@color/color_FFFFFF"
-            android:textSize="@dimen/ts_16"/>
+            android:textSize="@dimen/ts_20"/>
 
 </LinearLayout>
 
