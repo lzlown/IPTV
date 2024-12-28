@@ -220,9 +220,9 @@ public class EpgConfig implements Config {
                 for (int i = 0; i < 23; i++) {
                     String start = String.format("%02d:00", i);
                     String end = String.format("%02d:00", i + 1);
-                    epgItems.add(new LiveEpgItem(date, start, end, item.getChannelName(), i));
+                    epgItems.add(new LiveEpgItem(time, start, end, item.getChannelName(), i));
                 }
-                epgItems.add(new LiveEpgItem(date, "23:00", "23:59", item.getChannelName(), 23));
+                epgItems.add(new LiveEpgItem(time, "23:00", "23:59", item.getChannelName(), 23));
                 LiveEpgGroup liveEpgGroup = new LiveEpgGroup();
                 liveEpgGroup.setName(item.getChannelName());
                 liveEpgGroup.setEpgItems(epgItems);
