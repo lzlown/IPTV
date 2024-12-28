@@ -50,7 +50,7 @@ public class LivePlayActivity extends BaseActivity {
     //判断睡眠重置
     private boolean loadEnd = false;
     //UI显示时间
-    private final int showUiTime = 5000;
+    private final int showUiTime = 8000;
 
     private LiveConfig liveConfig;
     private EpgConfig epgConfig;
