@@ -1,5 +1,8 @@
 package com.lzlown.iptv.base;
 
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.util.Log;
 import androidx.multidex.MultiDexApplication;
 import com.lzlown.iptv.util.HawkConfig;
 import com.lzlown.iptv.videocache.HttpProxyCacheServer;
@@ -14,6 +17,8 @@ import java.util.Map;
 public class App extends MultiDexApplication implements HeaderInjector {
     private static App instance;
     public static Boolean LIVE_SHOW_EPG;
+    public static Integer LIVE_UI_SHOW_TIME;
+    public static Integer LIVE_CONNECT_TIMEOUT;
     private HttpProxyCacheServer proxy;
     public static final String auth_str = "lzlown_proxy_auth=auth";
     public static final String auth_key = "lzlown-auth";
@@ -32,9 +37,20 @@ public class App extends MultiDexApplication implements HeaderInjector {
         Hawk.init(this).build();
         initParams();
         AutoSizeConfig.getInstance().setCustomFragment(true).getUnitsManager()
-                .setSupportDP(false)
-                .setSupportSP(false)
-                .setSupportSubunits(Subunits.MM);
+                .setSupportDP(true)
+                .setSupportSP(true);
+        try {
+            PackageManager packageManager = getPackageManager();
+            PackageInfo packageInfo = packageManager.getPackageInfo(getPackageName(), 0);
+            int versionCode = packageInfo.versionCode;
+            Integer lzlVersionCode = Hawk.get("lzlVersionCode", -1);
+            if (lzlVersionCode < versionCode) {
+                cleanParams();
+                Hawk.put("lzlVersionCode", versionCode);
+            }
+        } catch (PackageManager.NameNotFoundException ignored) {
+
+        }
     }
 
     private void initParams() {
@@ -43,18 +59,23 @@ public class App extends MultiDexApplication implements HeaderInjector {
         Hawk.put(HawkConfig.LIVE_CROSS_GROUP, true);
         Hawk.put(HawkConfig.API_URL, "https://lzlown.com:9090/6e082dd89e717324/v2/tvcfg.json");
         if (!Hawk.contains(HawkConfig.LIVE_CONNECT_TIMEOUT)) {
-            Hawk.put(HawkConfig.LIVE_CONNECT_TIMEOUT, 5);
+            Hawk.put(HawkConfig.LIVE_CONNECT_TIMEOUT, -1);
         }
         if (!Hawk.contains(HawkConfig.LIVE_SHOW_EPG)) {
-            Hawk.put(HawkConfig.LIVE_SHOW_EPG, false);
+            Hawk.put(HawkConfig.LIVE_SHOW_EPG, true);
         }
         if (!Hawk.contains(HawkConfig.LIVE_SHOW_TIME)) {
-            Hawk.put(HawkConfig.LIVE_SHOW_TIME, false);
+            Hawk.put(HawkConfig.LIVE_SHOW_TIME, true);
         }
         if (!Hawk.contains(HawkConfig.LIVE_SHOW_SPEED)) {
-            Hawk.put(HawkConfig.LIVE_SHOW_SPEED, false);
+            Hawk.put(HawkConfig.LIVE_SHOW_SPEED, true);
+        }
+        if (!Hawk.contains(HawkConfig.LIVE_UI_SHOW_TIME)) {
+            Hawk.put(HawkConfig.LIVE_UI_SHOW_TIME, 60);
         }
         LIVE_SHOW_EPG= Hawk.get(HawkConfig.LIVE_SHOW_EPG, false);
+        LIVE_UI_SHOW_TIME= Hawk.get(HawkConfig.LIVE_UI_SHOW_TIME, 5)*1000;
+        LIVE_CONNECT_TIMEOUT= Hawk.get(HawkConfig.LIVE_CONNECT_TIMEOUT, 5)*1000;
     }
 
     public void cleanParams(){

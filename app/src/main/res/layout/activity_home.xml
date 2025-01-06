@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
-        android:id="@+id/home_root"
+        xmlns:tools="http://schemas.android.com/tools" android:id="@+id/home_root"
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -12,12 +12,12 @@
             android:visibility="invisible">
         <ProgressBar
                 android:id="@+id/loadingBar"
-                android:layout_width="@dimen/vs_40"
-                android:layout_height="@dimen/vs_40"
-                android:layout_alignParentRight="true"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentEnd="true"
                 android:layout_alignParentBottom="true"
-                android:layout_marginBottom="@dimen/vs_8"
-                android:layout_marginRight="@dimen/vs_20"
+                android:layout_marginBottom="20dp"
+                android:layout_marginEnd="20dp"
                 android:indeterminateTint="@color/color_selected"
                 android:visibility="visible"/>
         <TextView
@@ -28,8 +28,8 @@
                 android:textColor="@android:color/white"
                 android:layout_centerHorizontal="true"
                 android:layout_alignParentBottom="true"
-                android:layout_marginBottom="@dimen/vs_8"
-                android:textSize="@dimen/vs_24"
-                android:visibility="gone"/>
+                android:layout_marginBottom="8dp"
+                android:textSize="14sp"
+                android:visibility="gone" tools:ignore="HardcodedText"/>
     </RelativeLayout>
 </FrameLayout>

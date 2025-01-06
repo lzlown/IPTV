@@ -1,6 +1,7 @@
 package com.lzlown.iptv.ui.adapter;
 
 import android.graphics.Color;
+import android.view.Gravity;
 import android.widget.TextView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -16,18 +17,26 @@ public class LiveEpgDateAdapter extends BaseQuickAdapter<LiveEpgDate, BaseViewHo
     private int focusedIndex = -1;
 
     public LiveEpgDateAdapter() {
-        super(R.layout.item_epg_date, new ArrayList<>());
+        super(R.layout.item, new ArrayList<>());
     }
 
     @Override
     protected void convert(BaseViewHolder holder, LiveEpgDate item) {
-        TextView tvGroupName = holder.getView(R.id.tvChannelGroupName);
-        tvGroupName.setText(item.getDatePresented());
-        tvGroupName.setBackgroundColor(Color.TRANSPARENT);
-        if (item.getIndex() == selectedIndex && item.getIndex() != focusedIndex) {
-            tvGroupName.setTextColor(mContext.getResources().getColor(R.color.color_selected));
+        TextView tvItem = holder.getView(R.id.tvItem);
+        tvItem.setGravity(Gravity.CENTER);
+        tvItem.setText(item.getDatePresented());
+        if (focusedIndex == item.getIndex()) {
+            if (item.getIndex() == selectedIndex) {
+                tvItem.setTextColor(mContext.getResources().getColor(R.color.color_selected));
+            } else {
+                tvItem.setTextColor(mContext.getResources().getColor(R.color.color_0E0E0E_90));
+            }
         } else {
-            tvGroupName.setTextColor(Color.WHITE);
+            if (item.getIndex() == selectedIndex) {
+                tvItem.setTextColor(mContext.getResources().getColor(R.color.color_selected));
+            } else {
+                tvItem.setTextColor(Color.WHITE);
+            }
         }
     }
 

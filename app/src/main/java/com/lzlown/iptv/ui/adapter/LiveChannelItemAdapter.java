@@ -18,7 +18,7 @@ public class LiveChannelItemAdapter extends BaseQuickAdapter<LiveChannelItem, Ba
     private int focusedChannelIndex = -1;
 
     public LiveChannelItemAdapter() {
-        super(R.layout.item_live_channel, new ArrayList<>());
+        super(R.layout.item_channel_item, new ArrayList<>());
     }
 
     @Override
@@ -32,12 +32,22 @@ public class LiveChannelItemAdapter extends BaseQuickAdapter<LiveChannelItem, Ba
             tvChannelEpg.setVisibility(View.GONE);
         }
         int channelIndex = item.getChannelIndex();
-        if (channelIndex == selectedChannelIndex && channelIndex != focusedChannelIndex) {
-            tvChannel.setTextColor(mContext.getResources().getColor(R.color.color_selected));
-            tvChannelEpg.setTextColor(mContext.getResources().getColor(R.color.color_selected));
+        if (focusedChannelIndex == channelIndex) {
+            if (channelIndex == selectedChannelIndex) {
+                tvChannel.setTextColor(mContext.getResources().getColor(R.color.color_selected));
+                tvChannelEpg.setTextColor(mContext.getResources().getColor(R.color.color_selected));
+            } else {
+                tvChannel.setTextColor(mContext.getResources().getColor(R.color.color_0E0E0E_90));
+                tvChannelEpg.setTextColor(mContext.getResources().getColor(R.color.color_0E0E0E_90));
+            }
         } else {
-            tvChannel.setTextColor(Color.WHITE);
-            tvChannelEpg.setTextColor(Color.WHITE);
+            if (channelIndex == selectedChannelIndex) {
+                tvChannel.setTextColor(mContext.getResources().getColor(R.color.color_selected));
+                tvChannelEpg.setTextColor(mContext.getResources().getColor(R.color.color_selected));
+            }else {
+                tvChannel.setTextColor(Color.WHITE);
+                tvChannelEpg.setTextColor(Color.WHITE);
+            }
         }
     }
 

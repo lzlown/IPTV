@@ -29,6 +29,7 @@ android {
             minifyEnabled false
 
             ndk {
+                abiFilters 'x86'
                 abiFilters 'armeabi-v7a'
             }
         }

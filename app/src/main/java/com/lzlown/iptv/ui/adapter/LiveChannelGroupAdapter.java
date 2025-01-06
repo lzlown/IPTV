@@ -1,6 +1,7 @@
 package com.lzlown.iptv.ui.adapter;
 
 import android.graphics.Color;
+import android.view.Gravity;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -15,18 +16,27 @@ public class LiveChannelGroupAdapter extends BaseQuickAdapter<LiveChannelGroup, 
     private int focusedGroupIndex = -1;
 
     public LiveChannelGroupAdapter() {
-        super(R.layout.item_live_channel_group, new ArrayList<>());
+        super(R.layout.item, new ArrayList<>());
     }
 
     @Override
     protected void convert(BaseViewHolder holder, LiveChannelGroup item) {
-        TextView tvGroupName = holder.getView(R.id.tvChannelGroupName);
-        tvGroupName.setText(item.getGroupName());
+        TextView tvItem = holder.getView(R.id.tvItem);
+        tvItem.setGravity(Gravity.CENTER);
+        tvItem.setText(item.getGroupName());
         int groupIndex = item.getGroupIndex();
-        if (groupIndex == selectedGroupIndex && groupIndex != focusedGroupIndex) {
-            tvGroupName.setTextColor(mContext.getResources().getColor(R.color.color_selected));
+        if (focusedGroupIndex == groupIndex) {
+            if (groupIndex == selectedGroupIndex) {
+                tvItem.setTextColor(mContext.getResources().getColor(R.color.color_selected));
+            } else {
+                tvItem.setTextColor(mContext.getResources().getColor(R.color.color_0E0E0E_90));
+            }
         } else {
-            tvGroupName.setTextColor(Color.WHITE);
+            if (groupIndex == selectedGroupIndex) {
+                tvItem.setTextColor(mContext.getResources().getColor(R.color.color_selected));
+            }else {
+                tvItem.setTextColor(Color.WHITE);
+            }
         }
     }
 

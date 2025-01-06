@@ -91,4 +91,10 @@ public class TimeUtil {
         }
         return (eTime - sTime) / 1000;
     }
+    public static String getWeek(){
+        Calendar calendar = Calendar.getInstance();
+        int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+        String[] daysOfWeek = {"周日", "周一", "周二", "周三", "周四", "周五", "周六"};
+        return daysOfWeek[dayOfWeek - 1];
+    }
 }

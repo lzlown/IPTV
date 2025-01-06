@@ -19,22 +19,33 @@ public class LiveEpgItemAdapter extends BaseQuickAdapter<LiveEpgItem, BaseViewHo
     private boolean isCanBack = true;
 
     public LiveEpgItemAdapter() {
-        super(R.layout.item_live_epg, new ArrayList<>());
+        super(R.layout.item_epg_item, new ArrayList<>());
     }
 
     @Override
     protected void convert(BaseViewHolder holder, LiveEpgItem value) {
         TextView name = holder.getView(R.id.tv_epg_name);
         TextView time = holder.getView(R.id.tv_epg_time);
-        TextView back = holder.getView(R.id.goback);
-        if (value.index == selectedIndex && value.index != focusedIndex&& value.index != -1) {
-            int color = mContext.getResources().getColor(R.color.color_selected);
-            name.setTextColor(color);
-            time.setTextColor(color);
+        TextView back = holder.getView(R.id.tv_epg_re_reading);
+        if (focusedIndex == value.index) {
+            if (value.index == selectedIndex) {
+                name.setTextColor(mContext.getResources().getColor(R.color.color_selected));
+                time.setTextColor(mContext.getResources().getColor(R.color.color_selected));
+            } else {
+                name.setTextColor(mContext.getResources().getColor(R.color.color_0E0E0E_90));
+                time.setTextColor(mContext.getResources().getColor(R.color.color_0E0E0E_90));
+            }
         } else {
-            name.setTextColor(Color.WHITE);
-            time.setTextColor(Color.WHITE);
+            if (value.index == selectedIndex) {
+                name.setTextColor(mContext.getResources().getColor(R.color.color_selected));
+                time.setTextColor(mContext.getResources().getColor(R.color.color_selected));
+            }else {
+                name.setTextColor(Color.WHITE);
+                time.setTextColor(Color.WHITE);
+            }
         }
+
+
         int color_epg_current = mContext.getResources().getColor(R.color.color_epg_current);
         int color_epg_none = mContext.getResources().getColor(R.color.color_epg_none);
         int color_epg_back_ing = mContext.getResources().getColor(R.color.color_epg_back_ing);

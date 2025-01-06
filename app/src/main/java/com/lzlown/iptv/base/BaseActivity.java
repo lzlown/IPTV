@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -38,6 +39,7 @@ public abstract class BaseActivity extends AppCompatActivity implements CustomAd
                 int screenWidth = dm.widthPixels;
                 int screenHeight = dm.heightPixels;
                 screenRatio = (float) Math.max(screenWidth, screenHeight) / (float) Math.min(screenWidth, screenHeight);
+                Log.d("screenRatio", "onCreate: "+screenRatio+"/"+screenWidth+"/"+screenHeight +"--"+(isBaseOnWidth() ? 1280 : 720));
             }
         } catch (Throwable th) {
             th.printStackTrace();
@@ -140,38 +142,38 @@ public abstract class BaseActivity extends AppCompatActivity implements CustomAd
     public void changeWallpaper(boolean force) {
         if (!force && globalWp != null)
             getWindow().setBackgroundDrawable(globalWp);
-        try {
-            File wp = new File(getFilesDir().getAbsolutePath() + "/wp");
-            if (wp.exists()) {
-                BitmapFactory.Options opts = new BitmapFactory.Options();
-                opts.inJustDecodeBounds = true;
-                BitmapFactory.decodeFile(wp.getAbsolutePath(), opts);
-                int imageHeight = opts.outHeight;
-                int imageWidth = opts.outWidth;
-                int picHeight = 720;
-                int picWidth = 1080;
-                int scaleX = imageWidth / picWidth;
-                int scaleY = imageHeight / picHeight;
-                int scale = 1;
-                if (scaleX > scaleY && scaleY >= 1) {
-                    scale = scaleX;
-                }
-                if (scaleX < scaleY && scaleX >= 1) {
-                    scale = scaleY;
-                }
-                opts.inJustDecodeBounds = false;
-                opts.inSampleSize = scale;
-                globalWp = new BitmapDrawable(BitmapFactory.decodeFile(wp.getAbsolutePath(), opts));
-            } else {
-                globalWp = null;
-            }
-        } catch (Throwable throwable) {
-            throwable.printStackTrace();
-            globalWp = null;
-        }
+//        try {
+//            File wp = new File(getFilesDir().getAbsolutePath() + "/wp");
+//            if (wp.exists()) {
+//                BitmapFactory.Options opts = new BitmapFactory.Options();
+//                opts.inJustDecodeBounds = true;
+//                BitmapFactory.decodeFile(wp.getAbsolutePath(), opts);
+//                int imageHeight = opts.outHeight;
+//                int imageWidth = opts.outWidth;
+//                int picHeight = 720;
+//                int picWidth = 1080;
+//                int scaleX = imageWidth / picWidth;
+//                int scaleY = imageHeight / picHeight;
+//                int scale = 1;
+//                if (scaleX > scaleY && scaleY >= 1) {
+//                    scale = scaleX;
+//                }
+//                if (scaleX < scaleY && scaleX >= 1) {
+//                    scale = scaleY;
+//                }
+//                opts.inJustDecodeBounds = false;
+//                opts.inSampleSize = scale;
+//                globalWp = new BitmapDrawable(BitmapFactory.decodeFile(wp.getAbsolutePath(), opts));
+//            } else {
+//                globalWp = null;
+//            }
+//        } catch (Throwable throwable) {
+//            throwable.printStackTrace();
+//            globalWp = null;
+//        }
         if (globalWp != null)
             getWindow().setBackgroundDrawable(globalWp);
         else
-            getWindow().setBackgroundDrawableResource(R.drawable.live_bg);
+            getWindow().setBackgroundDrawableResource(R.drawable.home_bg);
     }
 }

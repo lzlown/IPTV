@@ -12,6 +12,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.widget.ContentLoadingProgressBar;
 import com.lzlown.iptv.videoplayer.controller.BaseVideoController;
 import com.lzlown.iptv.videoplayer.controller.IControlComponent;
 import com.lzlown.iptv.videoplayer.controller.IGestureComponent;
@@ -84,7 +85,7 @@ public abstract class BaseController extends BaseVideoController implements Gest
     }
 
     private TextView mSlideInfo;
-    private RelativeLayout mLoading;
+    private View mLoading;
 //    private ViewGroup mPauseRoot;
 //    private TextView mPauseTime;
 

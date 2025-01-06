@@ -1,6 +1,7 @@
 package com.lzlown.iptv.ui.adapter;
 
 import android.graphics.Color;
+import android.view.View;
 import android.widget.TextView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -13,19 +14,33 @@ public class LiveSettingItemAdapter extends BaseQuickAdapter<LiveSettingItem, Ba
     private int focusedItemIndex = -1;
 
     public LiveSettingItemAdapter() {
-        super(R.layout.item_live_setting, new ArrayList<>());
+        super(R.layout.item_setting, new ArrayList<>());
     }
 
     @Override
     protected void convert(BaseViewHolder holder, LiveSettingItem item) {
         TextView tvItemName = holder.getView(R.id.tvSettingItemName);
+        View tvItemSelect = holder.getView(R.id.tvSettingItemSelect);
         tvItemName.setText(item.getItemName());
         int itemIndex = item.getItemIndex();
-        if (item.isItemSelected() && itemIndex != focusedItemIndex) {
-            tvItemName.setTextColor(mContext.getResources().getColor(R.color.color_selected));
+        if (focusedItemIndex == itemIndex) {
+            if (item.isItemSelected()) {
+                tvItemName.setTextColor(mContext.getResources().getColor(R.color.color_selected));
+                tvItemSelect.setBackgroundResource(R.drawable.radio_checked_shape);
+            } else {
+                tvItemName.setTextColor(Color.BLACK);
+                tvItemSelect.setBackgroundResource(R.drawable.radio_disenable_shape);
+            }
         } else {
-            tvItemName.setTextColor(Color.WHITE);
+            if (item.isItemSelected()) {
+                tvItemName.setTextColor(mContext.getResources().getColor(R.color.color_selected));
+                tvItemSelect.setBackgroundResource(R.drawable.radio_checked_shape);
+            }else {
+                tvItemName.setTextColor(Color.WHITE);
+                tvItemSelect.setBackgroundResource(R.drawable.radio_unchecked_shape);
+            }
         }
+
     }
 
     public void selectItem(int selectedItemIndex, boolean select, boolean unselectPreItemIndex) {
