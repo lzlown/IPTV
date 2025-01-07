@@ -27,6 +27,7 @@
                 android:id="@+id/tv_currentpos"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textSize="18sp"
                 android:textColor="@android:color/white"/>
         <SeekBar
                 android:id="@+id/pb_progressbar"
@@ -43,11 +44,11 @@
                 android:layout_weight="1"
                 android:paddingStart="@dimen/vs_item_padding"
                 android:paddingEnd="@dimen/vs_item_padding"/>
-
         <TextView
                 android:id="@+id/tv_duration"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textSize="18sp"
                 android:textColor="@android:color/white"/>
     </LinearLayout>
 
@@ -116,8 +117,11 @@
                     android:fadeScrollbars="false"
                     android:focusable="true"
                     android:focusableInTouchMode="false"
-                    android:layout_margin="18dp"
-                    android:scrollbars="none"/>
+                    android:scrollbars="none"
+                    android:layout_marginTop="18dp"
+                    android:layout_marginBottom="18dp"
+                    android:layout_marginStart="@dimen/vs_item_margin"
+                    android:layout_marginEnd="@dimen/vs_item_margin"/>
         </LinearLayout>
         <View
                 android:layout_width="1dp"
@@ -131,8 +135,11 @@
                 android:fadeScrollbars="false"
                 android:focusable="true"
                 android:focusableInTouchMode="false"
-                android:layout_margin="18dp"
-                android:scrollbars="none"/>
+                android:scrollbars="none"
+                android:layout_marginTop="18dp"
+                android:layout_marginBottom="18dp"
+                android:layout_marginStart="@dimen/vs_item_margin"
+                android:layout_marginEnd="@dimen/vs_item_margin"/>
     </LinearLayout>
 
     <!--左侧回放-->
@@ -154,19 +161,25 @@
                 android:focusable="true"
                 android:focusableInTouchMode="false"
                 android:scrollbars="none"
-                android:layout_margin="18dp"/>
+                android:layout_marginTop="18dp"
+                android:layout_marginBottom="18dp"
+                android:layout_marginStart="@dimen/vs_item_margin"
+                android:layout_marginEnd="@dimen/vs_item_margin"/>
         <View
                 android:layout_width="1dp"
                 android:layout_height="match_parent"
                 android:background="@android:color/white"/>
         <com.owen.tvrecyclerview.widget.TvRecyclerView
                 android:id="@+id/mEpgDateGridView"
-                android:layout_width="100dp"
+                android:layout_width="120dp"
                 android:layout_height="match_parent"
-                android:layout_margin="18dp"
                 android:divider="@null"
                 android:fadeScrollbars="false"
-                android:scrollbars="none"/>
+                android:scrollbars="none"
+                android:layout_marginTop="18dp"
+                android:layout_marginBottom="18dp"
+                android:layout_marginStart="@dimen/vs_item_margin"
+                android:layout_marginEnd="@dimen/vs_item_margin"/>
         <View
                 android:layout_width="1dp"
                 android:layout_height="match_parent"
@@ -178,7 +191,10 @@
                 android:divider="@null"
                 android:fadeScrollbars="false"
                 android:scrollbars="none"
-                android:layout_margin="18dp"/>
+                android:layout_marginTop="18dp"
+                android:layout_marginBottom="18dp"
+                android:layout_marginStart="@dimen/vs_item_margin"
+                android:layout_marginEnd="@dimen/vs_item_margin"/>
         <TextView
                 android:layout_height="match_parent"
                 android:textColor="@color/color_text_none"
@@ -356,7 +372,9 @@
                 android:id="@+id/mSettingMenuView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_margin="@dimen/vs_item_margin"
+                android:layout_marginLeft="@dimen/vs_item_margin"
+                android:layout_marginRight="@dimen/vs_item_margin"
+                android:layout_marginBottom="@dimen/vs_item_margin"
                 android:divider="@null"
                 android:fadeScrollbars="false"
                 android:focusable="true"
@@ -382,7 +400,10 @@
                 android:focusableInTouchMode="false"
                 android:divider="@null"
                 android:fadeScrollbars="false"
-                android:layout_margin="18dp"
+                android:layout_marginTop="18dp"
+                android:layout_marginBottom="18dp"
+                android:layout_marginStart="@dimen/vs_item_margin"
+                android:layout_marginEnd="@dimen/vs_item_margin"
                 android:scrollbars="none"/>
     </LinearLayout>
     <!--右侧更多设置子项-->
@@ -396,7 +417,10 @@
         <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="18dp"
+                android:layout_marginTop="18dp"
+                android:layout_marginBottom="18dp"
+                android:layout_marginStart="@dimen/vs_item_margin"
+                android:layout_marginEnd="@dimen/vs_item_margin"
                 android:orientation="horizontal">
             <Button
                     android:id="@+id/settingRightItemExit"
@@ -429,7 +453,9 @@
                 android:focusableInTouchMode="false"
                 android:divider="@null"
                 android:fadeScrollbars="false"
-                android:layout_margin="18dp"
+                android:layout_marginBottom="18dp"
+                android:layout_marginStart="@dimen/vs_item_margin"
+                android:layout_marginEnd="@dimen/vs_item_margin"
                 android:scrollbars="none"/>
     </LinearLayout>
 

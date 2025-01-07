@@ -283,11 +283,12 @@ public abstract class BaseController extends BaseVideoController implements Gest
         }
         if (mChangePosition) {
             slideToChangePosition(deltaX);
-        } else if (mChangeBrightness) {
-            slideToChangeBrightness(deltaY);
-        } else if (mChangeVolume) {
-            slideToChangeVolume(deltaY);
         }
+//        else if (mChangeBrightness) {
+//            slideToChangeBrightness(deltaY);
+//        } else if (mChangeVolume) {
+//            slideToChangeVolume(deltaY);
+//        }
         return true;
     }
 
