@@ -6,7 +6,7 @@ public class LiveSettingGroup {
     private int groupIndex;
     private String groupName;
     private ArrayList<LiveSettingItem> liveSettingItems;
-    private Integer type=1;
+    private Integer type=0;
     private Boolean select=false;
     private String val="";
 

@@ -40,7 +40,7 @@ public class LiveRightSettingGroupAdapter extends BaseQuickAdapter<LiveSettingGr
 //            tvItemSelect.setVisibility(View.VISIBLE);
             swh_status.setVisibility(View.VISIBLE);
             swh_status.setChecked(group.getSelect());
-        }else {
+        }else  if (group.getType()==2){
             val.setVisibility(View.VISIBLE);
             tvItemRightSelect.setVisibility(View.VISIBLE);
             val.setText(group.getVal());

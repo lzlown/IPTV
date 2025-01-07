@@ -81,6 +81,13 @@ public class App extends MultiDexApplication implements HeaderInjector {
     public void cleanParams(){
         Hawk.deleteAll();
         initParams();
+        try {
+            PackageManager packageManager = getPackageManager();
+            PackageInfo packageInfo = packageManager.getPackageInfo(getPackageName(), 0);
+            Hawk.put("lzlVersionCode", packageInfo.versionCode);
+        } catch (PackageManager.NameNotFoundException ignored) {
+
+        }
     }
 
     public static App getInstance() {

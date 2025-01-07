@@ -11,6 +11,7 @@ import com.orhanobut.hawk.Hawk;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class SettingConfig implements Config {
     private static volatile SettingConfig instance;
@@ -103,48 +104,85 @@ public class SettingConfig implements Config {
             liveSettingGroup.setLiveSettingItems(liveSettingItemList);
             liveSettingGroupMoreList.add(liveSettingGroup);
         }
-        liveSettingGroupMoreList.get(3).setType(3);
-        liveSettingGroupMoreList.get(4).setType(3);
-        liveSettingGroupMoreList.get(5).setType(0);
+
+
+        liveSettingGroupMoreList.get(0).setType(1);
+        liveSettingGroupMoreList.get(1).setType(1);
+        liveSettingGroupMoreList.get(2).setType(1);
+        liveSettingGroupMoreList.get(3).setType(2);
+        liveSettingGroupMoreList.get(4).setType(2);
+
         liveSettingGroupMoreList.get(0).setSelect(Hawk.get(HawkConfig.LIVE_SHOW_TIME, false));
         liveSettingGroupMoreList.get(1).setSelect(Hawk.get(HawkConfig.LIVE_SHOW_SPEED, false));
         liveSettingGroupMoreList.get(2).setSelect(Hawk.get(HawkConfig.LIVE_SHOW_EPG, false));
+        liveSettingGroupMoreList.get(3).setVal(liveSettingGroupMoreList.get(3).getLiveSettingItems().get(getItemIndex(3)).getItemName());
+        liveSettingGroupMoreList.get(4).setVal(liveSettingGroupMoreList.get(4).getLiveSettingItems().get(getItemIndex(4)).getItemName());
+
 
     }
 
-    public void loadSettings() {
-        liveSettingGroupMoreList.get(3).setVal(liveSettingGroupMoreList.get(3).getLiveSettingItems().get(getUiTimeIndex()).getItemName());
-        liveSettingGroupMoreList.get(4).setVal(liveSettingGroupMoreList.get(4).getLiveSettingItems().get(getCanTimeIndex()).getItemName());
+    public void changeVal(int group, int pos) {
+        String key = "setting";
+        switch (group) {
+            case 0:
+                key = HawkConfig.LIVE_SHOW_TIME;
+                break;
+            case 1:
+                key = HawkConfig.LIVE_SHOW_SPEED;
+                break;
+            case 2:
+                key = HawkConfig.LIVE_SHOW_EPG;
+                break;
+            case 3:
+                key = HawkConfig.LIVE_UI_SHOW_TIME;
+                break;
+            case 4:
+                key = HawkConfig.LIVE_CONNECT_TIMEOUT;
+                break;
+        }
+        Integer type = liveSettingGroupMoreList.get(group).getType();
+        switch (type) {
+            case 1:
+                Boolean select = !Hawk.get(key, false);
+                Hawk.put(key, select);
+                liveSettingGroupMoreList.get(group).setSelect(select);
+                break;
+            case 2:
+                if (key.equals(HawkConfig.LIVE_UI_SHOW_TIME)) {
+                    Hawk.put(key, uiTimeList.get(pos));
+                    App.LIVE_UI_SHOW_TIME = uiTimeList.get(pos) * 1000;
+                } else if (key.equals(HawkConfig.LIVE_CONNECT_TIMEOUT)) {
+                    Hawk.put(key, canTimeList.get(pos));
+                    App.LIVE_CONNECT_TIMEOUT = canTimeList.get(pos) * 1000;
+                }
+                break;
+            case 3:
+                break;
+        }
+
     }
 
-    public Integer getUiTimeIndex() {
-        Integer uiTime = Hawk.get(HawkConfig.LIVE_UI_SHOW_TIME, 5);
-        for (int i = 0; i < uiTimeList.size(); i++) {
-            if (uiTimeList.get(i).equals(uiTime)) {
-                return i;
-            }
+    public int getItemIndex(int pos) {
+        int val = -1;
+        switch (pos) {
+            case 3:
+                val = Hawk.get(HawkConfig.LIVE_UI_SHOW_TIME, 5);
+                for (int i = 0; i < uiTimeList.size(); i++) {
+                    if (uiTimeList.get(i).equals(val)) {
+                        return i;
+                    }
+                }
+                break;
+            case 4:
+                val = Hawk.get(HawkConfig.LIVE_CONNECT_TIMEOUT, 5);
+                for (int i = 0; i < canTimeList.size(); i++) {
+                    if (canTimeList.get(i).equals(val)) {
+                        return i;
+                    }
+                }
+                break;
         }
         return -1;
-    }
-
-    public void setUiTime(int index) {
-        Hawk.put(HawkConfig.LIVE_UI_SHOW_TIME, uiTimeList.get(index));
-        App.LIVE_UI_SHOW_TIME=uiTimeList.get(index)*1000;
-    }
-
-    public Integer getCanTimeIndex() {
-        Integer uiTime = Hawk.get(HawkConfig.LIVE_CONNECT_TIMEOUT, 5);
-        for (int i = 0; i < canTimeList.size(); i++) {
-            if (canTimeList.get(i).equals(uiTime)) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    public void setCanTime(int index) {
-        Hawk.put(HawkConfig.LIVE_CONNECT_TIMEOUT, canTimeList.get(index));
-        App.LIVE_CONNECT_TIMEOUT=canTimeList.get(index)*1000;
     }
 
     @Override
@@ -156,5 +194,6 @@ public class SettingConfig implements Config {
 
     public void reSet() {
         initLiveSettingGroupList();
+        initLiveSettingGroupMoreList();
     }
 }
