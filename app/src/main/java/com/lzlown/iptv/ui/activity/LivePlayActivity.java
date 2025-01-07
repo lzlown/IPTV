@@ -1100,6 +1100,11 @@ public class LivePlayActivity extends BaseActivity {
         public void run() {
             if (tvRightSettingItemLayout.getVisibility() == View.VISIBLE) {
                 tvRightSettingItemLayout.setVisibility(View.GONE);
+                if (mRightSettingGroupView.getVisibility() != View.VISIBLE) {
+                    mHandler.removeCallbacks(mHideRightSettingGroupRun);
+                    mHandler.post(mHideRightSettingGroupRun);
+                }
+
             }
         }
     };
@@ -1251,10 +1256,10 @@ public class LivePlayActivity extends BaseActivity {
                 switch (position) {
                     case 0:
                     case 1:
-                        settingConfig.changeVal(position, -1);
+                        settingConfig.setSettingItemVal(position, -1);
                         break;
                     case 2:
-                        settingConfig.changeVal(position, -1);
+                        settingConfig.setSettingItemVal(position, -1);
                         Toast.makeText(App.getInstance(), "重启生效", Toast.LENGTH_SHORT).show();
                         break;
                     case 3:
@@ -1262,7 +1267,7 @@ public class LivePlayActivity extends BaseActivity {
                         settingRightItemName.setText(Objects.requireNonNull(liveRightSettingGroupAdapter.getItem(position)).getGroupName());
                         liveRightSettingItemAdapter.setFocusedItemIndex(-1);
                         liveRightSettingItemAdapter.setNewData(Objects.requireNonNull(liveRightSettingGroupAdapter.getItem(position)).getLiveSettingItems());
-                        int itemIndex = settingConfig.getItemIndex(position);
+                        int itemIndex = settingConfig.getSelectItemIndex(position);
                         Log.i(TAG, "selectRightSettingGroup: " + itemIndex);
                         liveRightSettingItemAdapter.selectItem(itemIndex, true, false);
                         mRightSettingItemView.scrollToPosition(itemIndex);
@@ -1292,8 +1297,8 @@ public class LivePlayActivity extends BaseActivity {
                 liveRightSettingItemAdapter.selectItem(position, true, true);
                 LiveSettingGroup item = liveRightSettingGroupAdapter.getItem(index);
                 if (item != null) {
-                    item.setVal(item.getLiveSettingItems().get(position).getItemName());
-                    settingConfig.changeVal(index, position);
+                    item.setVal(settingConfig.getSettingItemName(index, position));
+                    settingConfig.setSettingItemVal(index, position);
                     liveRightSettingGroupAdapter.setSelectedGroupIndex(index);
                 }
                 break;

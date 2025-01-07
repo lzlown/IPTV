@@ -1,6 +1,5 @@
 package com.lzlown.iptv.config;
 
-import android.util.Log;
 import com.google.gson.JsonElement;
 import com.lzlown.iptv.base.App;
 import com.lzlown.iptv.bean.LiveSettingGroup;
@@ -11,9 +10,9 @@ import com.orhanobut.hawk.Hawk;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 public class SettingConfig implements Config {
+    private static final String TAG = "SettingConfig";
     private static volatile SettingConfig instance;
     private final List<LiveSettingGroup> liveSettingGroupList = new ArrayList<>();
     private final List<LiveSettingGroup> liveSettingGroupMoreList = new ArrayList<>();
@@ -48,11 +47,10 @@ public class SettingConfig implements Config {
         ArrayList<String> epgItems = new ArrayList<>();
         ArrayList<String> sourceItems = new ArrayList<>();
         ArrayList<String> scaleItems = new ArrayList<>(Arrays.asList("默认", "16:9", "4:3", "填充", "原始", "裁剪"));
-        ArrayList<String> personalSettingItems = new ArrayList<>(Arrays.asList("显示时间", "显示网速", "显示预告", "清理缓存"));
         itemsArrayList.add(epgItems);
         itemsArrayList.add(sourceItems);
         itemsArrayList.add(scaleItems);
-        itemsArrayList.add(personalSettingItems);
+        itemsArrayList.add(epgItems);
         liveSettingGroupList.clear();
         for (int i = 0; i < groupNames.size(); i++) {
             LiveSettingGroup liveSettingGroup = new LiveSettingGroup();
@@ -68,15 +66,7 @@ public class SettingConfig implements Config {
             liveSettingGroup.setLiveSettingItems(liveSettingItemList);
             liveSettingGroupList.add(liveSettingGroup);
         }
-        liveSettingGroupList.get(3).getLiveSettingItems().get(0).setItemSelected(Hawk.get(HawkConfig.LIVE_SHOW_TIME, false));
-        liveSettingGroupList.get(3).getLiveSettingItems().get(1).setItemSelected(Hawk.get(HawkConfig.LIVE_SHOW_SPEED, false));
-        liveSettingGroupList.get(3).getLiveSettingItems().get(2).setItemSelected(Hawk.get(HawkConfig.LIVE_SHOW_EPG, false));
     }
-
-    private ArrayList<String> uiTimeStrList = new ArrayList<>(Arrays.asList("5秒", "10秒", "15秒", "30秒", "60秒"));
-    private ArrayList<Integer> uiTimeList = new ArrayList<>(Arrays.asList(5, 10, 15, 30, 60));
-    private ArrayList<String> canTimeStrList = new ArrayList<>(Arrays.asList("5秒", "10秒", "15秒", "不更换"));
-    private ArrayList<Integer> canTimeList = new ArrayList<>(Arrays.asList(5, 10, 15, -1));
 
     //右侧设置列表
     private void initLiveSettingGroupMoreList() {
@@ -86,8 +76,8 @@ public class SettingConfig implements Config {
         itemsArrayList.add(epgItems);
         itemsArrayList.add(epgItems);
         itemsArrayList.add(epgItems);
-        itemsArrayList.add(uiTimeStrList);
-        itemsArrayList.add(canTimeStrList);
+        itemsArrayList.add(new ArrayList<>(Arrays.asList("5秒&5", "10秒&10", "15秒&15", "30秒&30", "60秒&60")));
+        itemsArrayList.add(new ArrayList<>(Arrays.asList("5秒&5", "10秒&10", "15秒&15", "不更换&-1")));
         itemsArrayList.add(epgItems);
         liveSettingGroupMoreList.clear();
         for (int i = 0; i < groupNames.size(); i++) {
@@ -115,72 +105,78 @@ public class SettingConfig implements Config {
         liveSettingGroupMoreList.get(0).setSelect(Hawk.get(HawkConfig.LIVE_SHOW_TIME, false));
         liveSettingGroupMoreList.get(1).setSelect(Hawk.get(HawkConfig.LIVE_SHOW_SPEED, false));
         liveSettingGroupMoreList.get(2).setSelect(Hawk.get(HawkConfig.LIVE_SHOW_EPG, false));
-        liveSettingGroupMoreList.get(3).setVal(liveSettingGroupMoreList.get(3).getLiveSettingItems().get(getItemIndex(3)).getItemName());
-        liveSettingGroupMoreList.get(4).setVal(liveSettingGroupMoreList.get(4).getLiveSettingItems().get(getItemIndex(4)).getItemName());
-
-
+        liveSettingGroupMoreList.get(3).setVal(getSettingItemName(3, getSelectItemIndex(3)));
+        liveSettingGroupMoreList.get(4).setVal(getSettingItemName(4, getSelectItemIndex(4)));
     }
 
-    public void changeVal(int group, int pos) {
-        String key = "setting";
-        switch (group) {
+    private String getSettingItemCacheKey(int itemIndex) {
+        switch (itemIndex) {
             case 0:
-                key = HawkConfig.LIVE_SHOW_TIME;
-                break;
+                return HawkConfig.LIVE_SHOW_TIME;
             case 1:
-                key = HawkConfig.LIVE_SHOW_SPEED;
-                break;
+                return HawkConfig.LIVE_SHOW_SPEED;
             case 2:
-                key = HawkConfig.LIVE_SHOW_EPG;
-                break;
+                return HawkConfig.LIVE_SHOW_EPG;
             case 3:
-                key = HawkConfig.LIVE_UI_SHOW_TIME;
-                break;
+                return HawkConfig.LIVE_UI_SHOW_TIME;
             case 4:
-                key = HawkConfig.LIVE_CONNECT_TIMEOUT;
-                break;
+                return HawkConfig.LIVE_CONNECT_TIMEOUT;
         }
-        Integer type = liveSettingGroupMoreList.get(group).getType();
+        return "";
+    }
+
+    public String getSettingItemName(int groupIndex, int itemIndex) {
+        LiveSettingGroup liveSettingGroup = liveSettingGroupMoreList.get(groupIndex);
+        String itemName = liveSettingGroup.getLiveSettingItems().get(itemIndex).getItemName();
+        String[] split = itemName.split("&");
+        return split[0];
+    }
+
+    private String getSettingItemVal(int groupIndex, int itemIndex) {
+        LiveSettingGroup liveSettingGroup = liveSettingGroupMoreList.get(groupIndex);
+        String itemName = liveSettingGroup.getLiveSettingItems().get(itemIndex).getItemName();
+        String[] split = itemName.split("&");
+        return split.length>1?split[1]:split[0];
+    }
+
+    public void setSettingItemVal(int groupIndex, int itemIndex) {
+        String key = getSettingItemCacheKey(groupIndex);
+        if (key.isEmpty()) return;
+        Integer type = liveSettingGroupMoreList.get(groupIndex).getType();
         switch (type) {
+            //按钮
+            case 0:
+                break;
+            //开关 Switch
             case 1:
                 Boolean select = !Hawk.get(key, false);
                 Hawk.put(key, select);
-                liveSettingGroupMoreList.get(group).setSelect(select);
+                liveSettingGroupMoreList.get(groupIndex).setSelect(select);
                 break;
+            //选择 选择子项
             case 2:
+                String settingItemVal = getSettingItemVal(groupIndex, itemIndex);
+                int val = Integer.parseInt(settingItemVal);
+                Hawk.put(key, val);
                 if (key.equals(HawkConfig.LIVE_UI_SHOW_TIME)) {
-                    Hawk.put(key, uiTimeList.get(pos));
-                    App.LIVE_UI_SHOW_TIME = uiTimeList.get(pos) * 1000;
+                    App.LIVE_UI_SHOW_TIME = val * 1000;
                 } else if (key.equals(HawkConfig.LIVE_CONNECT_TIMEOUT)) {
-                    Hawk.put(key, canTimeList.get(pos));
-                    App.LIVE_CONNECT_TIMEOUT = canTimeList.get(pos) * 1000;
+                    App.LIVE_CONNECT_TIMEOUT = val * 1000;
                 }
-                break;
-            case 3:
                 break;
         }
 
     }
 
-    public int getItemIndex(int pos) {
-        int val = -1;
-        switch (pos) {
-            case 3:
-                val = Hawk.get(HawkConfig.LIVE_UI_SHOW_TIME, 5);
-                for (int i = 0; i < uiTimeList.size(); i++) {
-                    if (uiTimeList.get(i).equals(val)) {
-                        return i;
-                    }
-                }
-                break;
-            case 4:
-                val = Hawk.get(HawkConfig.LIVE_CONNECT_TIMEOUT, 5);
-                for (int i = 0; i < canTimeList.size(); i++) {
-                    if (canTimeList.get(i).equals(val)) {
-                        return i;
-                    }
-                }
-                break;
+    public int getSelectItemIndex(int groupIndex) {
+        String settingItemCacheKey = getSettingItemCacheKey(groupIndex);
+        if (settingItemCacheKey.isEmpty()) return -1;
+        int val = Hawk.get(settingItemCacheKey, 5);
+        ArrayList<LiveSettingItem> liveSettingItems = liveSettingGroupMoreList.get(groupIndex).getLiveSettingItems();
+        for (int i = 0; i <liveSettingItems.size(); i++) {
+            if (liveSettingItems.get(i).getItemName().split("&")[1].equals(String.valueOf(val))) {
+                return i;
+            }
         }
         return -1;
     }
