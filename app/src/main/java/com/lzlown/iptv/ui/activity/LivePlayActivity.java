@@ -21,6 +21,7 @@ import com.lzlown.iptv.R;
 import com.lzlown.iptv.base.App;
 import com.lzlown.iptv.base.BaseActivity;
 import com.lzlown.iptv.bean.*;
+import com.lzlown.iptv.config.AppConfig;
 import com.lzlown.iptv.config.EpgConfig;
 import com.lzlown.iptv.config.LiveConfig;
 import com.lzlown.iptv.config.SettingConfig;
@@ -420,6 +421,7 @@ public class LivePlayActivity extends BaseActivity {
                 showEpg();
                 showInfo();
             } else {
+                mHandler.removeCallbacks(mHideChannelNameRun);
                 tvName.setVisibility(View.VISIBLE);
             }
 
@@ -1256,10 +1258,10 @@ public class LivePlayActivity extends BaseActivity {
                 switch (position) {
                     case 0:
                     case 1:
-                        settingConfig.setSettingItemVal(position, -1);
+                        settingConfig.selectSettingItemVal(position, -1);
                         break;
                     case 2:
-                        settingConfig.setSettingItemVal(position, -1);
+                        settingConfig.selectSettingItemVal(position, -1);
                         Toast.makeText(App.getInstance(), "重启生效", Toast.LENGTH_SHORT).show();
                         break;
                     case 3:
@@ -1281,7 +1283,17 @@ public class LivePlayActivity extends BaseActivity {
                         break;
                     case 5:
                         App.getInstance().cleanParams();
-                        settingConfig.reSet();
+                        settingConfig.init(null, new AppConfig.LoadCallback() {
+                            @Override
+                            public void success() {
+
+                            }
+
+                            @Override
+                            public void error(String msg) {
+
+                            }
+                        });
                         Toast.makeText(App.getInstance(), "缓存清理完成", Toast.LENGTH_SHORT).show();
                         mHandler.removeCallbacks(mHideRightSettingGroupRun);
                         mHandler.post(mHideRightSettingGroupRun);
@@ -1298,7 +1310,7 @@ public class LivePlayActivity extends BaseActivity {
                 LiveSettingGroup item = liveRightSettingGroupAdapter.getItem(index);
                 if (item != null) {
                     item.setVal(settingConfig.getSettingItemName(index, position));
-                    settingConfig.setSettingItemVal(index, position);
+                    settingConfig.selectSettingItemVal(index, position);
                     liveRightSettingGroupAdapter.setSelectedGroupIndex(index);
                 }
                 break;

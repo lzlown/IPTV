@@ -9,6 +9,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.lzlown.iptv.R;
 import com.lzlown.iptv.bean.LiveSettingGroup;
+import com.lzlown.iptv.config.SettingConfig;
 
 import java.util.ArrayList;
 
@@ -24,47 +25,32 @@ public class LiveRightSettingGroupAdapter extends BaseQuickAdapter<LiveSettingGr
     protected void convert(BaseViewHolder holder, LiveSettingGroup group) {
         TextView tvGroupName = holder.getView(R.id.tvSettingGroupName);
         SwitchCompat swh_status = holder.getView(R.id.swh_status);
-//        View tvItemSelect = holder.getView(R.id.tvSettingItemSelect);
         ImageView tvItemRightSelect = holder.getView(R.id.tvSettingGroupLine);
-//        swh_status.setClickable(false);
         TextView val = holder.getView(R.id.tvSettingGroupVal);
         tvGroupName.setText(group.getGroupName());
-        if (group.getType()==0){
+        if (group.getType()== SettingConfig.BUTTON){
             val.setVisibility(View.GONE);
             tvItemRightSelect.setVisibility(View.GONE);
             swh_status.setVisibility(View.GONE);
-//            tvItemSelect.setVisibility(View.GONE);
-        }else if (group.getType()==1){
+        }else if (group.getType()==SettingConfig.SWITCH){
             val.setVisibility(View.GONE);
             tvItemRightSelect.setVisibility(View.GONE);
-//            tvItemSelect.setVisibility(View.VISIBLE);
             swh_status.setVisibility(View.VISIBLE);
             swh_status.setChecked(group.getSelect());
-        }else  if (group.getType()==2){
+        }else  if (group.getType()==SettingConfig.SELECT){
             val.setVisibility(View.VISIBLE);
             tvItemRightSelect.setVisibility(View.VISIBLE);
             val.setText(group.getVal());
-//            tvItemSelect.setVisibility(View.GONE);
             swh_status.setVisibility(View.GONE);
         }
         if (group.getGroupIndex() == focusedGroupIndex){
             tvGroupName.setTextColor(Color.BLACK);
             val.setTextColor(Color.BLACK);
             tvItemRightSelect.setImageResource(R.drawable.baseline_chevron_right_24_black);
-//            if (group.getSelect()){
-//                tvItemSelect.setBackgroundResource(R.drawable.radio_checked_shape);
-//            }else {
-//                tvItemSelect.setBackgroundResource(R.drawable.radio_disenable_shape);
-//            }
         }else {
             tvGroupName.setTextColor(Color.WHITE);
             val.setTextColor(Color.WHITE);
             tvItemRightSelect.setImageResource(R.drawable.baseline_chevron_right_24_white);
-//            if (group.getSelect()){
-//                tvItemSelect.setBackgroundResource(R.drawable.radio_checked_shape);
-//            }else {
-//                tvItemSelect.setBackgroundResource(R.drawable.radio_unchecked_shape);
-//            }
         }
     }
 

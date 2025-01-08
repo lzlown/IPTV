@@ -17,6 +17,10 @@ public class SettingConfig implements Config {
     private final List<LiveSettingGroup> liveSettingGroupList = new ArrayList<>();
     private final List<LiveSettingGroup> liveSettingGroupMoreList = new ArrayList<>();
 
+    public static final int BUTTON=0;
+    public static final int SWITCH=1;
+    public static final int SELECT=2;
+
     private SettingConfig() {
 
     }
@@ -96,11 +100,12 @@ public class SettingConfig implements Config {
         }
 
 
-        liveSettingGroupMoreList.get(0).setType(1);
-        liveSettingGroupMoreList.get(1).setType(1);
-        liveSettingGroupMoreList.get(2).setType(1);
-        liveSettingGroupMoreList.get(3).setType(2);
-        liveSettingGroupMoreList.get(4).setType(2);
+        liveSettingGroupMoreList.get(0).setType(SWITCH);
+        liveSettingGroupMoreList.get(1).setType(SWITCH);
+        liveSettingGroupMoreList.get(2).setType(SWITCH);
+        liveSettingGroupMoreList.get(3).setType(SELECT);
+        liveSettingGroupMoreList.get(4).setType(SELECT);
+        liveSettingGroupMoreList.get(5).setType(BUTTON);
 
         liveSettingGroupMoreList.get(0).setSelect(Hawk.get(HawkConfig.LIVE_SHOW_TIME, false));
         liveSettingGroupMoreList.get(1).setSelect(Hawk.get(HawkConfig.LIVE_SHOW_SPEED, false));
@@ -125,13 +130,6 @@ public class SettingConfig implements Config {
         return "";
     }
 
-    public String getSettingItemName(int groupIndex, int itemIndex) {
-        LiveSettingGroup liveSettingGroup = liveSettingGroupMoreList.get(groupIndex);
-        String itemName = liveSettingGroup.getLiveSettingItems().get(itemIndex).getItemName();
-        String[] split = itemName.split("&");
-        return split[0];
-    }
-
     private String getSettingItemVal(int groupIndex, int itemIndex) {
         LiveSettingGroup liveSettingGroup = liveSettingGroupMoreList.get(groupIndex);
         String itemName = liveSettingGroup.getLiveSettingItems().get(itemIndex).getItemName();
@@ -139,7 +137,14 @@ public class SettingConfig implements Config {
         return split.length>1?split[1]:split[0];
     }
 
-    public void setSettingItemVal(int groupIndex, int itemIndex) {
+    public String getSettingItemName(int groupIndex, int itemIndex) {
+        LiveSettingGroup liveSettingGroup = liveSettingGroupMoreList.get(groupIndex);
+        String itemName = liveSettingGroup.getLiveSettingItems().get(itemIndex).getItemName();
+        String[] split = itemName.split("&");
+        return split[0];
+    }
+
+    public void selectSettingItemVal(int groupIndex, int itemIndex) {
         String key = getSettingItemCacheKey(groupIndex);
         if (key.isEmpty()) return;
         Integer type = liveSettingGroupMoreList.get(groupIndex).getType();
@@ -169,9 +174,9 @@ public class SettingConfig implements Config {
     }
 
     public int getSelectItemIndex(int groupIndex) {
-        String settingItemCacheKey = getSettingItemCacheKey(groupIndex);
-        if (settingItemCacheKey.isEmpty()) return -1;
-        int val = Hawk.get(settingItemCacheKey, 5);
+        String key = getSettingItemCacheKey(groupIndex);
+        if (key.isEmpty()) return -1;
+        int val = Hawk.get(key, 5);
         ArrayList<LiveSettingItem> liveSettingItems = liveSettingGroupMoreList.get(groupIndex).getLiveSettingItems();
         for (int i = 0; i <liveSettingItems.size(); i++) {
             if (liveSettingItems.get(i).getItemName().split("&")[1].equals(String.valueOf(val))) {
@@ -186,10 +191,5 @@ public class SettingConfig implements Config {
         initLiveSettingGroupList();
         initLiveSettingGroupMoreList();
         callback.success();
-    }
-
-    public void reSet() {
-        initLiveSettingGroupList();
-        initLiveSettingGroupMoreList();
     }
 }
