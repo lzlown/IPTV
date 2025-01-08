@@ -264,7 +264,9 @@ public class LivePlayActivity extends BaseActivity {
         super.onResume();
         if (mVideoView != null && loadEnd) {
             //todo 睡眠处理
-            jumpActivity(LivePlayActivity.class);
+            reSet();
+            recreate();
+//            jumpActivity(LivePlayActivity.class);
         }
     }
 
@@ -280,13 +282,12 @@ public class LivePlayActivity extends BaseActivity {
         rmAllCallback();
     }
 
-    private void jumpThis(){
+    private void reSet(){
         if (mVideoView != null) {
             mVideoView.release();
         }
         epgConfig.reSet();
         rmAllCallback();
-        jumpActivity(LivePlayActivity.class);
     }
 
     @Override
@@ -1307,7 +1308,8 @@ public class LivePlayActivity extends BaseActivity {
                         Toast.makeText(App.getInstance(), "重置完成", Toast.LENGTH_SHORT).show();
                         mHandler.removeCallbacks(mHideRightSettingGroupRun);
                         mHandler.post(mHideRightSettingGroupRun);
-                        jumpThis();
+                        reSet();
+                        recreate();
                         break;
                     default:
                         break;
@@ -1326,7 +1328,8 @@ public class LivePlayActivity extends BaseActivity {
                     liveRightSettingGroupAdapter.setSelectedGroupIndex(index);
                     if (index==5){
                         mHandler.post(mHideRightSettingItemRun);
-                        jumpThis();
+                        reSet();
+                        recreate();
                     }
                 }
                 break;
