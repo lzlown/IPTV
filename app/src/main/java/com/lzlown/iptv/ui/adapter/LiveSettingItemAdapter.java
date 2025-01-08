@@ -6,6 +6,7 @@ import android.widget.TextView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.lzlown.iptv.R;
+import com.lzlown.iptv.base.BaseActivity;
 import com.lzlown.iptv.bean.LiveSettingItem;
 
 import java.util.ArrayList;
@@ -25,7 +26,7 @@ public class LiveSettingItemAdapter extends BaseQuickAdapter<LiveSettingItem, Ba
         int itemIndex = item.getItemIndex();
         if (focusedItemIndex == itemIndex) {
             if (item.isItemSelected()) {
-                tvItemName.setTextColor(mContext.getResources().getColor(R.color.color_selected));
+                tvItemName.setTextColor(((BaseActivity) mContext).getThemeColor());
                 tvItemSelect.setBackgroundResource(R.drawable.radio_checked_shape);
             } else {
                 tvItemName.setTextColor(Color.BLACK);
@@ -33,7 +34,7 @@ public class LiveSettingItemAdapter extends BaseQuickAdapter<LiveSettingItem, Ba
             }
         } else {
             if (item.isItemSelected()) {
-                tvItemName.setTextColor(mContext.getResources().getColor(R.color.color_selected));
+                tvItemName.setTextColor(((BaseActivity) mContext).getThemeColor());
                 tvItemSelect.setBackgroundResource(R.drawable.radio_checked_shape);
             }else {
                 tvItemName.setTextColor(Color.WHITE);

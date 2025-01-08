@@ -57,9 +57,9 @@ public class App extends MultiDexApplication implements HeaderInjector {
         Hawk.put(HawkConfig.PLAY_TYPE, 0);
         Hawk.put(HawkConfig.PLAY_SCALE, 0);
         Hawk.put(HawkConfig.LIVE_CROSS_GROUP, true);
-        Hawk.put(HawkConfig.API_URL, "https://lzlown.com:9090/6e082dd89e717324/v2/tvcfg.json");
+        Hawk.put(HawkConfig.API_URL, "https://lzlown.com:9090/6e082dd89e717324/v3/tvcfg.json");
         if (!Hawk.contains(HawkConfig.LIVE_CONNECT_TIMEOUT)) {
-            Hawk.put(HawkConfig.LIVE_CONNECT_TIMEOUT, -1);
+            Hawk.put(HawkConfig.LIVE_CONNECT_TIMEOUT, 10);
         }
         if (!Hawk.contains(HawkConfig.LIVE_SHOW_EPG)) {
             Hawk.put(HawkConfig.LIVE_SHOW_EPG, true);
@@ -71,11 +71,11 @@ public class App extends MultiDexApplication implements HeaderInjector {
             Hawk.put(HawkConfig.LIVE_SHOW_SPEED, true);
         }
         if (!Hawk.contains(HawkConfig.LIVE_UI_SHOW_TIME)) {
-            Hawk.put(HawkConfig.LIVE_UI_SHOW_TIME, 60);
+            Hawk.put(HawkConfig.LIVE_UI_SHOW_TIME, 10);
         }
         LIVE_SHOW_EPG= Hawk.get(HawkConfig.LIVE_SHOW_EPG, false);
-        LIVE_UI_SHOW_TIME= Hawk.get(HawkConfig.LIVE_UI_SHOW_TIME, 5)*1000;
-        LIVE_CONNECT_TIMEOUT= Hawk.get(HawkConfig.LIVE_CONNECT_TIMEOUT, 5)*1000;
+        LIVE_UI_SHOW_TIME= Hawk.get(HawkConfig.LIVE_UI_SHOW_TIME, 10)*1000;
+        LIVE_CONNECT_TIMEOUT= Hawk.get(HawkConfig.LIVE_CONNECT_TIMEOUT, 10)*1000;
     }
 
     public void cleanParams(){

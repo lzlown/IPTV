@@ -6,7 +6,9 @@ import android.widget.TextView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.lzlown.iptv.R;
+import com.lzlown.iptv.base.BaseActivity;
 import com.lzlown.iptv.bean.LiveEpgItem;
+import com.lzlown.iptv.config.EpgConfig;
 import com.lzlown.iptv.util.TimeUtil;
 
 import java.util.ArrayList;
@@ -15,7 +17,6 @@ import java.util.Date;
 public class LiveEpgItemAdapter extends BaseQuickAdapter<LiveEpgItem, BaseViewHolder> {
     private int selectedIndex = -1;
     private int focusedIndex = -1;
-    private LiveEpgItem liveEpgItem;
     private boolean isCanBack = true;
 
     public LiveEpgItemAdapter() {
@@ -29,22 +30,21 @@ public class LiveEpgItemAdapter extends BaseQuickAdapter<LiveEpgItem, BaseViewHo
         TextView back = holder.getView(R.id.tv_epg_re_reading);
         if (focusedIndex == value.index) {
             if (value.index == selectedIndex) {
-                name.setTextColor(mContext.getResources().getColor(R.color.color_selected));
-                time.setTextColor(mContext.getResources().getColor(R.color.color_selected));
+                name.setTextColor(((BaseActivity) mContext).getThemeColor());
+                time.setTextColor(((BaseActivity) mContext).getThemeColor());
             } else {
-                name.setTextColor(mContext.getResources().getColor(R.color.color_0E0E0E_90));
-                time.setTextColor(mContext.getResources().getColor(R.color.color_0E0E0E_90));
+                name.setTextColor(Color.BLACK);
+                time.setTextColor(Color.BLACK);
             }
         } else {
             if (value.index == selectedIndex) {
-                name.setTextColor(mContext.getResources().getColor(R.color.color_selected));
-                time.setTextColor(mContext.getResources().getColor(R.color.color_selected));
+                name.setTextColor(((BaseActivity) mContext).getThemeColor());
+                time.setTextColor(((BaseActivity) mContext).getThemeColor());
             }else {
                 name.setTextColor(Color.WHITE);
                 time.setTextColor(Color.WHITE);
             }
         }
-
 
         int color_epg_current = mContext.getResources().getColor(R.color.color_epg_current);
         int color_epg_none = mContext.getResources().getColor(R.color.color_epg_none);
@@ -73,7 +73,7 @@ public class LiveEpgItemAdapter extends BaseQuickAdapter<LiveEpgItem, BaseViewHo
             back.setText("直播中");
             back.setTextColor(Color.WHITE);
         } else {
-            if (value.equals(liveEpgItem)) {
+            if (value.equals(EpgConfig.get().getSelectedEpgItem())) {
                 back.setVisibility(View.VISIBLE);
                 back.setBackgroundColor(color_epg_back_ing);
                 back.setText("回看中");
@@ -118,10 +118,6 @@ public class LiveEpgItemAdapter extends BaseQuickAdapter<LiveEpgItem, BaseViewHo
             notifyItemChanged(this.focusedIndex);
         else if (this.focusedIndex != -1)
             notifyItemChanged(this.focusedIndex);
-    }
-
-    public void setLiveEpgItem(LiveEpgItem liveEpgItem) {
-        this.liveEpgItem = liveEpgItem;
     }
 
     public void setCanBack(boolean canBack) {

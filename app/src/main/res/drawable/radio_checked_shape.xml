@@ -7,7 +7,7 @@
             <!--设置圆环大小  -->
             <size android:width="26dp" android:height="26dp"></size>
             <!-- 边线颜色和宽度 -->
-            <stroke android:width="3dp" android:color="@color/color_selected"></stroke>
+            <stroke android:width="3dp" android:color="?attr/color_theme"></stroke>
         </shape>
     </item>
     <item android:left="3dp" android:right="3dp" android:top="3dp" android:bottom="3dp">
@@ -18,7 +18,7 @@
             <!-- 边线颜色和宽度 -->
             <stroke android:width="6dp" android:color="@android:color/transparent"></stroke>
             <!-- 填充 -->
-            <solid android:color="@color/color_selected"></solid>
+            <solid android:color="?attr/color_theme"></solid>
         </shape>
     </item>
 </layer-list>

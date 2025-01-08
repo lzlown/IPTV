@@ -66,5 +66,5 @@
             android:layout_gravity="center"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:indeterminateTint="@color/color_selected"/>
+            android:indeterminateTint="?attr/color_theme"/>
 </FrameLayout>

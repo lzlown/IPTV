@@ -6,6 +6,7 @@ import android.widget.TextView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.lzlown.iptv.R;
+import com.lzlown.iptv.base.BaseActivity;
 import com.lzlown.iptv.config.EpgConfig;
 import com.lzlown.iptv.base.App;
 import com.lzlown.iptv.bean.LiveChannelItem;
@@ -34,16 +35,16 @@ public class LiveChannelItemAdapter extends BaseQuickAdapter<LiveChannelItem, Ba
         int channelIndex = item.getChannelIndex();
         if (focusedChannelIndex == channelIndex) {
             if (channelIndex == selectedChannelIndex) {
-                tvChannel.setTextColor(mContext.getResources().getColor(R.color.color_selected));
-                tvChannelEpg.setTextColor(mContext.getResources().getColor(R.color.color_selected));
+                tvChannel.setTextColor(((BaseActivity) mContext).getThemeColor());
+                tvChannelEpg.setTextColor(((BaseActivity) mContext).getThemeColor());
             } else {
-                tvChannel.setTextColor(mContext.getResources().getColor(R.color.color_0E0E0E_90));
-                tvChannelEpg.setTextColor(mContext.getResources().getColor(R.color.color_0E0E0E_90));
+                tvChannel.setTextColor(Color.BLACK);
+                tvChannelEpg.setTextColor(Color.BLACK);
             }
         } else {
             if (channelIndex == selectedChannelIndex) {
-                tvChannel.setTextColor(mContext.getResources().getColor(R.color.color_selected));
-                tvChannelEpg.setTextColor(mContext.getResources().getColor(R.color.color_selected));
+                tvChannel.setTextColor(((BaseActivity) mContext).getThemeColor());
+                tvChannelEpg.setTextColor(((BaseActivity) mContext).getThemeColor());
             }else {
                 tvChannel.setTextColor(Color.WHITE);
                 tvChannelEpg.setTextColor(Color.WHITE);

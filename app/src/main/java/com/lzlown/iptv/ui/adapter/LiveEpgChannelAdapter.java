@@ -5,6 +5,7 @@ import android.widget.TextView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.lzlown.iptv.R;
+import com.lzlown.iptv.base.BaseActivity;
 import com.lzlown.iptv.bean.LiveChannelItem;
 
 import java.util.ArrayList;
@@ -24,13 +25,13 @@ public class LiveEpgChannelAdapter extends BaseQuickAdapter<LiveChannelItem, Bas
         int channelIndex = item.getChannelNum()-1;
         if (focusedChannelIndex == channelIndex) {
             if (channelIndex == selectedChannelIndex) {
-                tvItem.setTextColor(mContext.getResources().getColor(R.color.color_selected));
+                tvItem.setTextColor(((BaseActivity) mContext).getThemeColor());
             } else {
-                tvItem.setTextColor(mContext.getResources().getColor(R.color.color_0E0E0E_90));
+                tvItem.setTextColor(Color.BLACK);
             }
         } else {
             if (channelIndex == selectedChannelIndex) {
-                tvItem.setTextColor(mContext.getResources().getColor(R.color.color_selected));
+                tvItem.setTextColor(((BaseActivity) mContext).getThemeColor());
             }else {
                 tvItem.setTextColor(Color.WHITE);
             }

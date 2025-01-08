@@ -6,6 +6,7 @@ import android.widget.TextView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.lzlown.iptv.R;
+import com.lzlown.iptv.base.BaseActivity;
 import com.lzlown.iptv.bean.LiveEpgDate;
 
 import java.util.ArrayList;
@@ -27,13 +28,13 @@ public class LiveEpgDateAdapter extends BaseQuickAdapter<LiveEpgDate, BaseViewHo
         tvItem.setText(item.getDatePresented());
         if (focusedIndex == item.getIndex()) {
             if (item.getIndex() == selectedIndex) {
-                tvItem.setTextColor(mContext.getResources().getColor(R.color.color_selected));
+                tvItem.setTextColor(((BaseActivity) mContext).getThemeColor());
             } else {
-                tvItem.setTextColor(mContext.getResources().getColor(R.color.color_0E0E0E_90));
+                tvItem.setTextColor(Color.BLACK);
             }
         } else {
             if (item.getIndex() == selectedIndex) {
-                tvItem.setTextColor(mContext.getResources().getColor(R.color.color_selected));
+                tvItem.setTextColor(((BaseActivity) mContext).getThemeColor());
             } else {
                 tvItem.setTextColor(Color.WHITE);
             }
