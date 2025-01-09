@@ -1,24 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
-        <shape xmlns:android="http://schemas.android.com/apk/res/android"
-               android:shape="oval">
-
+        <shape android:shape="oval">
             <!--设置圆环大小  -->
-            <size android:width="26dp" android:height="26dp"></size>
+            <size android:width="26dp" android:height="26dp"/>
             <!-- 边线颜色和宽度 -->
-            <stroke android:width="3dp" android:color="?attr/color_theme"></stroke>
+            <stroke android:width="3dp" android:color="@color/color_selected"/>
         </shape>
     </item>
-    <item android:left="3dp" android:right="3dp" android:top="3dp" android:bottom="3dp">
-        <shape xmlns:android="http://schemas.android.com/apk/res/android"
-               android:shape="oval" >
+    <item >
+        <shape android:shape="oval">
             <!--设置圆环大小  -->
-            <size android:width="26dp" android:height="26dp"></size>
+            <size android:width="26dp" android:height="26dp"/>
             <!-- 边线颜色和宽度 -->
-            <stroke android:width="8dp" android:color="@android:color/transparent"></stroke>
+            <stroke android:width="12dp" android:color="@android:color/transparent"/>
             <!-- 填充 -->
-            <solid android:color="?attr/color_theme"></solid>
+            <solid android:color="@color/color_selected"/>
         </shape>
     </item>
 </layer-list>

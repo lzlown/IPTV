@@ -5,14 +5,13 @@
               android:layout_height="60dp"
               android:background="@drawable/shape_focus_setting"
               android:focusable="true"
+              android:gravity="center"
               android:focusableInTouchMode="false">
     <TextView
             android:id="@+id/tvSettingGroupName"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ellipsize="marquee"
-            android:layout_gravity="center"
-            android:gravity="center"
             android:marqueeRepeatLimit="marquee_forever"
             android:singleLine="true"
             android:textColor="@android:color/white"

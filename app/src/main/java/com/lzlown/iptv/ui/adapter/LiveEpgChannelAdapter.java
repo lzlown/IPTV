@@ -23,15 +23,16 @@ public class LiveEpgChannelAdapter extends BaseQuickAdapter<LiveChannelItem, Bas
         TextView tvItem = holder.getView(R.id.tvItem);
         tvItem.setText(String.format("%03d", item.getChannelNum()) + "  " + item.getChannelName());
         int channelIndex = item.getChannelNum()-1;
+        int color = mContext.getResources().getColor(R.color.color_selected);
         if (focusedChannelIndex == channelIndex) {
             if (channelIndex == selectedChannelIndex) {
-                tvItem.setTextColor(((BaseActivity) mContext).getThemeColor());
+                tvItem.setTextColor(color);
             } else {
                 tvItem.setTextColor(Color.BLACK);
             }
         } else {
             if (channelIndex == selectedChannelIndex) {
-                tvItem.setTextColor(((BaseActivity) mContext).getThemeColor());
+                tvItem.setTextColor(color);
             }else {
                 tvItem.setTextColor(Color.WHITE);
             }

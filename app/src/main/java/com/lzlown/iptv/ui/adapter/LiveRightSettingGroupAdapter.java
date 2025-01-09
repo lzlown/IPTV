@@ -1,13 +1,18 @@
 package com.lzlown.iptv.ui.adapter;
 
+import android.content.res.ColorStateList;
+import android.content.res.Resources;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.appcompat.widget.SwitchCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.lzlown.iptv.R;
+import com.lzlown.iptv.base.BaseActivity;
 import com.lzlown.iptv.bean.LiveSettingGroup;
 import com.lzlown.iptv.config.SettingConfig;
 
@@ -28,6 +33,16 @@ public class LiveRightSettingGroupAdapter extends BaseQuickAdapter<LiveSettingGr
         ImageView tvItemRightSelect = holder.getView(R.id.tvSettingGroupLine);
         TextView val = holder.getView(R.id.tvSettingGroupVal);
         tvGroupName.setText(group.getGroupName());
+//        swh_status.setThumbTintList(new ColorStateList(
+//                new int[][]{
+//                        new int[]{((BaseActivity) mContext).getThemeColor()},
+//                        new int[]{((BaseActivity) mContext).getThemeColor()}
+//                },
+//                new int[]{
+//                        ((BaseActivity) mContext).getThemeColor(),
+//                        ((BaseActivity) mContext).getThemeColor()
+//                }));
+
         if (group.getType()== SettingConfig.BUTTON){
             val.setVisibility(View.GONE);
             tvItemRightSelect.setVisibility(View.GONE);

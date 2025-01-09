@@ -28,18 +28,20 @@ public class LiveEpgItemAdapter extends BaseQuickAdapter<LiveEpgItem, BaseViewHo
         TextView name = holder.getView(R.id.tv_epg_name);
         TextView time = holder.getView(R.id.tv_epg_time);
         TextView back = holder.getView(R.id.tv_epg_re_reading);
+        int color = mContext.getResources().getColor(R.color.color_selected);
         if (focusedIndex == value.index) {
             if (value.index == selectedIndex) {
-                name.setTextColor(((BaseActivity) mContext).getThemeColor());
-                time.setTextColor(((BaseActivity) mContext).getThemeColor());
+                name.setTextColor(color);
+                time.setTextColor(color);
             } else {
                 name.setTextColor(Color.BLACK);
                 time.setTextColor(Color.BLACK);
             }
         } else {
             if (value.index == selectedIndex) {
-                name.setTextColor(((BaseActivity) mContext).getThemeColor());
-                time.setTextColor(((BaseActivity) mContext).getThemeColor());
+                name.setTextColor(color);
+
+                time.setTextColor(color);
             }else {
                 name.setTextColor(Color.WHITE);
                 time.setTextColor(Color.WHITE);

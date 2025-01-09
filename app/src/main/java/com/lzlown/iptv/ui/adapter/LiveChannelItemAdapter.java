@@ -27,6 +27,7 @@ public class LiveChannelItemAdapter extends BaseQuickAdapter<LiveChannelItem, Ba
         TextView tvChannel = holder.getView(R.id.tvChannelName);
         MarqueeTextView tvChannelEpg = holder.getView(R.id.tvChannelEpg);
         tvChannel.setText(String.format("%03d", item.getChannelNum()) + "  " + item.getChannelName());
+        int color = mContext.getResources().getColor(R.color.color_selected);
         if (App.LIVE_SHOW_EPG) {
             tvChannelEpg.setText(EpgConfig.get().getLiveEpgItem(item).getTitle());
         } else {
@@ -35,16 +36,16 @@ public class LiveChannelItemAdapter extends BaseQuickAdapter<LiveChannelItem, Ba
         int channelIndex = item.getChannelIndex();
         if (focusedChannelIndex == channelIndex) {
             if (channelIndex == selectedChannelIndex) {
-                tvChannel.setTextColor(((BaseActivity) mContext).getThemeColor());
-                tvChannelEpg.setTextColor(((BaseActivity) mContext).getThemeColor());
+                tvChannel.setTextColor(color);
+                tvChannelEpg.setTextColor(color);
             } else {
                 tvChannel.setTextColor(Color.BLACK);
                 tvChannelEpg.setTextColor(Color.BLACK);
             }
         } else {
             if (channelIndex == selectedChannelIndex) {
-                tvChannel.setTextColor(((BaseActivity) mContext).getThemeColor());
-                tvChannelEpg.setTextColor(((BaseActivity) mContext).getThemeColor());
+                tvChannel.setTextColor(color);
+                tvChannelEpg.setTextColor(color);
             }else {
                 tvChannel.setTextColor(Color.WHITE);
                 tvChannelEpg.setTextColor(Color.WHITE);

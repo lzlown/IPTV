@@ -438,7 +438,8 @@ public class LivePlayActivity extends BaseActivity {
             livePlayerManager.getLiveChannelPlayer(mVideoView, getCurrentChannelGroupIndex() + liveChannelItem.getChannelName() + liveChannelItem.getSourceIndex());
             isCanBack = liveChannelItem.getUrl().contains(".mp4");
 
-            epgConfig.init();
+            epgConfig.setEpgBackChannel(null);
+            epgConfig.setSelectedEpgItem(null);
             selectTime = 0;
             mHandler.removeCallbacks(backChangeRun);
 

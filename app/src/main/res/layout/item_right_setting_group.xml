@@ -9,10 +9,10 @@
               android:paddingLeft="@dimen/vs_item_padding"
               android:paddingRight="@dimen/vs_item_padding"
               android:focusableInTouchMode="false"
+              android:gravity="center_vertical"
               android:orientation="horizontal">
     <TextView
             android:id="@+id/tvSettingGroupName"
-            android:gravity="center_vertical"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -20,7 +20,6 @@
             android:marqueeRepeatLimit="marquee_forever"
             android:singleLine="true"
             android:textColor="@android:color/white"
-            android:layout_gravity="center_vertical"
             android:textSize="@dimen/ts_item"/>
     <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/swh_status"
@@ -29,7 +28,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/vs_item_content_margin"
-            android:layout_gravity="center_vertical"
             android:thumb="@drawable/switch_thumb"
             app:track="@drawable/switch_track_style"
             android:background="@android:color/transparent"
@@ -43,7 +41,6 @@
             android:layout_height="wrap_content"
             android:ellipsize="marquee"
             android:layout_marginStart="@dimen/vs_item_content_margin"
-            android:layout_gravity="center_vertical"
             android:marqueeRepeatLimit="marquee_forever"
             android:singleLine="true"
             android:textColor="@android:color/white"
@@ -51,7 +48,6 @@
             tools:ignore="RtlHardcoded"/>
     <ImageView
             android:id="@+id/tvSettingGroupLine"
-            android:layout_gravity="center_vertical"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/baseline_chevron_right_24_white" />
