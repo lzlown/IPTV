@@ -14,7 +14,7 @@ import com.lzlown.iptv.util.AppManager;
 public class HomeActivity extends BaseActivity {
     public static Context context;
     private RelativeLayout ll_loading;
-    private ProgressBar progress;
+    private View progress;
     private TextView loadErr;
     private Handler mHandler = new Handler();
     @Override

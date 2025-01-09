@@ -16,7 +16,7 @@
             <!--设置圆环大小  -->
             <size android:width="26dp" android:height="26dp"></size>
             <!-- 边线颜色和宽度 -->
-            <stroke android:width="6dp" android:color="@android:color/transparent"></stroke>
+            <stroke android:width="8dp" android:color="@android:color/transparent"></stroke>
             <!-- 填充 -->
             <solid android:color="?attr/color_theme"></solid>
         </shape>

@@ -163,4 +163,8 @@ public class LiveConfig implements Config {
         groupChannelIndex[1] = liveChannelIndex;
         return groupChannelIndex;
     }
+
+    public void init(){
+        currentLiveChannelItem=null;
+    }
 }

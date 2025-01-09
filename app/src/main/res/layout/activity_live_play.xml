@@ -270,21 +270,25 @@
                     android:id="@+id/ll_epg"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-                <TextView
-                        android:layout_width="wrap_content"
-                        android:minWidth="260dp"
-                        android:layout_height="wrap_content"
-                        android:textColor="@android:color/white"
-                        android:id="@+id/tv_channel_bar_name"
-                        android:gravity="center"
-                        android:textSize="@dimen/ts_item"/>
+<!--                <TextView-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:minWidth="260dp"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:textColor="@android:color/white"-->
+<!--                        android:id="@+id/tv_channel_bar_name"-->
+<!--                        android:gravity="center"-->
+<!--                        android:textSize="@dimen/ts_item"/>-->
                 <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center|left"
-                        android:layout_marginStart="@dimen/vs_item_margin"
                         android:orientation="vertical"
                         tools:ignore="RtlHardcoded">
+                    <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@android:color/white"
+                            android:id="@+id/tv_channel_bar_name"
+                            android:textSize="@dimen/ts_item"/>
                     <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_marginTop="5dp"

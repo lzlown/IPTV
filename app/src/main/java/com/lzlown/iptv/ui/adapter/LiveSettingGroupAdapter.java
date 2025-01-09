@@ -5,6 +5,7 @@ import android.widget.TextView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.lzlown.iptv.R;
+import com.lzlown.iptv.base.BaseActivity;
 import com.lzlown.iptv.bean.LiveSettingGroup;
 
 import java.util.ArrayList;
@@ -23,7 +24,7 @@ public class LiveSettingGroupAdapter extends BaseQuickAdapter<LiveSettingGroup, 
         tvGroupName.setText(group.getGroupName());
         int groupIndex = group.getGroupIndex();
         if (groupIndex == focusedGroupIndex) {
-            tvGroupName.setTextColor(Color.BLACK);
+            tvGroupName.setTextColor(((BaseActivity) mContext).getThemeColor());
         } else {
             tvGroupName.setTextColor(Color.WHITE);
         }

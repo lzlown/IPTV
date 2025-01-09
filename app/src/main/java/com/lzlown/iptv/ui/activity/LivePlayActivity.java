@@ -125,13 +125,14 @@ public class LivePlayActivity extends BaseActivity {
 
     protected void initView() {
         mVideoView = findViewById(R.id.mVideoView);
-
         loadEnd = false;
+        selectTime = 0;
+
         //todo 睡眠处理
-        mVideoView.release();
-        mVideoView.setUrl(liveConfig.getLiveChannelGroupList().get(0).getLiveChannels().get(0).getUrl());
-        mVideoView.start();
-        mVideoView.setScreenScaleType(0);
+//        mVideoView.release();
+//        mVideoView.setUrl(liveConfig.getLiveChannelGroupList().get(0).getLiveChannels().get(0).getUrl());
+//        mVideoView.start();
+//        mVideoView.setScreenScaleType(0);
 
         //界面 view
         tvChannelLayout = findViewById(R.id.tvLeftChannnelListLayout);
@@ -273,30 +274,14 @@ public class LivePlayActivity extends BaseActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        if (mVideoView != null) {
-            mVideoView.release();
-        }
         loadEnd = true;
-        liveConfig.setCurrentLiveChannelItem(null);
-        epgConfig.reSet();
-        rmAllCallback();
-    }
-
-    private void reSet(){
-        if (mVideoView != null) {
-            mVideoView.release();
-        }
-        epgConfig.reSet();
-        rmAllCallback();
+        reSet();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mVideoView != null) {
-            mVideoView.release();
-            mVideoView = null;
-        }
+        reSet();
     }
 
     private void rmAllCallback() {
@@ -307,10 +292,7 @@ public class LivePlayActivity extends BaseActivity {
 
     private void exit() {
         if (System.currentTimeMillis() - mExitTime < 2000) {
-            if (mVideoView != null) {
-                mVideoView.release();
-            }
-            rmAllCallback();
+            reSet();
             mVideoView = null;
             mHandler = null;
             AppManager.getInstance().appExit(0);
@@ -320,6 +302,15 @@ public class LivePlayActivity extends BaseActivity {
             mExitTime = System.currentTimeMillis();
             Toast.makeText(mContext, "再按一次返回键退出应用", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void reSet() {
+        if (mVideoView != null) {
+            mVideoView.release();
+        }
+        liveConfig.init();
+        epgConfig.init();
+        rmAllCallback();
     }
 
     private int getCurrentChannelGroupIndex() {
@@ -417,13 +408,6 @@ public class LivePlayActivity extends BaseActivity {
     @SuppressLint("DefaultLocale")
     private void playChannel(int channelGroupIndex, int liveChannelIndex, boolean changeSource) {
         LiveChannelItem liveChannelItem = liveConfig.getLiveChannels(channelGroupIndex).get(liveChannelIndex);
-        if (liveConfig.getCurrentLiveChannelItem() != null &&
-                liveConfig.getCurrentLiveChannelItem().equals(liveChannelItem) &&
-                !changeSource || (changeSource && liveChannelItem.getSourceNum() == 1)) {
-            if (!isCanBack) {
-                return;
-            }
-        }
         if (!changeSource) {
             liveConfig.setCurrentLiveChannelItem(liveChannelItem);
             Hawk.put(HawkConfig.LIVE_GROUP, channelGroupIndex);
@@ -454,7 +438,7 @@ public class LivePlayActivity extends BaseActivity {
             livePlayerManager.getLiveChannelPlayer(mVideoView, getCurrentChannelGroupIndex() + liveChannelItem.getChannelName() + liveChannelItem.getSourceIndex());
             isCanBack = liveChannelItem.getUrl().contains(".mp4");
 
-            epgConfig.reSet();
+            epgConfig.init();
             selectTime = 0;
             mHandler.removeCallbacks(backChangeRun);
 
@@ -478,11 +462,6 @@ public class LivePlayActivity extends BaseActivity {
         @Override
         public void run() {
             if (tvBack.getVisibility() == View.VISIBLE) {
-                if (mVideoView.getCurrentPlayState()==5){
-                    Integer[] groupChannelIndex = liveConfig.getNextChannel(1);
-                    playChannel(groupChannelIndex[0], groupChannelIndex[1], false);
-                    return;
-                }
                 playChannel(getCurrentChannelGroupIndex(), getCurrentLiveChannelIndex(), false);
                 return;
             }
@@ -692,10 +671,9 @@ public class LivePlayActivity extends BaseActivity {
                 int selectChannelIndex = 0;
                 if (groupIndex == currentChannelGroupIndex) {
                     selectChannelIndex = currentLiveChannelIndex;
-                    liveChannelItemAdapter.setSelectedChannelIndex(selectChannelIndex);
+                    liveChannelItemAdapter.setSelectedChannelIndex(currentLiveChannelIndex);
                 } else {
                     liveChannelItemAdapter.setSelectedChannelIndex(-1);
-
                 }
                 mChannelItemView.scrollToPosition(selectChannelIndex);
                 LinearLayoutManager layoutManager = (LinearLayoutManager) mChannelItemView.getLayoutManager();
@@ -716,8 +694,7 @@ public class LivePlayActivity extends BaseActivity {
 
     //初始播放
     private void initLiveChannelList() {
-        List<LiveChannelGroup> list = liveConfig.getLiveChannelGroupList();
-        if (list.isEmpty()) {
+        if (liveConfig.getLiveChannelGroupList().isEmpty()) {
             Toast.makeText(App.getInstance(), "频道列表为空", Toast.LENGTH_SHORT).show();
             finish();
         } else {
@@ -744,7 +721,6 @@ public class LivePlayActivity extends BaseActivity {
             selectChannel(0, lastChannelGroupIndex, lastLiveChannelIndex);
         }
     }
-
 
     //设置
     private void initSettingView() {
@@ -1155,6 +1131,7 @@ public class LivePlayActivity extends BaseActivity {
                                 liveSettingItemEpgAdapter.setNewData(epgItems);
                                 int liveEpgItemIndex = epgConfig.getLiveEpgItemIndex(epgItems);
                                 liveSettingItemEpgAdapter.setSelectedIndex(liveEpgItemIndex);
+                                liveSettingItemEpgAdapter.setCanBack(StringUtils.isNotEmpty(epgConfig.getEpgSelectedChannel().getSocUrls()));
                                 valIndex = liveEpgItemIndex;
                             } else {
                                 mSettingMenuView.setVisibility(View.INVISIBLE);
@@ -1322,11 +1299,11 @@ public class LivePlayActivity extends BaseActivity {
                 liveRightSettingItemAdapter.selectItem(position, true, true);
                 LiveSettingGroup item = liveRightSettingGroupAdapter.getItem(index);
                 if (item != null) {
-                    if (item.getVal().equals(settingConfig.getSettingItemName(index, position)))return;
+                    if (item.getVal().equals(settingConfig.getSettingItemName(index, position))) return;
                     item.setVal(settingConfig.getSettingItemName(index, position));
                     settingConfig.selectSettingItemVal(index, position);
                     liveRightSettingGroupAdapter.setSelectedGroupIndex(index);
-                    if (index==5){
+                    if (index == 5) {
                         mHandler.post(mHideRightSettingItemRun);
                         reSet();
                         recreate();
@@ -1698,9 +1675,9 @@ public class LivePlayActivity extends BaseActivity {
         liveEpgItemAdapter.setNewData(epgItems);
 
         int liveEpgItemIndex = epgConfig.getLiveEpgItemIndex(epgItems);
-        if (date.equals(TimeUtil.getTime())){
+        if (date.equals(TimeUtil.getTime())) {
             liveEpgItemAdapter.setSelectedIndex(liveEpgItemIndex);
-        }else {
+        } else {
             liveEpgItemAdapter.setSelectedIndex(-1);
         }
 

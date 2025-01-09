@@ -294,7 +294,7 @@ public class EpgConfig implements Config {
         return 0;
     }
 
-    public void reSet() {
+    public void init() {
         epgSelectedChannel = null;
         epgBackChannel = null;
         selectedEpgItem = null;

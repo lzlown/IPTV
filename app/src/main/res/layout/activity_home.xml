@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
-        xmlns:tools="http://schemas.android.com/tools" android:id="@+id/home_root"
+        xmlns:tools="http://schemas.android.com/tools" xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/home_root"
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -10,16 +11,28 @@
             android:id="@+id/ll_loading"
             android:background="@drawable/home_bg"
             android:visibility="invisible">
-        <ProgressBar
+        <com.lzlown.iptv.ui.view.RingLoadingView
                 android:id="@+id/loadingBar"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                app:rlv_auto_start="true"
+                app:rlv_end_color="#FFFFFF"
+                app:rlv_ring_width="3dp"
+                app:rlv_start_color="?attr/color_theme"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentBottom="true"
                 android:layout_marginBottom="20dp"
                 android:layout_marginEnd="20dp"
-                android:indeterminateTint="?attr/color_theme"
-                android:visibility="visible"/>
+                android:layout_width="30dp"
+                android:layout_height="30dp"/>
+<!--        <ProgressBar-->
+<!--                android:id="@+id/loadingBar"-->
+<!--                android:layout_width="40dp"-->
+<!--                android:layout_height="40dp"-->
+<!--                android:layout_alignParentEnd="true"-->
+<!--                android:layout_alignParentBottom="true"-->
+<!--                android:layout_marginBottom="20dp"-->
+<!--                android:layout_marginEnd="20dp"-->
+<!--                android:indeterminateTint="?attr/color_theme"-->
+<!--                android:visibility="visible"/>-->
         <TextView
                 android:text="加载失败"
                 android:layout_width="wrap_content"

@@ -2,7 +2,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
-             android:layout_height="match_parent">
+             android:layout_height="match_parent" xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <FrameLayout
             android:id="@+id/tv_pause_container"
@@ -61,10 +61,25 @@
             android:textSize="26sp"
             android:visibility="gone"/>
 
-    <ProgressBar
+    <!--    <ProgressBar-->
+    <!--            android:tag="vod_control_loading"-->
+    <!--            android:layout_gravity="center"-->
+    <!--            android:layout_width="40dp"-->
+    <!--            android:layout_height="40dp"-->
+    <!--            android:indeterminateTint="?attr/color_theme"/>-->
+    <LinearLayout
+            android:background="@android:color/black"
             android:tag="vod_control_loading"
-            android:layout_gravity="center"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:indeterminateTint="?attr/color_theme"/>
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        <com.lzlown.iptv.ui.view.RingLoadingView
+                app:rlv_auto_start="true"
+                app:rlv_end_color="#FFFFFF"
+                app:rlv_ring_width="3dp"
+                app:rlv_start_color="?attr/color_theme"
+                android:layout_width="30dp"
+                android:layout_height="30dp"/>
+    </LinearLayout>
+
 </FrameLayout>
