@@ -18,7 +18,7 @@
             android:layout_marginBottom="30dp"
             android:layout_gravity="bottom"
             android:padding="10dp"
-            android:gravity="center"
+            android:gravity="center_vertical"
             android:id="@+id/seekbar"
             android:background="@drawable/bg_channel"
             android:orientation="horizontal">
@@ -32,7 +32,8 @@
         <SeekBar
                 android:id="@+id/pb_progressbar"
                 android:layout_width="0dp"
-                android:layout_height="35dp"
+                android:layout_height="wrap_content"
+                android:minHeight="6dp"
                 android:maxHeight="6dp"
                 android:max="100"
                 android:progress="0"
