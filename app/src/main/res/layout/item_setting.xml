@@ -19,10 +19,9 @@
             android:singleLine="true"
             android:textColor="@android:color/white"
             android:textSize="@dimen/ts_item"/>
-    <View
+    <com.lzlown.iptv.ui.view.MyRadioButton
             android:layout_marginStart="@dimen/vs_item_content_margin"
             android:id="@+id/tvSettingItemSelect"
-            android:background="@drawable/radio_unchecked_shape"
             android:layout_width="26dp"
             android:layout_height="26dp"/>
 </LinearLayout>

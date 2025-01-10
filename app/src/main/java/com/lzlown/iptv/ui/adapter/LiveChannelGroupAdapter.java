@@ -25,7 +25,7 @@ public class LiveChannelGroupAdapter extends BaseQuickAdapter<LiveChannelGroup, 
         TextView tvItem = holder.getView(R.id.tvItem);
         tvItem.setGravity(Gravity.CENTER);
         tvItem.setText(item.getGroupName());
-        int color = mContext.getResources().getColor(R.color.color_selected);
+        int color = ((BaseActivity) mContext).getThemeColor();
         int groupIndex = item.getGroupIndex();
         if (focusedGroupIndex == groupIndex) {
             if (groupIndex == selectedGroupIndex) {

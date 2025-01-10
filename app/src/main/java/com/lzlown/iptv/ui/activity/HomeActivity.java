@@ -3,12 +3,11 @@ package com.lzlown.iptv.ui.activity;
 import android.content.Context;
 import android.os.Handler;
 import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.lzlown.iptv.R;
-import com.lzlown.iptv.config.AppConfig;
 import com.lzlown.iptv.base.BaseActivity;
+import com.lzlown.iptv.config.AppConfig;
 import com.lzlown.iptv.util.AppManager;
 
 public class HomeActivity extends BaseActivity {
@@ -17,6 +16,7 @@ public class HomeActivity extends BaseActivity {
     private View progress;
     private TextView loadErr;
     private Handler mHandler = new Handler();
+
     @Override
     protected int getLayoutResID() {
         return R.layout.activity_home;
@@ -51,7 +51,7 @@ public class HomeActivity extends BaseActivity {
     private final Runnable getCfgRun = new Runnable() {
         @Override
         public void run() {
-            AppConfig.get().init(null,new AppConfig.LoadCallback() {
+            AppConfig.get().init(null, new AppConfig.LoadCallback() {
                 @Override
                 public void success() {
                     ll_loading.setVisibility(View.GONE);

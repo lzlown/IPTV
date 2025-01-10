@@ -27,7 +27,7 @@ public class LiveChannelItemAdapter extends BaseQuickAdapter<LiveChannelItem, Ba
         TextView tvChannel = holder.getView(R.id.tvChannelName);
         MarqueeTextView tvChannelEpg = holder.getView(R.id.tvChannelEpg);
         tvChannel.setText(String.format("%03d", item.getChannelNum()) + "  " + item.getChannelName());
-        int color = mContext.getResources().getColor(R.color.color_selected);
+        int color = ((BaseActivity) mContext).getThemeColor();
         if (App.LIVE_SHOW_EPG) {
             tvChannelEpg.setText(EpgConfig.get().getLiveEpgItem(item).getTitle());
         } else {

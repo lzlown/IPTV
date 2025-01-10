@@ -7,6 +7,10 @@ import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.ClipDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.LayerDrawable;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.util.Log;
@@ -1401,6 +1405,15 @@ public class LivePlayActivity extends BaseActivity {
 
     //进度条
     private void initTvSBar() {
+        ((GradientDrawable) (TvSBar.getThumb())).setColor(getThemeColor());
+        Drawable[] drawables = new Drawable[2];
+        LayerDrawable drawable = (LayerDrawable) TvSBar.getProgressDrawable();
+        GradientDrawable gradientDrawable = new GradientDrawable();
+        gradientDrawable.setColor(getThemeColor());
+        drawables[0] = drawable.getDrawable(0);
+        drawables[1] = new ClipDrawable(gradientDrawable, ClipDrawable.VERTICAL, ClipDrawable.HORIZONTAL);
+        LayerDrawable layerDrawable = new LayerDrawable(drawables);
+        TvSBar.setProgressDrawable(layerDrawable);
         TvSBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {

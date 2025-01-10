@@ -26,7 +26,7 @@ public class LiveEpgDateAdapter extends BaseQuickAdapter<LiveEpgDate, BaseViewHo
         TextView tvItem = holder.getView(R.id.tvItem);
         tvItem.setGravity(Gravity.CENTER);
         tvItem.setText(item.getDatePresented());
-        int color = mContext.getResources().getColor(R.color.color_selected);
+        int color = ((BaseActivity) mContext).getThemeColor();
         if (focusedIndex == item.getIndex()) {
             if (item.getIndex() == selectedIndex) {
                 tvItem.setTextColor(color);
