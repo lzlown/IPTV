@@ -49,23 +49,16 @@ public abstract class BaseActivity extends AppCompatActivity implements CustomAd
             th.printStackTrace();
         }
         if (Hawk.get(HawkConfig.THEME_SELECT, 0) == 0) {
-            setTheme(R.style.DefaultTheme);
-        }
+            setTheme(R.style.DefaultTheme);}
         else if (Hawk.get(HawkConfig.THEME_SELECT, 0) == 1) {
             setTheme(R.style.NetfxTheme);
         } else if (Hawk.get(HawkConfig.THEME_SELECT, 0) == 2) {
-            setTheme(R.style.DoraeTheme);}
-//        } else if (Hawk.get(HawkConfig.THEME_SELECT, 0) == 3) {
-//            setTheme(R.style.PepsiTheme);
-//        } else if (Hawk.get(HawkConfig.THEME_SELECT, 0) == 4) {
-//            setTheme(R.style.NarutoTheme);
-//        } else if (Hawk.get(HawkConfig.THEME_SELECT, 0) == 5) {
-//            setTheme(R.style.MinionTheme);
-//        } else if (Hawk.get(HawkConfig.THEME_SELECT, 0) == 6) {
-//            setTheme(R.style.YagamiTheme);
-//        } else {
-//            setTheme(R.style.SakuraTheme);
-//        }
+            setTheme(R.style.DoraeTheme);
+        } else if (Hawk.get(HawkConfig.THEME_SELECT, 0) == 3) {
+            setTheme(R.style.SakuraTheme);
+        }  else {
+            setTheme(R.style.DefaultTheme);
+        }
 
         super.onCreate(savedInstanceState);
         setContentView(getLayoutResID());

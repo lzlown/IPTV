@@ -632,7 +632,7 @@ public class LivePlayActivity extends BaseActivity {
                 tvEpgLayout.requestLayout();
                 ViewObj viewObj = new ViewObj(tvChannelLayout, (ViewGroup.MarginLayoutParams) tvChannelLayout.getLayoutParams());
                 ObjectAnimator animator = ObjectAnimator.ofObject(viewObj, "marginLeft", new IntEvaluator(), -tvChannelLayout.getLayoutParams().width, 0);
-                animator.setDuration(100);
+                animator.setDuration(200);
                 animator.addListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
@@ -1053,7 +1053,7 @@ public class LivePlayActivity extends BaseActivity {
                 tvRightSettingGroupLayout.requestLayout();
                 ViewObj viewObj = new ViewObj(tvRightSettingGroupLayout, (ViewGroup.MarginLayoutParams) tvRightSettingGroupLayout.getLayoutParams());
                 ObjectAnimator animator = ObjectAnimator.ofObject(viewObj, "marginRight", new IntEvaluator(), -tvRightSettingGroupLayout.getLayoutParams().width, 0);
-                animator.setDuration(100);
+                animator.setDuration(200);
                 animator.addListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
@@ -1744,7 +1744,7 @@ public class LivePlayActivity extends BaseActivity {
                 tvEpgLayout.requestLayout();
                 ViewObj viewObj = new ViewObj(tvEpgLayout, (ViewGroup.MarginLayoutParams) tvEpgLayout.getLayoutParams());
                 ObjectAnimator animator = ObjectAnimator.ofObject(viewObj, "marginLeft", new IntEvaluator(), -tvEpgLayout.getLayoutParams().width, 0);
-                animator.setDuration(100);
+                animator.setDuration(200);
                 animator.addListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {

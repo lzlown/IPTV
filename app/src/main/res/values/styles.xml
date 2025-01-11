@@ -59,60 +59,12 @@
         <item name="color_theme_text_selected">#18A2E7</item>
         <item name="color_theme_text_focused">#FFFFFF</item>
     </style>
-<!--    <style name="PepsiTheme" parent="AppTheme.NoActionBar">-->
-<!--        <item name="color_theme">#004B93</item>-->
-<!--        <item name="color_theme_80">#CC004B93</item>-->
-<!--        <item name="color_theme_70">#B3004B93</item>-->
-<!--        <item name="color_theme_60">#99004B93</item>-->
-<!--        <item name="color_theme_50">#80004B93</item>-->
-<!--        <item name="color_theme_40">#66004B93</item>-->
-<!--        <item name="color_theme_dark_70">#B3002547</item>-->
-<!--        <item name="color_theme_focused">#B3002547</item>-->
-<!--        <item name="color_theme_text_selected">#004B93</item>-->
-<!--    </style>-->
-<!--    <style name="NarutoTheme" parent="AppTheme.NoActionBar">-->
-<!--        <item name="color_theme">#FF7439</item>-->
-<!--        <item name="color_theme_80">#CCFF7439</item>-->
-<!--        <item name="color_theme_70">#B3FF7439</item>-->
-<!--        <item name="color_theme_60">#99FF7439</item>-->
-<!--        <item name="color_theme_50">#80FF7439</item>-->
-<!--        <item name="color_theme_40">#66FF7439</item>-->
-<!--        <item name="color_theme_dark_70">#B3B35127</item>-->
-<!--        <item name="color_theme_focused">#B3B35127</item>-->
-<!--        <item name="color_theme_text_selected">#FF7439</item>-->
-<!--    </style>-->
-<!--    <style name="MinionTheme" parent="AppTheme.NoActionBar">-->
-<!--        <item name="color_theme">#FFD55E</item>-->
-<!--        <item name="color_theme_80">#CCFFD55E</item>-->
-<!--        <item name="color_theme_70">#B3FFD55E</item>-->
-<!--        <item name="color_theme_60">#99FFD55E</item>-->
-<!--        <item name="color_theme_50">#80FFD55E</item>-->
-<!--        <item name="color_theme_40">#66FFD55E</item>-->
-<!--        <item name="color_theme_dark_70">#B3B39542</item>-->
-<!--        <item name="color_theme_focused">#B3B39542</item>-->
-<!--        <item name="color_theme_text_selected">#FFD55E</item>-->
-<!--    </style>-->
-<!--    <style name="YagamiTheme" parent="AppTheme.NoActionBar">-->
-<!--        <item name="color_theme">#FF2F70</item>-->
-<!--        <item name="color_theme_80">#CCFF2F70</item>-->
-<!--        <item name="color_theme_70">#B3FF2F70</item>-->
-<!--        <item name="color_theme_60">#99FF2F70</item>-->
-<!--        <item name="color_theme_50">#80FF2F70</item>-->
-<!--        <item name="color_theme_40">#66FF2F70</item>-->
-<!--        <item name="color_theme_dark_70">#B3B3204E</item>-->
-<!--        <item name="color_theme_focused">#B3B3204E</item>-->
-<!--        <item name="color_theme_text_selected">#FF2F70</item>-->
-<!--    </style>-->
-<!--    <style name="SakuraTheme" parent="AppTheme.NoActionBar">-->
-<!--        <item name="color_theme">#FD9BDB</item>-->
-<!--        <item name="color_theme_80">#CCFD9BDB</item>-->
-<!--        <item name="color_theme_70">#B3FD9BDB</item>-->
-<!--        <item name="color_theme_60">#99FD9BDB</item>-->
-<!--        <item name="color_theme_50">#80FD9BDB</item>-->
-<!--        <item name="color_theme_40">#66FD9BDB</item>-->
-<!--        <item name="color_theme_dark_70">#B3B06B98</item>-->
-<!--        <item name="color_theme_focused">#B3B06B98</item>-->
-<!--        <item name="color_theme_text_selected">#FD9BDB</item>-->
-<!--    </style>-->
+
+    <style name="SakuraTheme" parent="AppTheme.NoActionBar">
+        <item name="color_theme">#FD9BDB</item>
+        <item name="color_theme_focused">#B3B06B98</item>
+        <item name="color_theme_text_selected">#FD9BDB</item>
+        <item name="color_theme_text_focused">#FFFFFF</item>
+    </style>
 
 </resources>
