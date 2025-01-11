@@ -44,7 +44,7 @@
         <item name="color_theme">#409EFF</item>
         <item name="color_theme_focused">#FFFFFF</item>
         <item name="color_theme_text_selected">#409EFF</item>
-        <item name="color_theme_text_focused">#000000</item>
+        <item name="color_theme_text_focused">#333333</item>
     </style>
 
     <style name="NetfxTheme" parent="AppTheme.NoActionBar">

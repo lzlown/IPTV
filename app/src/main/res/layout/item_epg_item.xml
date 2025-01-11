@@ -14,13 +14,13 @@
             android:layout_height="wrap_content"
             android:layout_weight="1">
         <TextView
-                android:textSize="18sp"
+                android:textSize="20sp"
                 android:id="@+id/tv_epg_time"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@android:color/white"/>
         <com.lzlown.iptv.ui.tv.widget.MarqueeTextView
-                android:textSize="20sp"
+                android:textSize="24sp"
                 android:ellipsize="marquee"
                 android:singleLine="true"
                 android:marqueeRepeatLimit="marquee_forever"

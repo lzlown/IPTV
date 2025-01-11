@@ -17,6 +17,8 @@ import com.lzlown.iptv.base.BaseActivity;
 import com.lzlown.iptv.base.MyBaseViewHolder;
 import com.lzlown.iptv.bean.LiveSettingGroup;
 import com.lzlown.iptv.config.SettingConfig;
+import com.lzlown.iptv.util.HawkConfig;
+import com.orhanobut.hawk.Hawk;
 
 import java.util.ArrayList;
 
@@ -58,11 +60,16 @@ public class LiveRightSettingGroupAdapter extends BaseQuickAdapter<LiveSettingGr
         if (group.getGroupIndex() == focusedGroupIndex){
             tvGroupName.setTextColor(BaseActivity.focusedTextColor);
             val.setTextColor(BaseActivity.focusedTextColor);
-            tvItemRightSelect.setImageResource(R.drawable.baseline_chevron_right_24_black);
+            if (Hawk.get(HawkConfig.THEME_SELECT, 0) == 0){
+                tvItemRightSelect.setImageResource(R.drawable.baseline_chevron_right_24_black);
+            }
         }else {
             tvGroupName.setTextColor(Color.WHITE);
             val.setTextColor(Color.WHITE);
-            tvItemRightSelect.setImageResource(R.drawable.baseline_chevron_right_24_white);
+            if (Hawk.get(HawkConfig.THEME_SELECT, 0) == 0){
+                tvItemRightSelect.setImageResource(R.drawable.baseline_chevron_right_24_white);
+            }
+
         }
     }
 

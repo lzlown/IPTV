@@ -28,18 +28,8 @@ public class LiveSettingGroupAdapter extends BaseQuickAdapter<LiveSettingGroup, 
         int groupIndex = group.getGroupIndex();
         if (groupIndex == focusedGroupIndex) {
             tvGroupName.setTextColor(BaseActivity.selectedTextColor);
-//            StateListDrawable stateListDrawable = new StateListDrawable();
-//            GradientDrawable gradientDrawable = new GradientDrawable();
-//            gradientDrawable.setColor(BaseActivity.focusedColor);
-//            gradientDrawable.setCornerRadius(15);
-//            stateListDrawable.addState(new int[]{android.R.attr.state_focused}, gradientDrawable);
-//            holder.itemView.setBackground(stateListDrawable);
         } else {
             tvGroupName.setTextColor(Color.WHITE);
-//            GradientDrawable gradientDrawable = new GradientDrawable();
-//            gradientDrawable.setCornerRadius(15);
-//            gradientDrawable.setColor(mContext.getResources().getColor(R.color.color_0E0E0E_90));
-//            holder.itemView.setBackground(gradientDrawable);
         }
     }
 
