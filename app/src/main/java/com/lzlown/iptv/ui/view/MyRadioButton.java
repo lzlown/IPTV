@@ -9,6 +9,7 @@ import android.view.View;
 import androidx.annotation.Nullable;
 import com.lzlown.iptv.R;
 import com.lzlown.iptv.base.BaseActivity;
+import me.jessyan.autosize.AutoSizeConfig;
 
 public class MyRadioButton extends View {
     Context context;
@@ -34,14 +35,16 @@ public class MyRadioButton extends View {
 
     public void setState(int state) {
         LayerDrawable background = (LayerDrawable) this.getBackground();
+        float targetDensity = (float) AutoSizeConfig.getInstance().getScreenWidth() / 1280;
+        int round = Math.round(targetDensity * 3);
         if (state == 0) {
-            ((GradientDrawable) background.getDrawable(0)).setStroke(3, Color.WHITE);
+            ((GradientDrawable) background.getDrawable(0)).setStroke(round, Color.WHITE);
             ((GradientDrawable) background.getDrawable(1)).setColor(Color.TRANSPARENT);
         } else if (state == 1) {
-            ((GradientDrawable) background.getDrawable(0)).setStroke(3, ((BaseActivity) context).getThemeColor());
-            ((GradientDrawable) background.getDrawable(1)).setColor(((BaseActivity) context).getThemeColor());
+            ((GradientDrawable) background.getDrawable(0)).setStroke(round, BaseActivity.selectedTextColor);
+            ((GradientDrawable) background.getDrawable(1)).setColor(BaseActivity.selectedTextColor);
         } else {
-            ((GradientDrawable) background.getDrawable(0)).setStroke(3, Color.BLACK);
+            ((GradientDrawable) background.getDrawable(0)).setStroke(round, BaseActivity.focusedTextColor);
             ((GradientDrawable) background.getDrawable(1)).setColor(Color.TRANSPARENT);
         }
 

@@ -7,10 +7,7 @@ import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.drawable.ClipDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.LayerDrawable;
+import android.graphics.drawable.*;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.util.Log;
@@ -39,6 +36,7 @@ import com.lzlown.iptv.videoplayer.util.PlayerUtils;
 import com.orhanobut.hawk.Hawk;
 import com.owen.tvrecyclerview.widget.TvRecyclerView;
 import com.owen.tvrecyclerview.widget.V7LinearLayoutManager;
+import me.jessyan.autosize.AutoSizeConfig;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -634,7 +632,7 @@ public class LivePlayActivity extends BaseActivity {
                 tvEpgLayout.requestLayout();
                 ViewObj viewObj = new ViewObj(tvChannelLayout, (ViewGroup.MarginLayoutParams) tvChannelLayout.getLayoutParams());
                 ObjectAnimator animator = ObjectAnimator.ofObject(viewObj, "marginLeft", new IntEvaluator(), -tvChannelLayout.getLayoutParams().width, 0);
-                animator.setDuration(200);
+                animator.setDuration(100);
                 animator.addListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
@@ -898,6 +896,12 @@ public class LivePlayActivity extends BaseActivity {
         tvRightSettingItemLayout.setVisibility(View.INVISIBLE);
 
         Button button = findViewById(R.id.settingRightItemExit);
+        StateListDrawable stateListDrawable = (StateListDrawable)button.getBackground();
+        GradientDrawable gradientDrawable = new GradientDrawable();
+        gradientDrawable.setColor(BaseActivity.focusedColor);
+        float targetDensity = (float) AutoSizeConfig.getInstance().getScreenWidth() / 1280;
+        gradientDrawable.setCornerRadius(Math.round(targetDensity * 10));
+        stateListDrawable.addState(new int[]{android.R.attr.state_focused}, gradientDrawable);
         button.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -905,7 +909,7 @@ public class LivePlayActivity extends BaseActivity {
                     mHandler.removeCallbacks(mHideRightSettingItemRun);
                     mHandler.postDelayed(mHideRightSettingItemRun, App.LIVE_UI_SHOW_TIME);
                     liveRightSettingItemAdapter.setFocusedItemIndex(-1);
-                    button.setTextColor(Color.BLACK);
+                    button.setTextColor(BaseActivity.focusedTextColor);
                 } else {
                     button.setTextColor(Color.WHITE);
                 }
@@ -1049,7 +1053,7 @@ public class LivePlayActivity extends BaseActivity {
                 tvRightSettingGroupLayout.requestLayout();
                 ViewObj viewObj = new ViewObj(tvRightSettingGroupLayout, (ViewGroup.MarginLayoutParams) tvRightSettingGroupLayout.getLayoutParams());
                 ObjectAnimator animator = ObjectAnimator.ofObject(viewObj, "marginRight", new IntEvaluator(), -tvRightSettingGroupLayout.getLayoutParams().width, 0);
-                animator.setDuration(200);
+                animator.setDuration(100);
                 animator.addListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
@@ -1523,7 +1527,7 @@ public class LivePlayActivity extends BaseActivity {
     //预告回放
     private void initEpgGroupView() {
         liveEpgChannelAdapter = new LiveEpgChannelAdapter();
-        liveEpgChannelAdapter.setNewData(liveConfig.getLiveChannelList());
+//        liveEpgChannelAdapter.setNewData(liveConfig.getLiveChannelList());
         initTvRecyclerView(mEpgChannelView, liveEpgChannelAdapter, mHideEpgRun, LinearLayout.VERTICAL);
         mEpgChannelView.setOnItemListener(new TvRecyclerView.OnItemListener() {
             @Override
@@ -1609,7 +1613,7 @@ public class LivePlayActivity extends BaseActivity {
                     liveEpgChannelAdapter.setFocusedChannelIndex(position);
                     liveEpgDateAdapter.setFocusedIndex(-1);
                 }
-                if (position == liveEpgChannelAdapter.getSelectedChannelIndex() || position < -1)
+                if (position == liveEpgChannelAdapter.getSelectedChannelIndex() || position < 0)
                     return;
                 liveEpgChannelAdapter.setSelectedChannelIndex(position);
                 epgConfig.setEpgSelectedChannel(liveConfig.getLiveChannelList().get(position));
@@ -1622,7 +1626,7 @@ public class LivePlayActivity extends BaseActivity {
                     liveEpgDateAdapter.setFocusedIndex(position);
                     liveEpgItemAdapter.setFocusedIndex(-1);
                 }
-                if (position == liveEpgDateAdapter.getSelectedIndex() || position < -1)
+                if (position == liveEpgDateAdapter.getSelectedIndex() || position < 0)
                     return;
                 liveEpgDateAdapter.setSelectedIndex(position);
                 String format = TimeUtil.timeFormat.format(liveEpgDateAdapter.getData().get(position).getDateParamVal());
@@ -1634,7 +1638,7 @@ public class LivePlayActivity extends BaseActivity {
                     liveEpgDateAdapter.setFocusedIndex(-1);
                     return;
                 }
-                if (position == liveEpgItemAdapter.getSelectedIndex() || position < -1)
+                if (position == liveEpgItemAdapter.getSelectedIndex() || position < 0)
                     return;
                 LiveEpgItem epgItem = liveEpgItemAdapter.getItem(position);
                 if (epgItem == null) {
@@ -1713,7 +1717,7 @@ public class LivePlayActivity extends BaseActivity {
             }
             int pos = epgConfig.getEpgSelectedChannel().getChannelNum() - 1;
             liveEpgChannelAdapter.setSelectedChannelIndex(pos);
-//            liveEpgChannelAdapter.setNewData(liveConfig.getLiveChannelList());
+            liveEpgChannelAdapter.setNewData(liveConfig.getLiveChannelList());
             mEpgChannelView.scrollToPosition(pos);
             LinearLayoutManager layoutManager = (LinearLayoutManager) mEpgChannelView.getLayoutManager();
             if (layoutManager != null) {
@@ -1740,7 +1744,7 @@ public class LivePlayActivity extends BaseActivity {
                 tvEpgLayout.requestLayout();
                 ViewObj viewObj = new ViewObj(tvEpgLayout, (ViewGroup.MarginLayoutParams) tvEpgLayout.getLayoutParams());
                 ObjectAnimator animator = ObjectAnimator.ofObject(viewObj, "marginLeft", new IntEvaluator(), -tvEpgLayout.getLayoutParams().width, 0);
-                animator.setDuration(200);
+                animator.setDuration(100);
                 animator.addListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {

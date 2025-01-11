@@ -1,24 +1,17 @@
 package com.lzlown.iptv.ui.adapter;
 
-import android.annotation.SuppressLint;
-import android.content.res.ColorStateList;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.os.Build;
-import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
-import androidx.appcompat.widget.AppCompatRadioButton;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.BaseViewHolder;
 import com.lzlown.iptv.R;
 import com.lzlown.iptv.base.BaseActivity;
+import com.lzlown.iptv.base.MyBaseViewHolder;
 import com.lzlown.iptv.bean.LiveSettingItem;
 import com.lzlown.iptv.ui.view.MyRadioButton;
 
 import java.util.ArrayList;
 
-public class LiveSettingItemAdapter extends BaseQuickAdapter<LiveSettingItem, BaseViewHolder> {
+public class LiveSettingItemAdapter extends BaseQuickAdapter<LiveSettingItem, MyBaseViewHolder> {
     private int focusedItemIndex = -1;
 
     public LiveSettingItemAdapter() {
@@ -27,24 +20,17 @@ public class LiveSettingItemAdapter extends BaseQuickAdapter<LiveSettingItem, Ba
 
 
     @Override
-    protected void convert(BaseViewHolder holder, LiveSettingItem item) {
+    protected void convert(MyBaseViewHolder holder, LiveSettingItem item) {
         TextView tvItemName = holder.getView(R.id.tvSettingItemName);
         MyRadioButton tvItemSelect = holder.getView(R.id.tvSettingItemSelect);
         tvItemName.setText(item.getItemName().split("&")[0]);
-        int itemIndex = item.getItemIndex();
-        int color = ((BaseActivity) mContext).getThemeColor();
-        if (focusedItemIndex == itemIndex) {
-            if (item.isItemSelected()) {
-                tvItemName.setTextColor(color);
-                tvItemSelect.setState(1);
-            } else {
-                tvItemName.setTextColor(Color.BLACK);
-                tvItemSelect.setState(-1);
-            }
+        if (item.isItemSelected()) {
+            tvItemName.setTextColor(BaseActivity.selectedTextColor);
+            tvItemSelect.setState(1);
         } else {
-            if (item.isItemSelected()) {
-                tvItemName.setTextColor(color);
-                tvItemSelect.setState(1);
+            if (focusedItemIndex==item.getItemIndex()) {
+                tvItemName.setTextColor(BaseActivity.focusedTextColor);
+                tvItemSelect.setState(-1);
             }else {
                 tvItemName.setTextColor(Color.WHITE);
                 tvItemSelect.setState(0);

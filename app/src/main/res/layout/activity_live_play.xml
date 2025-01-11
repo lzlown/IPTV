@@ -260,8 +260,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:paddingLeft="35dp"
-                android:paddingRight="35dp"
+                android:paddingLeft="50dp"
+                android:paddingRight="50dp"
                 android:gravity="bottom">
             <LinearLayout
                     android:gravity="center_vertical"
@@ -432,6 +432,7 @@
                     android:background="@drawable/shape_focus_button"
                     android:textSize="@dimen/ts_item"
                     android:text="@string/revert"
+                    android:gravity="center"
                     android:focusable="true"
                     android:focusableInTouchMode="false"
                     android:textColor="@android:color/white">

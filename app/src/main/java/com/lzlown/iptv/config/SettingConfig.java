@@ -21,6 +21,8 @@ public class SettingConfig implements Config {
     public static final int SWITCH=1;
     public static final int SELECT=2;
 
+
+
     private SettingConfig() {
 
     }
@@ -82,7 +84,7 @@ public class SettingConfig implements Config {
         itemsArrayList.add(epgItems);
         itemsArrayList.add(new ArrayList<>(Arrays.asList("5秒&5", "10秒&10", "15秒&15", "30秒&30", "60秒&60")));
         itemsArrayList.add(new ArrayList<>(Arrays.asList("5秒&5", "10秒&10", "15秒&15", "30秒&30", "60秒&60")));
-        itemsArrayList.add(new ArrayList<>(Arrays.asList("奈飞&0", "哆啦&1", "百事&2", "鸣人&3", "小黄&4", "八神&5", "樱花&6")));
+        itemsArrayList.add(new ArrayList<>(Arrays.asList("默认&0","奈飞&1", "哆啦&2", "百事&3", "鸣人&4", "小黄&5", "八神&6", "樱花&7")));
         itemsArrayList.add(epgItems);
         liveSettingGroupMoreList.clear();
         for (int i = 0; i < groupNames.size(); i++) {

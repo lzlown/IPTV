@@ -7,12 +7,13 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.lzlown.iptv.R;
 import com.lzlown.iptv.base.BaseActivity;
+import com.lzlown.iptv.base.MyBaseViewHolder;
 import com.lzlown.iptv.bean.LiveEpgDate;
 
 import java.util.ArrayList;
 
 
-public class LiveEpgDateAdapter extends BaseQuickAdapter<LiveEpgDate, BaseViewHolder> {
+public class LiveEpgDateAdapter extends BaseQuickAdapter<LiveEpgDate, MyBaseViewHolder> {
 
     private int selectedIndex = -1;
     private int focusedIndex = -1;
@@ -22,20 +23,16 @@ public class LiveEpgDateAdapter extends BaseQuickAdapter<LiveEpgDate, BaseViewHo
     }
 
     @Override
-    protected void convert(BaseViewHolder holder, LiveEpgDate item) {
+    protected void convert(MyBaseViewHolder holder, LiveEpgDate item) {
         TextView tvItem = holder.getView(R.id.tvItem);
         tvItem.setGravity(Gravity.CENTER);
         tvItem.setText(item.getDatePresented());
-        int color = ((BaseActivity) mContext).getThemeColor();
-        if (focusedIndex == item.getIndex()) {
-            if (item.getIndex() == selectedIndex) {
-                tvItem.setTextColor(color);
-            } else {
-                tvItem.setTextColor(Color.BLACK);
-            }
+        int index = item.getIndex();
+        if (selectedIndex == index) {
+            tvItem.setTextColor(BaseActivity.selectedTextColor);
         } else {
-            if (item.getIndex() == selectedIndex) {
-                tvItem.setTextColor(color);
+            if (focusedIndex == index) {
+                tvItem.setTextColor(BaseActivity.focusedTextColor);
             } else {
                 tvItem.setTextColor(Color.WHITE);
             }
@@ -63,9 +60,5 @@ public class LiveEpgDateAdapter extends BaseQuickAdapter<LiveEpgDate, BaseViewHo
             notifyItemChanged(preSelectedIndex);
         if (this.focusedIndex != -1)
             notifyItemChanged(this.focusedIndex);
-    }
-
-    public int getFocusedIndex() {
-        return focusedIndex;
     }
 }

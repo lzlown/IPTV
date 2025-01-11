@@ -1,6 +1,8 @@
 package com.lzlown.iptv.ui.adapter;
 
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.view.Gravity;
 import android.widget.TextView;
 
@@ -8,11 +10,12 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.lzlown.iptv.R;
 import com.lzlown.iptv.base.BaseActivity;
+import com.lzlown.iptv.base.MyBaseViewHolder;
 import com.lzlown.iptv.bean.LiveChannelGroup;
 
 import java.util.ArrayList;
 
-public class LiveChannelGroupAdapter extends BaseQuickAdapter<LiveChannelGroup, BaseViewHolder> {
+public class LiveChannelGroupAdapter extends BaseQuickAdapter<LiveChannelGroup, MyBaseViewHolder> {
     private int selectedGroupIndex = -1;
     private int focusedGroupIndex = -1;
 
@@ -21,25 +24,22 @@ public class LiveChannelGroupAdapter extends BaseQuickAdapter<LiveChannelGroup, 
     }
 
     @Override
-    protected void convert(BaseViewHolder holder, LiveChannelGroup item) {
+    protected void convert(MyBaseViewHolder holder, LiveChannelGroup item) {
         TextView tvItem = holder.getView(R.id.tvItem);
         tvItem.setGravity(Gravity.CENTER);
         tvItem.setText(item.getGroupName());
-        int color = ((BaseActivity) mContext).getThemeColor();
         int groupIndex = item.getGroupIndex();
-        if (focusedGroupIndex == groupIndex) {
-            if (groupIndex == selectedGroupIndex) {
-                tvItem.setTextColor(color);
-            } else {
-                tvItem.setTextColor(Color.BLACK);
-            }
+        if (selectedGroupIndex == groupIndex) {
+            tvItem.setTextColor(BaseActivity.selectedTextColor);
         } else {
-            if (groupIndex == selectedGroupIndex) {
-                tvItem.setTextColor(color);
-            }else {
+            if (focusedGroupIndex == groupIndex) {
+                tvItem.setTextColor(BaseActivity.focusedTextColor);
+            } else {
                 tvItem.setTextColor(Color.WHITE);
             }
         }
+
+
     }
 
     public void setSelectedGroupIndex(int selectedGroupIndex) {
@@ -64,7 +64,4 @@ public class LiveChannelGroupAdapter extends BaseQuickAdapter<LiveChannelGroup, 
             notifyItemChanged(this.selectedGroupIndex);
     }
 
-    public int getFocusedGroupIndex() {
-        return focusedGroupIndex;
-    }
 }

@@ -16,7 +16,6 @@
                 android:layout_width="200dp"
                 android:layout_height="140dp"
                 android:layout_gravity="center"
-                android:background="@drawable/shape_focus"
                 android:focusable="false"
                 android:focusableInTouchMode="false"
                 android:gravity="center"

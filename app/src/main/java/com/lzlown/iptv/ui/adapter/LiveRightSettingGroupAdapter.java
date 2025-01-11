@@ -1,7 +1,11 @@
 package com.lzlown.iptv.ui.adapter;
 
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.VectorDrawable;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -10,12 +14,13 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.lzlown.iptv.R;
 import com.lzlown.iptv.base.BaseActivity;
+import com.lzlown.iptv.base.MyBaseViewHolder;
 import com.lzlown.iptv.bean.LiveSettingGroup;
 import com.lzlown.iptv.config.SettingConfig;
 
 import java.util.ArrayList;
 
-public class LiveRightSettingGroupAdapter extends BaseQuickAdapter<LiveSettingGroup, BaseViewHolder> {
+public class LiveRightSettingGroupAdapter extends BaseQuickAdapter<LiveSettingGroup, MyBaseViewHolder> {
     private int selectedGroupIndex = -1;
     private int focusedGroupIndex = -1;
 
@@ -24,14 +29,14 @@ public class LiveRightSettingGroupAdapter extends BaseQuickAdapter<LiveSettingGr
     }
 
     @Override
-    protected void convert(BaseViewHolder holder, LiveSettingGroup group) {
+    protected void convert(MyBaseViewHolder holder, LiveSettingGroup group) {
         TextView tvGroupName = holder.getView(R.id.tvSettingGroupName);
         SwitchCompat swh_status = holder.getView(R.id.swh_status);
         ImageView tvItemRightSelect = holder.getView(R.id.tvSettingGroupLine);
         TextView val = holder.getView(R.id.tvSettingGroupVal);
         tvGroupName.setText(group.getGroupName());
         try {
-            ((GradientDrawable)swh_status.getThumbDrawable()).setColor(((BaseActivity) mContext).getThemeColor());
+            ((GradientDrawable)swh_status.getThumbDrawable()).setColor(BaseActivity.themeColor);
         }catch (Exception ignored){}
 
         if (group.getType()== SettingConfig.BUTTON){
@@ -49,9 +54,10 @@ public class LiveRightSettingGroupAdapter extends BaseQuickAdapter<LiveSettingGr
             val.setText(group.getVal());
             swh_status.setVisibility(View.GONE);
         }
+
         if (group.getGroupIndex() == focusedGroupIndex){
-            tvGroupName.setTextColor(Color.BLACK);
-            val.setTextColor(Color.BLACK);
+            tvGroupName.setTextColor(BaseActivity.focusedTextColor);
+            val.setTextColor(BaseActivity.focusedTextColor);
             tvItemRightSelect.setImageResource(R.drawable.baseline_chevron_right_24_black);
         }else {
             tvGroupName.setTextColor(Color.WHITE);

@@ -2,14 +2,12 @@ package com.lzlown.iptv.base;
 
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.util.Log;
 import androidx.multidex.MultiDexApplication;
 import com.lzlown.iptv.util.HawkConfig;
 import com.lzlown.iptv.videocache.HttpProxyCacheServer;
 import com.lzlown.iptv.videocache.headers.HeaderInjector;
 import com.orhanobut.hawk.Hawk;
 import me.jessyan.autosize.AutoSizeConfig;
-import me.jessyan.autosize.unit.Subunits;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -62,7 +60,7 @@ public class App extends MultiDexApplication implements HeaderInjector {
             Hawk.put(HawkConfig.LIVE_CONNECT_TIMEOUT, 10);
         }
         if (!Hawk.contains(HawkConfig.LIVE_SHOW_EPG)) {
-            Hawk.put(HawkConfig.LIVE_SHOW_EPG, true);
+            Hawk.put(HawkConfig.LIVE_SHOW_EPG, false);
         }
         if (!Hawk.contains(HawkConfig.LIVE_SHOW_TIME)) {
             Hawk.put(HawkConfig.LIVE_SHOW_TIME, true);

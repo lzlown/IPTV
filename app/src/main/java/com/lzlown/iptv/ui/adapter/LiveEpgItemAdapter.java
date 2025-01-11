@@ -7,6 +7,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.lzlown.iptv.R;
 import com.lzlown.iptv.base.BaseActivity;
+import com.lzlown.iptv.base.MyBaseViewHolder;
 import com.lzlown.iptv.bean.LiveEpgItem;
 import com.lzlown.iptv.config.EpgConfig;
 import com.lzlown.iptv.util.TimeUtil;
@@ -14,7 +15,7 @@ import com.lzlown.iptv.util.TimeUtil;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class LiveEpgItemAdapter extends BaseQuickAdapter<LiveEpgItem, BaseViewHolder> {
+public class LiveEpgItemAdapter extends BaseQuickAdapter<LiveEpgItem, MyBaseViewHolder> {
     private int selectedIndex = -1;
     private int focusedIndex = -1;
     private boolean isCanBack = true;
@@ -24,25 +25,18 @@ public class LiveEpgItemAdapter extends BaseQuickAdapter<LiveEpgItem, BaseViewHo
     }
 
     @Override
-    protected void convert(BaseViewHolder holder, LiveEpgItem value) {
+    protected void convert(MyBaseViewHolder holder, LiveEpgItem value) {
         TextView name = holder.getView(R.id.tv_epg_name);
         TextView time = holder.getView(R.id.tv_epg_time);
         TextView back = holder.getView(R.id.tv_epg_re_reading);
-        int color = ((BaseActivity) mContext).getThemeColor()  ;
-        if (focusedIndex == value.index) {
-            if (value.index == selectedIndex) {
-                name.setTextColor(color);
-                time.setTextColor(color);
-            } else {
-                name.setTextColor(Color.BLACK);
-                time.setTextColor(Color.BLACK);
-            }
+        if (selectedIndex == value.index) {
+            name.setTextColor(BaseActivity.selectedTextColor);
+            time.setTextColor(BaseActivity.selectedTextColor);
         } else {
-            if (value.index == selectedIndex) {
-                name.setTextColor(color);
-
-                time.setTextColor(color);
-            }else {
+            if (focusedIndex == value.index) {
+                name.setTextColor(BaseActivity.focusedTextColor);
+                time.setTextColor(BaseActivity.focusedTextColor);
+            } else {
                 name.setTextColor(Color.WHITE);
                 time.setTextColor(Color.WHITE);
             }
@@ -86,7 +80,7 @@ public class LiveEpgItemAdapter extends BaseQuickAdapter<LiveEpgItem, BaseViewHo
             back.setBackgroundColor(color_epg_back_can);
             back.setTextColor(Color.WHITE);
             back.setText("回看");
-            if (!isCanBack){
+            if (!isCanBack) {
                 back.setBackgroundColor(Color.GRAY);
             }
         }
@@ -106,11 +100,6 @@ public class LiveEpgItemAdapter extends BaseQuickAdapter<LiveEpgItem, BaseViewHo
             notifyItemChanged(this.selectedIndex);
     }
 
-
-    public int getFocusedIndex() {
-        return focusedIndex;
-    }
-
     public void setFocusedIndex(int focusedIndex) {
         int preFocusedChannelIndex = this.focusedIndex;
         this.focusedIndex = focusedIndex;
@@ -118,8 +107,8 @@ public class LiveEpgItemAdapter extends BaseQuickAdapter<LiveEpgItem, BaseViewHo
             notifyItemChanged(preFocusedChannelIndex);
         if (this.focusedIndex != -1)
             notifyItemChanged(this.focusedIndex);
-        else if (this.focusedIndex != -1)
-            notifyItemChanged(this.focusedIndex);
+        else if (this.selectedIndex != -1)
+            notifyItemChanged(this.selectedIndex);
     }
 
     public void setCanBack(boolean canBack) {

@@ -2,7 +2,7 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
        android:shape="oval">
     <!--设置圆环大小  -->
-    <size android:width="26dp" android:height="26dp"></size>
+    <size android:width="26dp" android:height="26dp"/>
     <!-- 边线颜色和宽度 -->
-    <stroke android:width="3dp" android:color="#ffffff"></stroke>
+    <stroke android:width="3dp" android:color="#ffffff"/>
 </shape>

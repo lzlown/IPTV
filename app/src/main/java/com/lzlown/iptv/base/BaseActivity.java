@@ -5,33 +5,35 @@ import android.content.Intent;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
-import android.graphics.BitmapFactory;
-import com.orhanobut.hawk.Hawk;
-import com.lzlown.iptv.util.HawkConfig;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.View;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.PermissionChecker;
 import com.lzlown.iptv.R;
 import com.lzlown.iptv.util.AppManager;
+import com.lzlown.iptv.util.HawkConfig;
+import com.lzlown.iptv.videoplayer.util.CutoutUtil;
+import com.orhanobut.hawk.Hawk;
 import me.jessyan.autosize.AutoSizeCompat;
 import me.jessyan.autosize.internal.CustomAdapt;
-import com.lzlown.iptv.videoplayer.util.CutoutUtil;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
 public abstract class BaseActivity extends AppCompatActivity implements CustomAdapt {
     protected Context mContext;
     private static float screenRatio = -100.0f;
+
+    public static int themeColor;
+    public static int focusedColor;
+    public static int selectedTextColor;
+    public static int focusedTextColor;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -42,33 +44,39 @@ public abstract class BaseActivity extends AppCompatActivity implements CustomAd
                 int screenWidth = dm.widthPixels;
                 int screenHeight = dm.heightPixels;
                 screenRatio = (float) Math.max(screenWidth, screenHeight) / (float) Math.min(screenWidth, screenHeight);
-                Log.d("screenRatio", "onCreate: "+screenRatio+"/"+screenWidth+"/"+screenHeight +"--"+(isBaseOnWidth() ? 1280 : 720));
             }
         } catch (Throwable th) {
             th.printStackTrace();
         }
-
         if (Hawk.get(HawkConfig.THEME_SELECT, 0) == 0) {
-            setTheme(R.style.NetfxTheme);
-        } else if (Hawk.get(HawkConfig.THEME_SELECT, 0) == 1) {
-            setTheme(R.style.DoraeTheme);
-        } else if (Hawk.get(HawkConfig.THEME_SELECT, 0) == 2) {
-            setTheme(R.style.PepsiTheme);
-        } else if (Hawk.get(HawkConfig.THEME_SELECT, 0) == 3) {
-            setTheme(R.style.NarutoTheme);
-        } else if (Hawk.get(HawkConfig.THEME_SELECT, 0) == 4) {
-            setTheme(R.style.MinionTheme);
-        } else if (Hawk.get(HawkConfig.THEME_SELECT, 0) == 5) {
-            setTheme(R.style.YagamiTheme);
-        } else {
-            setTheme(R.style.SakuraTheme);
+            setTheme(R.style.DefaultTheme);
         }
+        else if (Hawk.get(HawkConfig.THEME_SELECT, 0) == 1) {
+            setTheme(R.style.NetfxTheme);
+        } else if (Hawk.get(HawkConfig.THEME_SELECT, 0) == 2) {
+            setTheme(R.style.DoraeTheme);}
+//        } else if (Hawk.get(HawkConfig.THEME_SELECT, 0) == 3) {
+//            setTheme(R.style.PepsiTheme);
+//        } else if (Hawk.get(HawkConfig.THEME_SELECT, 0) == 4) {
+//            setTheme(R.style.NarutoTheme);
+//        } else if (Hawk.get(HawkConfig.THEME_SELECT, 0) == 5) {
+//            setTheme(R.style.MinionTheme);
+//        } else if (Hawk.get(HawkConfig.THEME_SELECT, 0) == 6) {
+//            setTheme(R.style.YagamiTheme);
+//        } else {
+//            setTheme(R.style.SakuraTheme);
+//        }
 
         super.onCreate(savedInstanceState);
         setContentView(getLayoutResID());
         mContext = this;
         CutoutUtil.adaptCutoutAboveAndroidP(mContext, true);//设置刘海
         AppManager.getInstance().addActivity(this);
+        TypedArray a = mContext.obtainStyledAttributes(R.styleable.themeColor);
+        themeColor = a.getColor(R.styleable.themeColor_color_theme, 0);
+        focusedColor = a.getColor(R.styleable.themeColor_color_theme_focused, 0);
+        selectedTextColor = a.getColor(R.styleable.themeColor_color_theme_text_selected, 0);
+        focusedTextColor = a.getColor(R.styleable.themeColor_color_theme_text_focused, 0);
         init();
     }
 

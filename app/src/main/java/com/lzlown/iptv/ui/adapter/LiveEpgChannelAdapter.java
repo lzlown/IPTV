@@ -6,11 +6,12 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.lzlown.iptv.R;
 import com.lzlown.iptv.base.BaseActivity;
+import com.lzlown.iptv.base.MyBaseViewHolder;
 import com.lzlown.iptv.bean.LiveChannelItem;
 
 import java.util.ArrayList;
 
-public class LiveEpgChannelAdapter extends BaseQuickAdapter<LiveChannelItem, BaseViewHolder> {
+public class LiveEpgChannelAdapter extends BaseQuickAdapter<LiveChannelItem, MyBaseViewHolder> {
     private int selectedChannelIndex = -1;
     private int focusedChannelIndex = -1;
 
@@ -19,21 +20,16 @@ public class LiveEpgChannelAdapter extends BaseQuickAdapter<LiveChannelItem, Bas
     }
 
     @Override
-    protected void convert(BaseViewHolder holder, LiveChannelItem item) {
+    protected void convert(MyBaseViewHolder holder, LiveChannelItem item) {
         TextView tvItem = holder.getView(R.id.tvItem);
         tvItem.setText(String.format("%03d", item.getChannelNum()) + "  " + item.getChannelName());
-        int channelIndex = item.getChannelNum()-1;
-        int color = ((BaseActivity) mContext).getThemeColor();
-        if (focusedChannelIndex == channelIndex) {
-            if (channelIndex == selectedChannelIndex) {
-                tvItem.setTextColor(color);
-            } else {
-                tvItem.setTextColor(Color.BLACK);
-            }
+        int channelIndex = item.getChannelNum() - 1;
+        if (selectedChannelIndex == channelIndex) {
+            tvItem.setTextColor(BaseActivity.selectedTextColor);
         } else {
-            if (channelIndex == selectedChannelIndex) {
-                tvItem.setTextColor(color);
-            }else {
+            if (focusedChannelIndex == channelIndex) {
+                tvItem.setTextColor(BaseActivity.focusedTextColor);
+            } else {
                 tvItem.setTextColor(Color.WHITE);
             }
         }
