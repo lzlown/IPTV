@@ -63,10 +63,10 @@ public class App extends MultiDexApplication implements HeaderInjector {
             Hawk.put(HawkConfig.LIVE_SHOW_EPG, false);
         }
         if (!Hawk.contains(HawkConfig.LIVE_SHOW_TIME)) {
-            Hawk.put(HawkConfig.LIVE_SHOW_TIME, true);
+            Hawk.put(HawkConfig.LIVE_SHOW_TIME, false);
         }
         if (!Hawk.contains(HawkConfig.LIVE_SHOW_SPEED)) {
-            Hawk.put(HawkConfig.LIVE_SHOW_SPEED, true);
+            Hawk.put(HawkConfig.LIVE_SHOW_SPEED, false);
         }
         if (!Hawk.contains(HawkConfig.LIVE_UI_SHOW_TIME)) {
             Hawk.put(HawkConfig.LIVE_UI_SHOW_TIME, 10);

@@ -61,7 +61,7 @@
             android:textSize="@dimen/ts_item"
             android:textColor="@android:color/white"
             android:layout_marginTop="35dp"
-            android:layout_marginEnd="20dp"
+            android:layout_marginEnd="35dp"
             tools:ignore="RtlHardcoded">
     </TextView>
     <TextView
