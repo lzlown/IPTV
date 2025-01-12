@@ -101,6 +101,7 @@ public abstract class BaseController extends BaseVideoController implements Gest
         mSlideInfo = findViewWithTag("vod_control_slide_info");
         mLoading = findViewWithTag("vod_control_loading");
         ringLoadingView=findViewById(R.id.RingLoadingView);
+//        mLoading.setVisibility(GONE);
 //        mPauseRoot = findViewWithTag("vod_control_pause");
 //        mPauseTime = findViewWithTag("vod_control_pause_t");
     }
@@ -131,15 +132,15 @@ public abstract class BaseController extends BaseVideoController implements Gest
                 break;
             case VideoView.STATE_PREPARED:
             case VideoView.STATE_BUFFERED:
-                mLoading.setVisibility(GONE);
-                ringLoadingView.stop();
+//                mLoading.setVisibility(GONE);
+//                ringLoadingView.stop();
                 break;
             case VideoView.STATE_PREPARING:
             case VideoView.STATE_BUFFERING:
-                if (mLoading.getVisibility() == GONE){
-                    ringLoadingView.start();
-                }
-                mLoading.setVisibility(VISIBLE);
+//                if (mLoading.getVisibility() == GONE){
+//                    ringLoadingView.start();
+//                }
+//                mLoading.setVisibility(VISIBLE);
                 break;
             case VideoView.STATE_PLAYBACK_COMPLETED:
 //                mLoading.setVisibility(GONE);
