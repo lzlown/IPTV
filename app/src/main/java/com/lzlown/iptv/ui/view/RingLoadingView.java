@@ -56,7 +56,7 @@ public class RingLoadingView extends View implements Runnable {
     /**
      * 当前旋转到的角度
      */
-    private int mCurrentAngle = 1;
+    private int mCurrentAngle = 270;
     /**
      * 半径
      */
@@ -183,11 +183,12 @@ public class RingLoadingView extends View implements Runnable {
     }
 
 
-    private void start() {
+    public void start() {
         postDelayed(this, INTERVAL_TIME);
     }
 
-    private void stop() {
+    public void stop()
+    {   mCurrentAngle=270;
         removeCallbacks(this);
     }
 

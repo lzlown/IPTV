@@ -20,11 +20,13 @@ import com.lzlown.iptv.util.HawkConfig;
 import com.lzlown.iptv.videoplayer.util.CutoutUtil;
 import com.orhanobut.hawk.Hawk;
 import me.jessyan.autosize.AutoSizeCompat;
+import me.jessyan.autosize.AutoSizeConfig;
 import me.jessyan.autosize.internal.CustomAdapt;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.security.PublicKey;
 
 public abstract class BaseActivity extends AppCompatActivity implements CustomAdapt {
     protected Context mContext;
@@ -49,14 +51,14 @@ public abstract class BaseActivity extends AppCompatActivity implements CustomAd
             th.printStackTrace();
         }
         if (Hawk.get(HawkConfig.THEME_SELECT, 0) == 0) {
-            setTheme(R.style.DefaultTheme);}
-        else if (Hawk.get(HawkConfig.THEME_SELECT, 0) == 1) {
+            setTheme(R.style.DefaultTheme);
+        } else if (Hawk.get(HawkConfig.THEME_SELECT, 0) == 1) {
             setTheme(R.style.NetfxTheme);
         } else if (Hawk.get(HawkConfig.THEME_SELECT, 0) == 2) {
             setTheme(R.style.DoraeTheme);
         } else if (Hawk.get(HawkConfig.THEME_SELECT, 0) == 3) {
             setTheme(R.style.SakuraTheme);
-        }  else {
+        } else {
             setTheme(R.style.DefaultTheme);
         }
 
@@ -162,6 +164,15 @@ public abstract class BaseActivity extends AppCompatActivity implements CustomAd
     @Override
     public boolean isBaseOnWidth() {
         return !(screenRatio >= 4.0f);
+    }
+
+    public float getTargetDensity() {
+        if (isBaseOnWidth()) {
+            return (float) AutoSizeConfig.getInstance().getScreenWidth() / getSizeInDp();
+        } else {
+            return (float) AutoSizeConfig.getInstance().getScreenHeight() / getSizeInDp();
+
+        }
     }
 
     protected static BitmapDrawable globalWp = null;

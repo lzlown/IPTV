@@ -2,40 +2,35 @@ package com.lzlown.iptv.ui.view;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.util.AttributeSet;
 import android.view.View;
 import androidx.annotation.Nullable;
-import com.lzlown.iptv.R;
 import com.lzlown.iptv.base.BaseActivity;
-import me.jessyan.autosize.AutoSizeConfig;
 
 public class MyRadioButton extends View {
+    float targetDensity = 1;
     Context context;
 
-
     public MyRadioButton(Context context) {
-        super(context);
-        this.context = context;
-        this.setBackgroundResource(R.drawable.radio_checked_shape);
+        this(context, null);
     }
 
     public MyRadioButton(Context context, @Nullable AttributeSet attrs) {
-        super(context, attrs);
-        this.context = context;
-        this.setBackgroundResource(R.drawable.radio_checked_shape);
+
+        this(context, attrs, 0);
     }
 
     public MyRadioButton(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         this.context = context;
-        this.setBackgroundResource(R.drawable.radio_checked_shape);
+        init();
     }
 
     public void setState(int state) {
         LayerDrawable background = (LayerDrawable) this.getBackground();
-        float targetDensity = (float) AutoSizeConfig.getInstance().getScreenWidth() / 1280;
         int round = Math.round(targetDensity * 3);
         if (state == 0) {
             ((GradientDrawable) background.getDrawable(0)).setStroke(round, Color.WHITE);
@@ -48,6 +43,21 @@ public class MyRadioButton extends View {
             ((GradientDrawable) background.getDrawable(1)).setColor(Color.TRANSPARENT);
         }
 
+    }
+
+    private void init() {
+        targetDensity = ((BaseActivity) context).getTargetDensity();
+        GradientDrawable gradientDrawable = new GradientDrawable();
+        gradientDrawable.setShape(GradientDrawable.OVAL);
+        gradientDrawable.setSize(Math.round(targetDensity * 26), Math.round(targetDensity * 26));
+        gradientDrawable.setStroke(Math.round(targetDensity * 3), BaseActivity.selectedTextColor);
+        GradientDrawable cen = new GradientDrawable();
+        cen.setSize(Math.round(targetDensity * 26), Math.round(targetDensity * 26));
+        cen.setShape(GradientDrawable.OVAL);
+        cen.setColor(BaseActivity.selectedTextColor);
+        cen.setStroke(Math.round(targetDensity * 12), Color.TRANSPARENT);
+        LayerDrawable layerDrawable = new LayerDrawable(new Drawable[]{gradientDrawable, cen});
+        this.setBackground(layerDrawable);
     }
 
 }

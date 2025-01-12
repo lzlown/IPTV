@@ -14,9 +14,9 @@
         <com.lzlown.iptv.ui.view.RingLoadingView
                 android:id="@+id/loadingBar"
                 app:rlv_auto_start="true"
-                app:rlv_end_color="#FFFFFF"
+                app:rlv_end_color="?attr/color_theme"
                 app:rlv_ring_width="3dp"
-                app:rlv_start_color="?attr/color_theme"
+                app:rlv_start_color="@android:color/white"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentBottom="true"
                 android:layout_marginBottom="20dp"

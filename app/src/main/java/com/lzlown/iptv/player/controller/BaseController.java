@@ -13,6 +13,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.widget.ContentLoadingProgressBar;
+import com.lzlown.iptv.R;
+import com.lzlown.iptv.ui.view.RingLoadingView;
 import com.lzlown.iptv.videoplayer.controller.BaseVideoController;
 import com.lzlown.iptv.videoplayer.controller.IControlComponent;
 import com.lzlown.iptv.videoplayer.controller.IGestureComponent;
@@ -86,6 +88,7 @@ public abstract class BaseController extends BaseVideoController implements Gest
 
     private TextView mSlideInfo;
     private View mLoading;
+    private RingLoadingView ringLoadingView;
 //    private ViewGroup mPauseRoot;
 //    private TextView mPauseTime;
 
@@ -97,6 +100,7 @@ public abstract class BaseController extends BaseVideoController implements Gest
         setOnTouchListener(this);
         mSlideInfo = findViewWithTag("vod_control_slide_info");
         mLoading = findViewWithTag("vod_control_loading");
+        ringLoadingView=findViewById(R.id.RingLoadingView);
 //        mPauseRoot = findViewWithTag("vod_control_pause");
 //        mPauseTime = findViewWithTag("vod_control_pause_t");
     }
@@ -117,6 +121,7 @@ public abstract class BaseController extends BaseVideoController implements Gest
             case VideoView.STATE_PLAYING:
 //                mPauseRoot.setVisibility(GONE);
                 mLoading.setVisibility(GONE);
+                ringLoadingView.stop();
                 break;
             case VideoView.STATE_PAUSED:
 //                mPauseRoot.setVisibility(VISIBLE);
@@ -127,9 +132,13 @@ public abstract class BaseController extends BaseVideoController implements Gest
             case VideoView.STATE_PREPARED:
             case VideoView.STATE_BUFFERED:
                 mLoading.setVisibility(GONE);
+                ringLoadingView.stop();
                 break;
             case VideoView.STATE_PREPARING:
             case VideoView.STATE_BUFFERING:
+                if (mLoading.getVisibility() == GONE){
+                    ringLoadingView.start();
+                }
                 mLoading.setVisibility(VISIBLE);
                 break;
             case VideoView.STATE_PLAYBACK_COMPLETED:
