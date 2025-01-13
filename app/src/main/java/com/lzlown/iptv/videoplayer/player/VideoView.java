@@ -548,6 +548,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
                     mPlayerContainer.removeView(view);
                 }
                 views.clear();
+                setScreenScaleType(0);
                 setPlayState(STATE_PLAYING);
                 mPlayerContainer.setKeepScreenOn(true);
                 break;

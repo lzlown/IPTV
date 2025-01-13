@@ -347,7 +347,7 @@ public class LivePlayActivity extends BaseActivity {
                     case VideoView.STATE_PREPARED:
                     case VideoView.STATE_BUFFERED:
                     case VideoView.STATE_PLAYING:
-                        livePlayerManager.getLiveChannelPlayer(mVideoView, getCurrentChannelGroupIndex() + getCurrentLiveChannelItem().getChannelName() + getCurrentLiveChannelItem().getSourceIndex());
+//                        livePlayerManager.getLiveChannelPlayer(mVideoView, getCurrentChannelGroupIndex() + getCurrentLiveChannelItem().getChannelName() + getCurrentLiveChannelItem().getSourceIndex());
                         mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
                         mHandler.removeCallbacks(mHideChannelNameRun);
                         mHandler.postDelayed(mHideChannelNameRun, 5000);
@@ -1232,12 +1232,13 @@ public class LivePlayActivity extends BaseActivity {
                             liveSettingItemScaleAdapter.setFocusedItemIndex(position);
                         } else {
                             if (liveSettingItemScaleAdapter.getSelectedItemIndex() == position) return;
-                            if (tvBack.getVisibility() == View.VISIBLE) {
-                                mVideoView.setScreenScaleType(position);
-                                return;
-                            }
-                            LiveChannelItem liveChannelItem = getCurrentLiveChannelItem();
-                            livePlayerManager.changeLivePlayerScale(mVideoView, position, getCurrentChannelGroupIndex() + liveChannelItem.getChannelName() + liveChannelItem.getSourceIndex());
+//                            if (tvBack.getVisibility() == View.VISIBLE) {
+//                                mVideoView.setScreenScaleType(position);
+//                                return;
+//                            }
+//                            LiveChannelItem liveChannelItem = getCurrentLiveChannelItem();
+//                            livePlayerManager.changeLivePlayerScale(mVideoView, position, getCurrentChannelGroupIndex() + liveChannelItem.getChannelName() + liveChannelItem.getSourceIndex());
+                            mVideoView.setScreenScaleType(position);
                             liveSettingItemScaleAdapter.selectItem(position, true, true);
                         }
                         break;
