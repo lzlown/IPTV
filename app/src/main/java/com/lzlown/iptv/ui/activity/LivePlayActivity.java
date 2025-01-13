@@ -347,6 +347,7 @@ public class LivePlayActivity extends BaseActivity {
                     case VideoView.STATE_PREPARED:
                     case VideoView.STATE_BUFFERED:
                     case VideoView.STATE_PLAYING:
+                        livePlayerManager.getLiveChannelPlayer(mVideoView, getCurrentChannelGroupIndex() + getCurrentLiveChannelItem().getChannelName() + getCurrentLiveChannelItem().getSourceIndex());
                         mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
                         mHandler.removeCallbacks(mHideChannelNameRun);
                         mHandler.postDelayed(mHideChannelNameRun, 5000);
@@ -437,7 +438,7 @@ public class LivePlayActivity extends BaseActivity {
         @Override
         public void run() {
             LiveChannelItem liveChannelItem = getCurrentLiveChannelItem();
-            livePlayerManager.getLiveChannelPlayer(mVideoView, getCurrentChannelGroupIndex() + liveChannelItem.getChannelName() + liveChannelItem.getSourceIndex());
+
             isCanBack = liveChannelItem.getUrl().contains(".mp4");
 
             epgConfig.setEpgBackChannel(null);
