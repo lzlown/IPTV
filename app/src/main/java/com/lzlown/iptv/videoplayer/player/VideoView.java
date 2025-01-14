@@ -269,8 +269,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
      */
     protected void addDisplay() {
         if (mRenderView != null) {
-            views.add(mRenderView.getView());
-//            mPlayerContainer.removeView(mRenderView.getView());
+            mPlayerContainer.removeView(mRenderView.getView());
             mRenderView.release();
         }
         mRenderView = mRenderViewFactory.createRenderView(getContext());
@@ -281,7 +280,6 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
                 Gravity.CENTER);
         mPlayerContainer.addView(mRenderView.getView(), 0, params);
     }
-   volatile List<View> views=new ArrayList<>();
 
     /**
      * 开始准备播放（直接播放）
@@ -370,11 +368,11 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
                 mMediaPlayer = null;
             }
             //释放renderView
-//            if (mRenderView != null) {
-//                mPlayerContainer.removeView(mRenderView.getView());
-//                mRenderView.release();
-//                mRenderView = null;
-//            }
+            if (mRenderView != null) {
+                mPlayerContainer.removeView(mRenderView.getView());
+                mRenderView.release();
+                mRenderView = null;
+            }
             //释放Assets资源
             if (mAssetFileDescriptor != null) {
                 try {
@@ -544,11 +542,6 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
                 setPlayState(STATE_BUFFERED);
                 break;
             case AbstractPlayer.MEDIA_INFO_RENDERING_START: // 视频/音频开始渲染
-                for (View view : views) {
-                    mPlayerContainer.removeView(view);
-                }
-                views.clear();
-                setScreenScaleType(0);
                 setPlayState(STATE_PLAYING);
                 mPlayerContainer.setKeepScreenOn(true);
                 break;

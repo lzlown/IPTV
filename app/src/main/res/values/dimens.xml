@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="vs_item_height">76dp</dimen>
+    <dimen name="vs_item_height">78dp</dimen>
     <dimen name="vs_item_content_margin">8dp</dimen>
     <dimen name="vs_item_padding">10dp</dimen>
     <dimen name="vs_item_margin">10dp</dimen>

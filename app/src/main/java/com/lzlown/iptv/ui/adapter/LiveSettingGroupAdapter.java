@@ -9,11 +9,12 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.lzlown.iptv.R;
 import com.lzlown.iptv.base.BaseActivity;
 import com.lzlown.iptv.base.MyBaseViewHolder;
+import com.lzlown.iptv.base.MySettingBaseViewHolder;
 import com.lzlown.iptv.bean.LiveSettingGroup;
 
 import java.util.ArrayList;
 
-public class LiveSettingGroupAdapter extends BaseQuickAdapter<LiveSettingGroup, MyBaseViewHolder> {
+public class LiveSettingGroupAdapter extends BaseQuickAdapter<LiveSettingGroup, MySettingBaseViewHolder> {
     private int selectedGroupIndex = -1;
     private int focusedGroupIndex = -1;
 
@@ -22,7 +23,7 @@ public class LiveSettingGroupAdapter extends BaseQuickAdapter<LiveSettingGroup, 
     }
 
     @Override
-    protected void convert(MyBaseViewHolder holder, LiveSettingGroup group) {
+    protected void convert(MySettingBaseViewHolder holder, LiveSettingGroup group) {
         TextView tvGroupName = holder.getView(R.id.tvSettingGroupName);
         tvGroupName.setText(group.getGroupName());
         int groupIndex = group.getGroupIndex();

@@ -36,6 +36,7 @@ public abstract class BaseActivity extends AppCompatActivity implements CustomAd
     public static int focusedColor;
     public static int selectedTextColor;
     public static int focusedTextColor;
+    public static int buttonColor;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -72,6 +73,7 @@ public abstract class BaseActivity extends AppCompatActivity implements CustomAd
         focusedColor = a.getColor(R.styleable.themeColor_color_theme_focused, 0);
         selectedTextColor = a.getColor(R.styleable.themeColor_color_theme_text_selected, 0);
         focusedTextColor = a.getColor(R.styleable.themeColor_color_theme_text_focused, 0);
+        buttonColor=getResources().getColor(R.color.color_0E0E0E_90);
         init();
     }
 

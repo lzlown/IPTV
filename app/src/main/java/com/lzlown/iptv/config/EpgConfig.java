@@ -27,6 +27,7 @@ public class EpgConfig implements Config {
     private LiveChannelItem epgSelectedChannel = null;
     private LiveChannelItem epgBackChannel = null;
     private LiveEpgItem selectedEpgItem;
+    private String backUrl;
 
     private EpgConfig() {
 
@@ -261,6 +262,13 @@ public class EpgConfig implements Config {
         this.epgBackChannel = epgBackChannel;
     }
 
+    public String getBackUrl() {
+        return backUrl;
+    }
+
+    public void setBackUrl(String backUrl) {
+        this.backUrl = backUrl;
+    }
 
     public LiveEpgItem getSelectedEpgItem() {
         return selectedEpgItem;

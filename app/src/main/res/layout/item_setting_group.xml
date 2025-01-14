@@ -3,7 +3,6 @@
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="140dp"
               android:layout_height="60dp"
-              android:background="@drawable/shape_focus_setting"
               android:focusable="true"
               android:gravity="center"
               android:focusableInTouchMode="false">

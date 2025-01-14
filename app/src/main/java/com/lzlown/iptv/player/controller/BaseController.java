@@ -132,15 +132,12 @@ public abstract class BaseController extends BaseVideoController implements Gest
                 break;
             case VideoView.STATE_PREPARED:
             case VideoView.STATE_BUFFERED:
-//                mLoading.setVisibility(GONE);
-//                ringLoadingView.stop();
+                mLoading.setVisibility(GONE);
+                ringLoadingView.stop();
                 break;
             case VideoView.STATE_PREPARING:
             case VideoView.STATE_BUFFERING:
-//                if (mLoading.getVisibility() == GONE){
-//                    ringLoadingView.start();
-//                }
-//                mLoading.setVisibility(VISIBLE);
+                showLoading();
                 break;
             case VideoView.STATE_PLAYBACK_COMPLETED:
 //                mLoading.setVisibility(GONE);
@@ -149,6 +146,12 @@ public abstract class BaseController extends BaseVideoController implements Gest
         }
     }
 
+    public void showLoading(){
+        if (mLoading.getVisibility() == GONE){
+            ringLoadingView.start();
+        }
+        mLoading.setVisibility(VISIBLE);
+    }
     /**
      * 设置是否可以滑动调节进度，默认可以
      */
