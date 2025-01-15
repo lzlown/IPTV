@@ -17,7 +17,7 @@ import java.util.concurrent.CountDownLatch;
 public class AppConfig implements Config {
     private static volatile AppConfig instance;
     private CountDownLatch latch;
-
+    private final List<Config> configs = new ArrayList<>();
     private AppConfig() {
     }
 
@@ -67,7 +67,7 @@ public class AppConfig implements Config {
                 try {
                     JsonElement jsonElement = JsonParser.parseString(response.getRawResponse().body().string());
                     PlayerConfig playerConfig = PlayerConfig.get();
-                    List<Config> configs = new ArrayList<>();
+                    configs.clear();
                     configs.add(playerConfig);
                     LiveConfig liveConfig = LiveConfig.get();
                     configs.add(liveConfig);
@@ -75,7 +75,7 @@ public class AppConfig implements Config {
                         EpgConfig epgConfig = EpgConfig.get();
                         configs.add(epgConfig);
                     }
-                    SettingConfig settingConfig= SettingConfig.get();
+                    SettingConfig settingConfig = SettingConfig.get();
                     configs.add(settingConfig);
                     latch = new CountDownLatch(configs.size());
                     for (Config baseConfig : configs) {

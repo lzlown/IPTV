@@ -16,6 +16,7 @@ public class HomeActivity extends BaseActivity {
     private View progress;
     private TextView loadErr;
     private Handler mHandler = new Handler();
+    private AppConfig appConfig;
 
     @Override
     protected int getLayoutResID() {
@@ -39,6 +40,7 @@ public class HomeActivity extends BaseActivity {
         progress = findViewById(R.id.loadingBar);
         loadErr = findViewById(R.id.loadErr);
         ll_loading.setVisibility(View.VISIBLE);
+        appConfig=AppConfig.get();
         mHandler.post(getCfgRun);
     }
 
@@ -51,7 +53,7 @@ public class HomeActivity extends BaseActivity {
     private final Runnable getCfgRun = new Runnable() {
         @Override
         public void run() {
-            AppConfig.get().init(null, new AppConfig.LoadCallback() {
+            appConfig.init(null, new AppConfig.LoadCallback() {
                 @Override
                 public void success() {
                     ll_loading.setVisibility(View.GONE);
