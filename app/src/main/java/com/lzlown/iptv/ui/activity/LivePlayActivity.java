@@ -1014,8 +1014,10 @@ public class LivePlayActivity extends BaseActivity {
                 switch (index) {
                     case 0:
                         holder = mSettingMenuView.findViewHolderForAdapterPosition(liveSettingItemEpgAdapter.getSelectedIndex());
+                        break;
                     case 1:
                         holder = mSettingMenuView.findViewHolderForAdapterPosition(liveSettingItemSourceAdapter.getSelectedItemIndex());
+                        break;
                     case 2:
                         holder = mSettingMenuView.findViewHolderForAdapterPosition(liveSettingItemScaleAdapter.getSelectedItemIndex());
                         break;
@@ -1810,7 +1812,7 @@ public class LivePlayActivity extends BaseActivity {
         countDownTimer.start();
         epgConfig.setBackUrl(String.format(epgConfig.getEpgBackChannel().getSocUrls(), TimeUtil.getTimeS(startDate) + "GMT-" + TimeUtil.getTimeS(endDate) + "GMT"));
         controller.showLoading();
-        mHandler.postDelayed(backPlayRun,100);
+        mHandler.postDelayed(backPlayRun, 100);
     }
 
     //选中 判断 回放
@@ -1847,7 +1849,7 @@ public class LivePlayActivity extends BaseActivity {
         mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
         mHandler.removeCallbacks(backChangeRun);
         mHandler.postDelayed(backChangeRun, 3000);
-        mHandler.postDelayed(backPlayRun,100);
+        mHandler.postDelayed(backPlayRun, 100);
     }
 
     //播放下一个回放
