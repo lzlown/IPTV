@@ -1639,9 +1639,7 @@ public class LivePlayActivity extends BaseActivity {
                 if (position == liveEpgItemAdapter.getSelectedIndex() || position < 0)
                     return;
                 LiveEpgItem epgItem = liveEpgItemAdapter.getItem(position);
-                if (epgItem == null) {
-                    return;
-                }
+                if (epgItem == null) return;
                 playBack(epgItem);
                 break;
         }
@@ -1691,7 +1689,7 @@ public class LivePlayActivity extends BaseActivity {
         liveEpgItemAdapter.setNewData(epgItems);
 
         int liveEpgItemIndex = epgConfig.getLiveEpgItemIndex(epgItems);
-        if (date.equals(TimeUtil.getTime())) {
+        if (date.equals(TimeUtil.getTime())||(epgConfig.getSelectedEpgItem()!=null&&date.equals(epgConfig.getSelectedEpgItem().currentEpgDate))) {
             liveEpgItemAdapter.setSelectedIndex(liveEpgItemIndex);
         } else {
             liveEpgItemAdapter.setSelectedIndex(-1);

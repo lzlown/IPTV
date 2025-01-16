@@ -33,10 +33,10 @@ public class PlayerConfig implements Config {
     private List<LivePlayerOption> defaultIJK() {
         List<LivePlayerOption> list = new ArrayList<>();
         list.add(new LivePlayerOption(4, "opensles", "0"));
-        list.add(new LivePlayerOption(4, "framedrop", "5"));
+        list.add(new LivePlayerOption(4, "framedrop", "3"));
         list.add(new LivePlayerOption(4, "start-on-prepared", "1"));
         list.add(new LivePlayerOption(1, "http-detect-rangeupport", "0"));
-        list.add(new LivePlayerOption(2, "skip_loop_filter", "0"));
+        list.add(new LivePlayerOption(2, "skip_loop_filter", "48"));
         list.add(new LivePlayerOption(4, "reconnect", "5"));
         list.add(new LivePlayerOption(4, "fast", "1"));
         list.add(new LivePlayerOption(1, "fflags", "fastseek"));
