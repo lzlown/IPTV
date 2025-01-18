@@ -13,7 +13,7 @@ import java.util.List;
 
 public class SettingConfig implements Config {
     private static final String TAG = "SettingConfig";
-    private static volatile SettingConfig instance;
+    private static final SettingConfig instance = new SettingConfig();
     private final List<LiveSettingGroup> liveSettingGroupList = new ArrayList<>();
     private final List<LiveSettingGroup> liveSettingGroupMoreList = new ArrayList<>();
 
@@ -28,13 +28,6 @@ public class SettingConfig implements Config {
     }
 
     public static SettingConfig get() {
-        if (instance == null) {
-            synchronized (SettingConfig.class) {
-                if (instance == null) {
-                    instance = new SettingConfig();
-                }
-            }
-        }
         return instance;
     }
 
@@ -77,7 +70,7 @@ public class SettingConfig implements Config {
     //右侧设置列表
     private void initLiveSettingGroupMoreList() {
         ArrayList<ArrayList<String>> itemsArrayList = new ArrayList<>();
-        ArrayList<String> groupNames = new ArrayList<>(Arrays.asList("显示时间", "显示网速", "显示预告", "超时关闭界面", "超时更换频道","主题", "恢复默认设置"));
+        ArrayList<String> groupNames = new ArrayList<>(Arrays.asList("显示时间", "显示网速", "显示预告", "超时关闭界面", "超时更换频道","主题","重载节目列表","重载节目预告", "恢复默认设置"));
         ArrayList<String> epgItems = new ArrayList<>();
         itemsArrayList.add(epgItems);
         itemsArrayList.add(epgItems);
@@ -85,6 +78,8 @@ public class SettingConfig implements Config {
         itemsArrayList.add(new ArrayList<>(Arrays.asList("5秒&5", "10秒&10", "15秒&15", "30秒&30", "60秒&60")));
         itemsArrayList.add(new ArrayList<>(Arrays.asList("5秒&5", "10秒&10", "15秒&15", "30秒&30", "60秒&60")));
         itemsArrayList.add(new ArrayList<>(Arrays.asList("默认&0","奈飞&1", "哆啦&2", "樱花&3")));
+        itemsArrayList.add(epgItems);
+        itemsArrayList.add(epgItems);
         itemsArrayList.add(epgItems);
         liveSettingGroupMoreList.clear();
         for (int i = 0; i < groupNames.size(); i++) {

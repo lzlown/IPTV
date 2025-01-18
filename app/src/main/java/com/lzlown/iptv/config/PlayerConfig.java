@@ -7,20 +7,13 @@ import com.lzlown.iptv.bean.LivePlayerOption;
 import java.util.*;
 
 public class PlayerConfig implements Config {
-    private static volatile PlayerConfig instance;
+    private static final PlayerConfig instance = new PlayerConfig();
 
     private PlayerConfig() {
 
     }
 
     public static PlayerConfig get() {
-        if (instance == null) {
-            synchronized (PlayerConfig.class) {
-                if (instance == null) {
-                    instance = new PlayerConfig();
-                }
-            }
-        }
         return instance;
     }
 

@@ -16,9 +16,10 @@ import java.util.List;
 import java.util.Map;
 
 public class LiveConfig implements Config {
-    private static volatile LiveConfig instance;
-    private List<LiveChannelGroup> liveChannelGroupList = new ArrayList<>();
-    private List<LiveChannelItem> liveChannelList = new ArrayList<>();
+    private static final LiveConfig instance = new LiveConfig();
+    private String liveUrl="";
+    private final List<LiveChannelGroup> liveChannelGroupList = new ArrayList<>();
+    private final List<LiveChannelItem> liveChannelList = new ArrayList<>();
     private LiveChannelItem currentLiveChannelItem = null;
 
     private LiveConfig() {
@@ -26,13 +27,6 @@ public class LiveConfig implements Config {
     }
 
     public static LiveConfig get() {
-        if (instance == null) {
-            synchronized (LiveConfig.class) {
-                if (instance == null) {
-                    instance = new LiveConfig();
-                }
-            }
-        }
         return instance;
     }
 
@@ -54,11 +48,11 @@ public class LiveConfig implements Config {
 
     @Override
     public void init(JsonElement jsonElement, AppConfig.LoadCallback callback) {
-        String live = jsonElement.getAsJsonObject().get("live").getAsString();
-        AppConfig.get().getOkGo(live).execute(new AbsCallback<String>() {
+        liveUrl = jsonElement.getAsJsonObject().get("live").getAsString();
+        AppConfig.get().getOkGo(liveUrl).execute(new AbsCallback<String>() {
             @Override
             public void onSuccess(Response<String> response) {
-                liveChannelGroupList = new ArrayList<>();
+                liveChannelGroupList.clear();
                 try {
                     LinkedHashMap<String, LinkedHashMap<String, ArrayList<String>>> tvMap = new LinkedHashMap<>();
                     TxtSubscribe.parse(tvMap, response.getRawResponse().body().string());
@@ -164,7 +158,75 @@ public class LiveConfig implements Config {
         return groupChannelIndex;
     }
 
-    public void init(){
-        currentLiveChannelItem=null;
+    public void init() {
+        currentLiveChannelItem = null;
+    }
+
+    public void reLoad() {
+        AppConfig.get().getOkGo(liveUrl).execute(new AbsCallback<String>() {
+            @Override
+            public void onSuccess(Response<String> response) {
+                liveChannelGroupList.clear();
+                try {
+                    LinkedHashMap<String, LinkedHashMap<String, ArrayList<String>>> tvMap = new LinkedHashMap<>();
+                    TxtSubscribe.parse(tvMap, response.getRawResponse().body().string());
+                    int sum = 0;
+                    int groupIndex = -1;
+                    for (Map.Entry entry : tvMap.entrySet()) {
+                        LinkedHashMap<String, ArrayList<String>> item = (LinkedHashMap<String, ArrayList<String>>) entry.getValue();
+                        LiveChannelGroup liveChannelGroup = new LiveChannelGroup();
+                        liveChannelGroup.setGroupIndex(liveChannelGroupList.size());
+                        liveChannelGroup.setGroupName(entry.getKey().toString());
+                        groupIndex++;
+                        ArrayList<LiveChannelItem> liveChannelItems = new ArrayList<>();
+                        for (Map.Entry entry2 : item.entrySet()) {
+                            sum++;
+                            LiveChannelItem liveChannelItem = new LiveChannelItem();
+                            liveChannelItem.setChannelGroupIndex(groupIndex);
+                            liveChannelItem.setChannelIndex(liveChannelItems.size());
+                            liveChannelItem.setChannelNum(sum);
+                            liveChannelItem.setChannelName(entry2.getKey().toString());
+                            List<LiveChannelItemSource> sources = new ArrayList<>();
+                            for (int i = 0; i < ((ArrayList<?>) entry2.getValue()).size(); i++) {
+                                LiveChannelItemSource liveChannelItemSource = new LiveChannelItemSource();
+                                String url = ((ArrayList<?>) entry2.getValue()).get(i).toString();
+                                String[] split = url.split("#");
+                                liveChannelItemSource.setUrl(split[1]);
+                                String[] splitsoc = split[0].split("&");
+                                if (splitsoc.length > 2) {
+                                    liveChannelItemSource.setBackUrl(splitsoc[2]);
+                                }
+                                if (splitsoc.length > 1) {
+                                    liveChannelItemSource.setCc(splitsoc[0]);
+                                    liveChannelItemSource.setName(splitsoc[1]);
+                                } else {
+                                    liveChannelItemSource.setName(splitsoc[0]);
+                                }
+                                sources.add(liveChannelItemSource);
+                            }
+                            liveChannelItem.setLiveChannelItemSources(sources);
+                            liveChannelItems.add(liveChannelItem);
+                        }
+                        liveChannelGroup.setLiveChannels(liveChannelItems);
+                        liveChannelGroupList.add(liveChannelGroup);
+                    }
+                    liveChannelList.clear();
+                    for (LiveChannelGroup liveChannelGroup : liveChannelGroupList) {
+                        liveChannelList.addAll(liveChannelGroup.getLiveChannels());
+                    }
+                } catch (Throwable ignored) {
+
+                }
+            }
+
+            @Override
+            public void onError(Response<String> response) {
+                super.onError(response);
+            }
+
+            public String convertResponse(okhttp3.Response response) throws Throwable {
+                return "";
+            }
+        });
     }
 }

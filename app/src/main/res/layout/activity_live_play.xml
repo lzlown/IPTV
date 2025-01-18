@@ -376,10 +376,7 @@
                 android:focusableInTouchMode="false"
                 android:divider="@null"
                 android:fadeScrollbars="false"
-                android:layout_marginTop="18dp"
-                android:layout_marginBottom="18dp"
-                android:layout_marginStart="@dimen/vs_item_margin"
-                android:layout_marginEnd="@dimen/vs_item_margin"
+                android:padding="9dp"
                 android:scrollbars="none"/>
     </LinearLayout>
     <!--右侧更多设置子项-->
@@ -393,10 +390,7 @@
         <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="18dp"
-                android:layout_marginBottom="18dp"
-                android:layout_marginStart="@dimen/vs_item_margin"
-                android:layout_marginEnd="@dimen/vs_item_margin"
+                android:padding="9dp"
                 android:orientation="horizontal">
             <Button
                     android:id="@+id/settingRightItemExit"
@@ -430,9 +424,7 @@
                 android:focusableInTouchMode="false"
                 android:divider="@null"
                 android:fadeScrollbars="false"
-                android:layout_marginBottom="18dp"
-                android:layout_marginStart="@dimen/vs_item_margin"
-                android:layout_marginEnd="@dimen/vs_item_margin"
+                android:padding="9dp"
                 android:scrollbars="none"/>
     </LinearLayout>
 

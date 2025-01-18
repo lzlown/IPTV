@@ -700,7 +700,6 @@ public class LivePlayActivity extends BaseActivity {
     //初始播放
     private void initLiveChannelList() {
         if (liveConfig.getLiveChannelGroupList().isEmpty()) {
-            Toast.makeText(App.getInstance(), "频道列表为空", Toast.LENGTH_SHORT).show();
             finish();
         } else {
             String lastChannelName = Hawk.get(HawkConfig.LIVE_CHANNEL, "");
@@ -1277,6 +1276,16 @@ public class LivePlayActivity extends BaseActivity {
                         mHandler.postDelayed(mShowRightSettingItemRun, 200);
                         break;
                     case 6:
+                        liveConfig.reLoad();
+                        mHandler.removeCallbacks(mHideRightSettingGroupRun);
+                        mHandler.post(mHideRightSettingGroupRun);
+                        break;
+                    case 7:
+                        epgConfig.reLoad();
+                        mHandler.removeCallbacks(mHideRightSettingGroupRun);
+                        mHandler.post(mHideRightSettingGroupRun);
+                        break;
+                    case 8:
                         App.getInstance().cleanParams();
                         settingConfig.init(null, new AppConfig.LoadCallback() {
                             @Override
@@ -1689,7 +1698,7 @@ public class LivePlayActivity extends BaseActivity {
         liveEpgItemAdapter.setNewData(epgItems);
 
         int liveEpgItemIndex = epgConfig.getLiveEpgItemIndex(epgItems);
-        if (date.equals(TimeUtil.getTime())||(epgConfig.getSelectedEpgItem()!=null&&date.equals(epgConfig.getSelectedEpgItem().currentEpgDate))) {
+        if (date.equals(TimeUtil.getTime()) || (epgConfig.getSelectedEpgItem() != null && date.equals(epgConfig.getSelectedEpgItem().currentEpgDate))) {
             liveEpgItemAdapter.setSelectedIndex(liveEpgItemIndex);
         } else {
             liveEpgItemAdapter.setSelectedIndex(-1);

@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.lzlown.iptv.base.App;
 import com.lzlown.iptv.bean.*;
 import com.lzlown.iptv.util.StringUtils;
 import com.lzlown.iptv.util.TimeUtil;
@@ -15,7 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class EpgConfig implements Config {
-    private static volatile EpgConfig instance;
+    private static final EpgConfig instance = new EpgConfig();
     private final Map<String, Map<String, LiveEpgGroup>> liveEpgMap = new HashMap<>();
     private final Map<String, Map<String, LiveEpgGroup>> defaultliveEpgMap = new HashMap<>();
     private String date;
@@ -34,13 +35,6 @@ public class EpgConfig implements Config {
     }
 
     public static EpgConfig get() {
-        if (instance == null) {
-            synchronized (EpgConfig.class) {
-                if (instance == null) {
-                    instance = new EpgConfig();
-                }
-            }
-        }
         return instance;
     }
 
@@ -108,13 +102,13 @@ public class EpgConfig implements Config {
                     }
                     callback.success();
                 } catch (Exception e) {
-                    callback.error("EPG解析失败");
+                    callback.success();
                 }
             }
 
             @Override
             public void onError(Response<String> response) {
-                callback.error("EPG获取失败");
+                callback.success();
             }
 
             public String convertResponse(okhttp3.Response response) throws Throwable {
@@ -291,7 +285,7 @@ public class EpgConfig implements Config {
     public int getLiveEpgItemIndex(List<LiveEpgItem> epgItems) {
         Date time = new Date();
         for (LiveEpgItem epgItem : epgItems) {
-            if (selectedEpgItem==epgItem){
+            if (selectedEpgItem == epgItem) {
                 return epgItem.index;
             }
             if (time.compareTo(TimeUtil.getEpgTime(epgItem.currentEpgDate + epgItem.start)) > 0 &&
@@ -306,5 +300,19 @@ public class EpgConfig implements Config {
         epgSelectedChannel = null;
         epgBackChannel = null;
         selectedEpgItem = null;
+    }
+
+    public void reLoad() {
+        if (App.LIVE_SHOW_EPG) getEpg(new AppConfig.LoadCallback() {
+            @Override
+            public void success() {
+
+            }
+
+            @Override
+            public void error(String msg) {
+
+            }
+        }, null);
     }
 }
