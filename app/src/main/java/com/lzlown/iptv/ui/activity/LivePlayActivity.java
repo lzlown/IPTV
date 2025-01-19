@@ -4,20 +4,26 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.IntEvaluator;
 import android.animation.ObjectAnimator;
-import android.annotation.SuppressLint;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.graphics.drawable.*;
+import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import com.android.cast.dlna.dmr.*;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.lzlown.iptv.R;
 import com.lzlown.iptv.base.App;
@@ -36,7 +42,10 @@ import com.lzlown.iptv.videoplayer.util.PlayerUtils;
 import com.orhanobut.hawk.Hawk;
 import com.owen.tvrecyclerview.widget.TvRecyclerView;
 import com.owen.tvrecyclerview.widget.V7LinearLayoutManager;
+import kotlin.jvm.internal.Intrinsics;
+import kotlin.text.StringsKt;
 import me.jessyan.autosize.AutoSizeConfig;
+import org.jetbrains.annotations.NotNull;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -114,17 +123,99 @@ public class LivePlayActivity extends BaseActivity {
     private boolean mIsDragging;
     //判断睡眠重置
     private boolean loadEnd = false;
+    private boolean dmr = false;
 
     @Override
     protected int getLayoutResID() {
         return R.layout.activity_live_play;
     }
 
+    protected void onCreate(@org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        DLNARendererService.Companion.startService(this);
+        this.bindService(new Intent((Context) this, DLNARendererService.class), this.serviceConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    private ServiceConnection serviceConnection = (ServiceConnection) (new ServiceConnection() {
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            Intrinsics.checkNotNullParameter(name, "name");
+            Intrinsics.checkNotNullParameter(service, "service");
+            rendererService = ((RendererServiceBinder) service).getService();
+            rendererService.bindRealPlayer(new RenderControl() {
+                @Override
+                public long getCurrentPosition() {
+                    return mVideoView.getCurrentPosition();
+                }
+
+                @Override
+                public long getDuration() {
+                    return mVideoView.getDuration();
+                }
+
+                @Override
+                public void play(@org.jetbrains.annotations.Nullable Double speed) {
+
+                }
+
+                @Override
+                public void pause() {
+//                    mVideoView.pause();
+                }
+
+                @Override
+                public void seek(long millSeconds) {
+//                    mVideoView.seekTo(millSeconds);
+                }
+
+                @Override
+                public void stop() {
+
+                }
+
+                @NotNull
+                @Override
+                public RenderState getState() {
+                    int currentPlayState = mVideoView.getCurrentPlayState();
+                    switch (currentPlayState) {
+                        case VideoView.STATE_PREPARED:
+                        case VideoView.STATE_BUFFERED:
+                        case VideoView.STATE_PLAYING:
+                            return RenderState.PLAYING;
+                        case VideoView.STATE_ERROR:
+                            return RenderState.ERROR;
+                        case VideoView.STATE_PREPARING:
+                        case VideoView.STATE_BUFFERING:
+                            return RenderState.PREPARING;
+                        case VideoView.STATE_PLAYBACK_COMPLETED:
+                            break;
+                    }
+                    return null;
+                }
+
+                @Override
+                public void start(@NotNull String url) {
+                    epgConfig.setBackUrl(url);
+                    isCanBack = true;
+                    dmr=true;
+                    mHandler.post(backPlayRun);
+                }
+            });
+        }
+
+        public void onServiceDisconnected(ComponentName name) {
+            Intrinsics.checkNotNullParameter(name, "name");
+            rendererService = null;
+        }
+    });
+
     @Override
     protected void init() {
         context = this;
         initView();
     }
+
+    @Nullable
+    private DLNARendererService rendererService;
 
     protected void initView() {
         mVideoView = findViewById(R.id.mVideoView);
@@ -284,8 +375,13 @@ public class LivePlayActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         reSet();
+        this.unbindService(this.serviceConnection);
+        DLNARendererService var1 = this.rendererService;
+        if (var1 != null) {
+            var1.bindRealPlayer((RenderControl)null);
+        }
+        super.onDestroy();
     }
 
     private void rmAllCallback() {
@@ -467,7 +563,7 @@ public class LivePlayActivity extends BaseActivity {
     private final Runnable mConnectTimeoutChangeSourceRun = new Runnable() {
         @Override
         public void run() {
-            if (tvBack.getVisibility() == View.VISIBLE) {
+            if (tvBack.getVisibility() == View.VISIBLE||dmr) {
                 playChannel(getCurrentChannelGroupIndex(), getCurrentLiveChannelIndex(), false);
                 return;
             }
@@ -689,7 +785,7 @@ public class LivePlayActivity extends BaseActivity {
                 }
                 break;
             case 1:
-                if (liveChannelIndex == liveChannelItemAdapter.getSelectedChannelIndex() && tvBack.getVisibility() != View.VISIBLE)
+                if (liveChannelIndex == liveChannelItemAdapter.getSelectedChannelIndex() && tvBack.getVisibility() != View.VISIBLE&& !dmr)
                     return;
                 liveChannelItemAdapter.setSelectedChannelIndex(liveChannelIndex);
                 playChannel(liveChannelGroupAdapter.getSelectedGroupIndex(), liveChannelIndex, false);
