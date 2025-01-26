@@ -12,6 +12,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.widget.ContentLoadingProgressBar;
+import com.lzlown.iptv.R;
+import com.lzlown.iptv.ui.view.RingLoadingView;
 import com.lzlown.iptv.videoplayer.controller.BaseVideoController;
 import com.lzlown.iptv.videoplayer.controller.IControlComponent;
 import com.lzlown.iptv.videoplayer.controller.IGestureComponent;
@@ -84,7 +87,7 @@ public abstract class BaseController extends BaseVideoController implements Gest
     }
 
     private TextView mSlideInfo;
-    private RelativeLayout mLoading;
+    private View mLoading;
 //    private ViewGroup mPauseRoot;
 //    private TextView mPauseTime;
 
@@ -129,13 +132,17 @@ public abstract class BaseController extends BaseVideoController implements Gest
                 break;
             case VideoView.STATE_PREPARING:
             case VideoView.STATE_BUFFERING:
-                mLoading.setVisibility(VISIBLE);
+                showLoading();
                 break;
             case VideoView.STATE_PLAYBACK_COMPLETED:
 //                mLoading.setVisibility(GONE);
 //                mPauseRoot.setVisibility(GONE);
                 break;
         }
+    }
+
+    public void showLoading() {
+        mLoading.setVisibility(VISIBLE);
     }
 
     /**
@@ -282,11 +289,12 @@ public abstract class BaseController extends BaseVideoController implements Gest
         }
         if (mChangePosition) {
             slideToChangePosition(deltaX);
-        } else if (mChangeBrightness) {
-            slideToChangeBrightness(deltaY);
-        } else if (mChangeVolume) {
-            slideToChangeVolume(deltaY);
         }
+//        else if (mChangeBrightness) {
+//            slideToChangeBrightness(deltaY);
+//        } else if (mChangeVolume) {
+//            slideToChangeVolume(deltaY);
+//        }
         return true;
     }
 

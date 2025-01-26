@@ -1,9 +1,9 @@
 package com.lzlown.iptv.player.ijk;
 
 import android.content.Context;
-import com.lzlown.iptv.api.ApiConfig;
+import com.lzlown.iptv.config.PlayerConfig;
 import com.lzlown.iptv.base.App;
-import com.lzlown.iptv.bean.IjkOption;
+import com.lzlown.iptv.bean.LivePlayerOption;
 import com.lzlown.iptv.videoplayer.player.ijk.IjkPlayer;
 import com.lzlown.iptv.videoplayer.util.PlayerUtils;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
@@ -23,10 +23,10 @@ public class IjkmPlayer extends IjkPlayer {
     @Override
     public void setOptions() {
         super.setOptions();
-        List<IjkOption> ijkOptionList = ApiConfig.get().getIjkOptions().get("default");
-        if (null != ijkOptionList) {
-            for (IjkOption ijkOption : ijkOptionList) {
-                mMediaPlayer.setOption(ijkOption.getCategory(), ijkOption.getName(), ijkOption.getValue());
+        List<LivePlayerOption> livePlayerOptionList = PlayerConfig.get().getIjkOptions().get("default");
+        if (null != livePlayerOptionList) {
+            for (LivePlayerOption livePlayerOption : livePlayerOptionList) {
+                mMediaPlayer.setOption(livePlayerOption.getCategory(), livePlayerOption.getName(), livePlayerOption.getValue());
             }
         }
         mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "subtitle", 1);
@@ -45,10 +45,10 @@ public class IjkmPlayer extends IjkPlayer {
             mMediaPlayer.setOption(1, "infbuf", 1);
             mMediaPlayer.setOption(1, "rtsp_transport", "tcp");
             mMediaPlayer.setOption(1, "rtsp_flags", "prefer_tcp");
-            List<IjkOption> ijkOptionList = ApiConfig.get().getIjkOptions().get("rtsp");
-            if (null != ijkOptionList) {
-                for (IjkOption ijkOption : ijkOptionList) {
-                    mMediaPlayer.setOption(ijkOption.getCategory(), ijkOption.getName(), ijkOption.getValue());
+            List<LivePlayerOption> livePlayerOptionList = PlayerConfig.get().getIjkOptions().get("rtsp");
+            if (null != livePlayerOptionList) {
+                for (LivePlayerOption livePlayerOption : livePlayerOptionList) {
+                    mMediaPlayer.setOption(livePlayerOption.getCategory(), livePlayerOption.getName(), livePlayerOption.getValue());
                 }
             }
         }

@@ -2,7 +2,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
-             android:layout_height="match_parent">
+             android:layout_height="match_parent" xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <FrameLayout
             android:id="@+id/tv_pause_container"
@@ -13,18 +13,17 @@
             tools:visibility="visible">
 
         <LinearLayout
-                android:layout_width="@dimen/vs_200"
-                android:layout_height="@dimen/vs_140"
+                android:layout_width="200dp"
+                android:layout_height="140dp"
                 android:layout_gravity="center"
-                android:background="@drawable/shape_focus"
                 android:focusable="false"
                 android:focusableInTouchMode="false"
                 android:gravity="center"
                 android:orientation="vertical" android:visibility="gone">
 
             <ImageView
-                    android:layout_width="@dimen/vs_60"
-                    android:layout_height="@dimen/vs_60"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
                     android:layout_gravity="center"
                     android:focusable="false"
                     android:focusableInTouchMode="false"
@@ -35,13 +34,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_marginTop="@dimen/vs_20"
+                    android:layout_marginTop="20dp"
                     android:focusable="false"
                     android:focusableInTouchMode="false"
                     android:tag="vod_control_pause_t"
                     android:visibility="gone"
                     android:textColor="@android:color/white"
-                    android:textSize="@dimen/ts_30"
+                    android:textSize="14sp"
                     tools:text="100"/>
         </LinearLayout>
 
@@ -49,30 +48,29 @@
 
     <TextView
             android:id="@+id/tv_slide_progress_text"
-            android:layout_width="@dimen/vs_200"
-            android:layout_height="@dimen/vs_100"
+            android:layout_width="200dp"
+            android:layout_height="100dp"
             android:layout_gravity="center"
-            android:background="@drawable/shape_focus"
+            android:background="@android:color/transparent"
             android:focusable="false"
             android:focusableInTouchMode="false"
             android:gravity="center"
             android:tag="vod_control_slide_info"
-            android:textAlignment="gravity"
             android:textColor="@android:color/white"
-            android:textSize="@dimen/ts_30"
-            android:visibility="gone"
-            tools:text="100"/>
+            android:textSize="26sp"
+            android:visibility="gone"/>
 
-    <RelativeLayout
-            android:background="@drawable/live_bg"
+    <LinearLayout
+            android:background="@android:color/black"
             android:tag="vod_control_loading"
+            android:gravity="center"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" android:visibility="gone">
+            android:layout_height="match_parent">
         <ProgressBar
-                android:layout_width="@dimen/vs_40"
-                android:layout_height="@dimen/vs_40"
-                android:indeterminateBehavior="repeat"
-                android:layout_centerInParent="true"
+                android:layout_gravity="center"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:indeterminateTint="@color/color_selected"/>
-    </RelativeLayout>
+    </LinearLayout>
+
 </FrameLayout>

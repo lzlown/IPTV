@@ -13,6 +13,7 @@ public class TimeUtil {
     public static String getTime() {
         return timeFormat.format(new Date());
     }
+
     public static Date getTime(String date) {
         try {
             return timeFormat.parse(date);
@@ -20,6 +21,7 @@ public class TimeUtil {
             return new Date();
         }
     }
+
     public static Date getEpgTime(String date) {
         try {
             return epgFormat.parse(date);
@@ -47,7 +49,7 @@ public class TimeUtil {
 
     public static String getTimeS(String time) {
         SimpleDateFormat f = new SimpleDateFormat("yyyyMMddHHmmss");
-        Date today  = null;
+        Date today = null;
         try {
             today = f.parse(time);
             Calendar c = Calendar.getInstance();
@@ -58,11 +60,12 @@ public class TimeUtil {
         } catch (ParseException e) {
 
         }
-       return f.format(new Date());
+        return f.format(new Date());
     }
-    public static String getTimeS(String time,int m) {
+
+    public static String getTimeS(String time, int m) {
         SimpleDateFormat f = new SimpleDateFormat("yyyyMMddHHmmss");
-        Date today  = null;
+        Date today = null;
         try {
             today = f.parse(time);
             Calendar c = Calendar.getInstance();
@@ -75,6 +78,7 @@ public class TimeUtil {
         }
         return f.format(new Date());
     }
+
     public static long getTime(String startTime, String endTime) {
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         long eTime = 0;
@@ -91,4 +95,12 @@ public class TimeUtil {
         }
         return (eTime - sTime) / 1000;
     }
+
+    public static String getWeek() {
+        Calendar calendar = Calendar.getInstance();
+        int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+        String[] daysOfWeek = {"周日", "周一", "周二", "周三", "周四", "周五", "周六"};
+        return daysOfWeek[dayOfWeek - 1];
+    }
+
 }

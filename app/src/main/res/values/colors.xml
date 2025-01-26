@@ -34,13 +34,16 @@
     <color name="color_99FFFFFF">#4D000000</color>
     <color name="color_59353744">#59353744</color>
     <color name="color_80FF0057">#66FF0057</color>
-    <color name="color_000000_60">#99000000</color>
+    <color name="color_000000_99">#99000000</color>
 
     <color name="color_selected">#409EFF</color>
+    <color name="color_focused">#333333</color>
     <color name="color_text_none">#C0C4CC</color>
     <color name="color_epg_current">#E6A23C</color>
     <color name="color_epg_back_ing">#F56C6C</color>
     <color name="color_epg_none">#909399</color>
     <color name="color_epg_back_can">#67C23A</color>
 
+    <color name="color_0E0E0E_90">#E60E0E0E</color>
+    <color name="color_6A6A6A_95">#F26A6A6A</color>
 </resources>

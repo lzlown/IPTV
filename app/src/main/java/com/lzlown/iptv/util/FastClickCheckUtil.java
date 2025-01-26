@@ -13,6 +13,9 @@ public class FastClickCheckUtil {
         check(view, 500);
     }
 
+    public static void check200(View view) {
+        check(view, 200);
+    }
     /**
      * 设置间隔点击规则，配置间隔点击时长
      *

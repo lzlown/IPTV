@@ -6,6 +6,9 @@ public class LiveSettingGroup {
     private int groupIndex;
     private String groupName;
     private ArrayList<LiveSettingItem> liveSettingItems;
+    private Integer type=0;
+    private Boolean select=false;
+    private String val="";
 
     public int getGroupIndex() {
         return groupIndex;
@@ -21,6 +24,30 @@ public class LiveSettingGroup {
 
     public void setGroupName(String groupName) {
         this.groupName = groupName;
+    }
+
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
+    }
+
+    public Boolean getSelect() {
+        return select;
+    }
+
+    public void setSelect(Boolean select) {
+        this.select = select;
+    }
+
+    public String getVal() {
+        return val;
+    }
+
+    public void setVal(String val) {
+        this.val = val;
     }
 
     public ArrayList<LiveSettingItem> getLiveSettingItems() {

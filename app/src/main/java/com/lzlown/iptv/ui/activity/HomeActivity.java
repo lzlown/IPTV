@@ -7,8 +7,8 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.lzlown.iptv.R;
-import com.lzlown.iptv.api.ApiConfig;
 import com.lzlown.iptv.base.BaseActivity;
+import com.lzlown.iptv.config.AppConfig;
 import com.lzlown.iptv.util.AppManager;
 
 public class HomeActivity extends BaseActivity {
@@ -17,6 +17,9 @@ public class HomeActivity extends BaseActivity {
     private ProgressBar progress;
     private TextView loadErr;
     private Handler mHandler = new Handler();
+    private AppConfig appConfig;
+    private Integer errSum = 0;
+
     @Override
     protected int getLayoutResID() {
         return R.layout.activity_home;
@@ -35,10 +38,12 @@ public class HomeActivity extends BaseActivity {
     @Override
     protected void init() {
         context = this;
+        errSum = 0;
         ll_loading = findViewById(R.id.ll_loading);
         progress = findViewById(R.id.loadingBar);
         loadErr = findViewById(R.id.loadErr);
         ll_loading.setVisibility(View.VISIBLE);
+        appConfig = AppConfig.get();
         mHandler.post(getCfgRun);
     }
 
@@ -49,10 +54,9 @@ public class HomeActivity extends BaseActivity {
     }
 
     private final Runnable getCfgRun = new Runnable() {
-
         @Override
         public void run() {
-            ApiConfig.get().loadData(new ApiConfig.LoadCallback() {
+            appConfig.init(null, new AppConfig.LoadCallback() {
                 @Override
                 public void success() {
                     ll_loading.setVisibility(View.GONE);
@@ -61,9 +65,15 @@ public class HomeActivity extends BaseActivity {
 
                 @Override
                 public void error(String msg) {
-                    progress.setVisibility(View.GONE);
-                    loadErr.setText(msg);
-                    loadErr.setVisibility(View.VISIBLE);
+                    errSum++;
+                    if (errSum > 5) {
+                        progress.setVisibility(View.GONE);
+                        loadErr.setText(msg);
+                        loadErr.setVisibility(View.VISIBLE);
+                    } else {
+                        mHandler.postDelayed(getCfgRun, 3000);
+                    }
+
                 }
             });
         }

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="140dp"
+              android:layout_height="60dp"
+              android:focusable="true"
+              android:gravity="center"
+              android:background="@drawable/shape_focus_setting"
+              android:focusableInTouchMode="false">
+    <TextView
+            android:id="@+id/tvSettingGroupName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:singleLine="true"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/ts_item"
+            tools:ignore="InOrMmUsage"/>
+</LinearLayout>

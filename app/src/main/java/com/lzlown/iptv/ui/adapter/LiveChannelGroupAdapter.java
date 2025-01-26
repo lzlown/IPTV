@@ -2,7 +2,6 @@ package com.lzlown.iptv.ui.adapter;
 
 import android.graphics.Color;
 import android.widget.TextView;
-
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.lzlown.iptv.R;
@@ -15,19 +14,25 @@ public class LiveChannelGroupAdapter extends BaseQuickAdapter<LiveChannelGroup, 
     private int focusedGroupIndex = -1;
 
     public LiveChannelGroupAdapter() {
-        super(R.layout.item_live_channel_group, new ArrayList<>());
+        super(R.layout.item_channel_group, new ArrayList<>());
     }
 
     @Override
     protected void convert(BaseViewHolder holder, LiveChannelGroup item) {
-        TextView tvGroupName = holder.getView(R.id.tvChannelGroupName);
-        tvGroupName.setText(item.getGroupName());
+        TextView tvItem = holder.getView(R.id.tvItem);
+        tvItem.setText(item.getGroupName());
         int groupIndex = item.getGroupIndex();
-        if (groupIndex == selectedGroupIndex && groupIndex != focusedGroupIndex) {
-            tvGroupName.setTextColor(mContext.getResources().getColor(R.color.color_selected));
+        if (selectedGroupIndex == groupIndex) {
+            tvItem.setTextColor(mContext.getResources().getColor(R.color.color_selected));
         } else {
-            tvGroupName.setTextColor(Color.WHITE);
+            if (focusedGroupIndex == groupIndex) {
+                tvItem.setTextColor(mContext.getResources().getColor(R.color.color_focused));
+            } else {
+                tvItem.setTextColor(Color.WHITE);
+            }
         }
+
+
     }
 
     public void setSelectedGroupIndex(int selectedGroupIndex) {
@@ -52,7 +57,4 @@ public class LiveChannelGroupAdapter extends BaseQuickAdapter<LiveChannelGroup, 
             notifyItemChanged(this.selectedGroupIndex);
     }
 
-    public int getFocusedGroupIndex() {
-        return focusedGroupIndex;
-    }
 }

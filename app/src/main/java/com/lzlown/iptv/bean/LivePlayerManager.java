@@ -94,6 +94,16 @@ public class LivePlayerManager {
         currentPlayerConfig = playerConfig;
     }
 
+    public void changeLivePlayerType(VideoView videoView) {
+        JSONObject playerConfig = currentPlayerConfig;
+        try {
+            playerConfig.put("pl", 1);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        PlayerHelper.updateCfg(videoView, playerConfig);
+    }
+
     public int getLivePlayerType() {
         try {
             return currentPlayerConfig.getInt("pl");

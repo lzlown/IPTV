@@ -1,15 +1,21 @@
 
 buildscript {
+    ext {
+        kotlin_version = '1.6.21'
+    }
     repositories {
         gradlePluginPortal()
         google()
+        maven { url "http://4thline.org/m2" }
         maven { url "https://jitpack.io" }
         maven { url 'https://download.01.org/crosswalk/releases/crosswalk/android/maven2' }
         maven { url "https://maven.aliyun.com/repository/releases" }
+        mavenCentral()
     }
 
     dependencies {
         classpath "com.android.tools.build:gradle:4.2.2"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.21"
     }
 }
 
@@ -17,9 +23,11 @@ allprojects {
     repositories {
         gradlePluginPortal()
         google()
+        maven { url "http://4thline.org/m2" }
         maven { url "https://jitpack.io" }
         maven { url 'https://download.01.org/crosswalk/releases/crosswalk/android/maven2' }
         maven { url "https://maven.aliyun.com/repository/releases" }
+        mavenCentral()
     }
 }
 

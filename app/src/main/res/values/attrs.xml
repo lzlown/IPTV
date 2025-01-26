@@ -63,4 +63,21 @@
         <attr name="playerBackgroundColor" format="color"/>
     </declare-styleable>
 
+    <declare-styleable name="themeColor">
+        <attr name="color_theme" format="color|reference" />
+        <attr name="color_theme_focused" format="color|reference" />
+        <attr name="color_theme_text_selected" format="color|reference" />
+        <attr name="color_theme_text_focused" format="color|reference" />
+    </declare-styleable>
+
+    <declare-styleable name="RingLoadingView">
+        <!-- 圆环开始颜色 -->
+        <attr name="rlv_start_color" format="color|reference" />
+        <!-- 圆环结束颜色 -->
+        <attr name="rlv_end_color" format="color|reference" />
+        <!-- 圆环的边宽 -->
+        <attr name="rlv_ring_width" format="dimension|reference|float" />
+        <!-- 是否自动开启旋转，默认开启 -->
+        <attr name="rlv_auto_start" format="boolean" />
+    </declare-styleable>
 </resources>

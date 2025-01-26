@@ -1,10 +1,16 @@
 package com.lzlown.iptv.util;
 
 import android.content.Context;
+import com.lzlown.iptv.player.ali.AlimPlayer;
 import com.lzlown.iptv.player.ijk.IjkmPlayer;
 import com.lzlown.iptv.videoplayer.player.PlayerFactory;
 import com.lzlown.iptv.videoplayer.player.VideoView;
+import com.lzlown.iptv.videoplayer.player.ali.AliPlayer;
+import com.lzlown.iptv.videoplayer.player.ali.AliPlayerFactory;
 import com.lzlown.iptv.videoplayer.player.android.AndroidMediaPlayerFactory;
+import com.lzlown.iptv.videoplayer.player.ijk.IjkPlayerFactory;
+import com.lzlown.iptv.videoplayer.player.vlc.VlcPlayer;
+import com.lzlown.iptv.videoplayer.player.vlc.VlcPlayerFactory;
 import com.lzlown.iptv.videoplayer.render.RenderViewFactory;
 import com.lzlown.iptv.videoplayer.render.SurfaceRenderViewFactory;
 import com.lzlown.iptv.videoplayer.render.TextureRenderViewFactory;
@@ -55,28 +61,16 @@ public class PlayerHelper {
                 th.printStackTrace();
             }
 
-        } else {
-//            playerFactory = AndroidMediaPlayerFactory.create();
-            playerFactory = new PlayerFactory<IjkmPlayer>() {
+        }
+        else if (playerType == 1) {
+            playerFactory = new VlcPlayerFactory() {
                 @Override
-                public IjkmPlayer createPlayer(Context context) {
-                    return new IjkmPlayer(context);
+                public VlcPlayer createPlayer(Context context) {
+                    return super.createPlayer(context);
                 }
             };
-            try {
-                tv.danmaku.ijk.media.player.IjkMediaPlayer.loadLibrariesOnce(new IjkLibLoader() {
-                    @Override
-                    public void loadLibrary(String s) throws UnsatisfiedLinkError, SecurityException {
-                        try {
-                            System.loadLibrary(s);
-                        } catch (Throwable th) {
-                            th.printStackTrace();
-                        }
-                    }
-                });
-            } catch (Throwable th) {
-                th.printStackTrace();
-            }
+        } else {
+            playerFactory = AndroidMediaPlayerFactory.create();
         }
         RenderViewFactory renderViewFactory = null;
         switch (renderType) {

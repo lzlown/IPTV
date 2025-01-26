@@ -6,12 +6,11 @@ import android.widget.TextView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.lzlown.iptv.R;
-import com.lzlown.iptv.api.ApiConfig;
 import com.lzlown.iptv.base.App;
+import com.lzlown.iptv.base.BaseActivity;
 import com.lzlown.iptv.bean.LiveChannelItem;
+import com.lzlown.iptv.config.EpgConfig;
 import com.lzlown.iptv.ui.tv.widget.MarqueeTextView;
-import com.lzlown.iptv.util.HawkConfig;
-import com.orhanobut.hawk.Hawk;
 
 import java.util.ArrayList;
 
@@ -20,7 +19,7 @@ public class LiveChannelItemAdapter extends BaseQuickAdapter<LiveChannelItem, Ba
     private int focusedChannelIndex = -1;
 
     public LiveChannelItemAdapter() {
-        super(R.layout.item_live_channel, new ArrayList<>());
+        super(R.layout.item_channel_item, new ArrayList<>());
     }
 
     @Override
@@ -29,17 +28,24 @@ public class LiveChannelItemAdapter extends BaseQuickAdapter<LiveChannelItem, Ba
         MarqueeTextView tvChannelEpg = holder.getView(R.id.tvChannelEpg);
         tvChannel.setText(String.format("%03d", item.getChannelNum()) + "  " + item.getChannelName());
         if (App.LIVE_SHOW_EPG) {
-            tvChannelEpg.setText(ApiConfig.get().getLiveEpgItem(item).getTitle());
+            tvChannelEpg.setText(EpgConfig.get().getLiveEpgItem(item).title);
         } else {
             tvChannelEpg.setVisibility(View.GONE);
         }
         int channelIndex = item.getChannelIndex();
-        if (channelIndex == selectedChannelIndex && channelIndex != focusedChannelIndex) {
-            tvChannel.setTextColor(mContext.getResources().getColor(R.color.color_selected));
-            tvChannelEpg.setTextColor(mContext.getResources().getColor(R.color.color_selected));
+        if (selectedChannelIndex == channelIndex) {
+            int color_selected = mContext.getResources().getColor(R.color.color_selected);
+            tvChannel.setTextColor(color_selected);
+            tvChannelEpg.setTextColor(color_selected);
         } else {
-            tvChannel.setTextColor(Color.WHITE);
-            tvChannelEpg.setTextColor(Color.WHITE);
+            if (focusedChannelIndex == channelIndex) {
+                int color_focused = mContext.getResources().getColor(R.color.color_focused);
+                tvChannel.setTextColor(color_focused);
+                tvChannelEpg.setTextColor(color_focused);
+            } else {
+                tvChannel.setTextColor(Color.WHITE);
+                tvChannelEpg.setTextColor(Color.WHITE);
+            }
         }
     }
 
@@ -64,11 +70,9 @@ public class LiveChannelItemAdapter extends BaseQuickAdapter<LiveChannelItem, Ba
             notifyItemChanged(this.selectedChannelIndex);
     }
 
-    public int getFocusedChannelIndex() {
-        return focusedChannelIndex;
-    }
-
     public int getSelectedChannelIndex() {
         return selectedChannelIndex;
     }
+
+
 }

@@ -6,7 +6,9 @@ import android.widget.TextView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.lzlown.iptv.R;
+import com.lzlown.iptv.base.BaseActivity;
 import com.lzlown.iptv.bean.LiveEpgItem;
+import com.lzlown.iptv.config.EpgConfig;
 import com.lzlown.iptv.util.TimeUtil;
 
 import java.util.ArrayList;
@@ -15,26 +17,34 @@ import java.util.Date;
 public class LiveEpgItemAdapter extends BaseQuickAdapter<LiveEpgItem, BaseViewHolder> {
     private int selectedIndex = -1;
     private int focusedIndex = -1;
-    private LiveEpgItem liveEpgItem;
     private boolean isCanBack = true;
 
     public LiveEpgItemAdapter() {
-        super(R.layout.item_live_epg, new ArrayList<>());
+        super(R.layout.item_epg_item, new ArrayList<>());
     }
 
     @Override
     protected void convert(BaseViewHolder holder, LiveEpgItem value) {
         TextView name = holder.getView(R.id.tv_epg_name);
         TextView time = holder.getView(R.id.tv_epg_time);
-        TextView back = holder.getView(R.id.goback);
-        if (value.index == selectedIndex && value.index != focusedIndex&& value.index != -1) {
-            int color = mContext.getResources().getColor(R.color.color_selected);
-            name.setTextColor(color);
-            time.setTextColor(color);
+        TextView back = holder.getView(R.id.tv_epg_re_reading);
+
+
+        if (selectedIndex == value.index) {
+            int color_selected = mContext.getResources().getColor(R.color.color_selected);
+            name.setTextColor(color_selected);
+            time.setTextColor(color_selected);
         } else {
-            name.setTextColor(Color.WHITE);
-            time.setTextColor(Color.WHITE);
+            if (focusedIndex == value.index) {
+                int color_focused = mContext.getResources().getColor(R.color.color_focused);
+                name.setTextColor(color_focused);
+                time.setTextColor(color_focused);
+            } else {
+                name.setTextColor(Color.WHITE);
+                time.setTextColor(Color.WHITE);
+            }
         }
+
         int color_epg_current = mContext.getResources().getColor(R.color.color_epg_current);
         int color_epg_none = mContext.getResources().getColor(R.color.color_epg_none);
         int color_epg_back_ing = mContext.getResources().getColor(R.color.color_epg_back_ing);
@@ -62,7 +72,7 @@ public class LiveEpgItemAdapter extends BaseQuickAdapter<LiveEpgItem, BaseViewHo
             back.setText("直播中");
             back.setTextColor(Color.WHITE);
         } else {
-            if (value.equals(liveEpgItem)) {
+            if (value.equals(EpgConfig.get().getSelectedEpgItem())) {
                 back.setVisibility(View.VISIBLE);
                 back.setBackgroundColor(color_epg_back_ing);
                 back.setText("回看中");
@@ -73,7 +83,7 @@ public class LiveEpgItemAdapter extends BaseQuickAdapter<LiveEpgItem, BaseViewHo
             back.setBackgroundColor(color_epg_back_can);
             back.setTextColor(Color.WHITE);
             back.setText("回看");
-            if (!isCanBack){
+            if (!isCanBack) {
                 back.setBackgroundColor(Color.GRAY);
             }
         }
@@ -93,11 +103,6 @@ public class LiveEpgItemAdapter extends BaseQuickAdapter<LiveEpgItem, BaseViewHo
             notifyItemChanged(this.selectedIndex);
     }
 
-
-    public int getFocusedIndex() {
-        return focusedIndex;
-    }
-
     public void setFocusedIndex(int focusedIndex) {
         int preFocusedChannelIndex = this.focusedIndex;
         this.focusedIndex = focusedIndex;
@@ -105,12 +110,8 @@ public class LiveEpgItemAdapter extends BaseQuickAdapter<LiveEpgItem, BaseViewHo
             notifyItemChanged(preFocusedChannelIndex);
         if (this.focusedIndex != -1)
             notifyItemChanged(this.focusedIndex);
-        else if (this.focusedIndex != -1)
-            notifyItemChanged(this.focusedIndex);
-    }
-
-    public void setLiveEpgItem(LiveEpgItem liveEpgItem) {
-        this.liveEpgItem = liveEpgItem;
+        else if (this.selectedIndex != -1)
+            notifyItemChanged(this.selectedIndex);
     }
 
     public void setCanBack(boolean canBack) {

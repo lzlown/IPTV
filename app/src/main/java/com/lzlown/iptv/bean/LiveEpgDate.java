@@ -1,9 +1,8 @@
 package com.lzlown.iptv.bean;
-import java.util.ArrayList;
+
 import java.util.Date;
 
 public class LiveEpgDate {
-
     private int index;
     private String datePresented;
     private Date dateParamVal;

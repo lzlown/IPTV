@@ -13,6 +13,6 @@ public class HawkConfig {
     public static final String LIVE_SHOW_TIME = "live_show_time";
     public static final String LIVE_SHOW_SPEED = "live_show_speed";
     public static final String LIVE_SHOW_EPG = "live_show_epg";
-
-
+    public static final String LIVE_UI_SHOW_TIME = "live_ui_show_time";
+    public static final String THEME_SELECT = "theme_select";
 }

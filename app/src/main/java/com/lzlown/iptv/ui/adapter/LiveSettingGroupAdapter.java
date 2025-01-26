@@ -5,6 +5,7 @@ import android.widget.TextView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.lzlown.iptv.R;
+import com.lzlown.iptv.base.BaseActivity;
 import com.lzlown.iptv.bean.LiveSettingGroup;
 
 import java.util.ArrayList;
@@ -14,7 +15,7 @@ public class LiveSettingGroupAdapter extends BaseQuickAdapter<LiveSettingGroup, 
     private int focusedGroupIndex = -1;
 
     public LiveSettingGroupAdapter() {
-        super(R.layout.item_live_setting_group, new ArrayList<>());
+        super(R.layout.item_setting_group, new ArrayList<>());
     }
 
     @Override
@@ -22,7 +23,7 @@ public class LiveSettingGroupAdapter extends BaseQuickAdapter<LiveSettingGroup, 
         TextView tvGroupName = holder.getView(R.id.tvSettingGroupName);
         tvGroupName.setText(group.getGroupName());
         int groupIndex = group.getGroupIndex();
-        if (groupIndex == selectedGroupIndex && groupIndex != focusedGroupIndex) {
+        if (groupIndex == focusedGroupIndex) {
             tvGroupName.setTextColor(mContext.getResources().getColor(R.color.color_selected));
         } else {
             tvGroupName.setTextColor(Color.WHITE);
@@ -43,7 +44,10 @@ public class LiveSettingGroupAdapter extends BaseQuickAdapter<LiveSettingGroup, 
     }
 
     public void setFocusedGroupIndex(int focusedGroupIndex) {
+        int preSelectedGroupIndex = this.focusedGroupIndex;
         this.focusedGroupIndex = focusedGroupIndex;
+        if (preSelectedGroupIndex != -1)
+            notifyItemChanged(preSelectedGroupIndex);
         if (this.focusedGroupIndex != -1)
             notifyItemChanged(this.focusedGroupIndex);
         else if (this.selectedGroupIndex != -1)

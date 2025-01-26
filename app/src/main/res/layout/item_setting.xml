@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:focusable="true"
+              android:focusableInTouchMode="false"
+              android:layout_height="@dimen/vs_item_height"
+              android:paddingLeft="@dimen/vs_item_padding"
+              android:paddingRight="@dimen/vs_item_padding"
+              android:background="@drawable/shape_focus"
+              android:gravity="center_vertical"
+              android:orientation="horizontal">
+    <TextView
+            android:id="@+id/tvSettingItemName"
+            android:layout_width="0mm"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:singleLine="true"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/ts_item"/>
+    <com.lzlown.iptv.ui.view.MyRadioButton
+            android:layout_marginStart="@dimen/vs_item_content_margin"
+            android:id="@+id/tvSettingItemSelect"
+            android:layout_width="26dp"
+            android:layout_height="26dp"/>
+</LinearLayout>

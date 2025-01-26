@@ -5,7 +5,9 @@ import android.widget.TextView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.lzlown.iptv.R;
+import com.lzlown.iptv.base.BaseActivity;
 import com.lzlown.iptv.bean.LiveSettingItem;
+import com.lzlown.iptv.ui.view.MyRadioButton;
 
 import java.util.ArrayList;
 
@@ -13,19 +15,28 @@ public class LiveSettingItemAdapter extends BaseQuickAdapter<LiveSettingItem, Ba
     private int focusedItemIndex = -1;
 
     public LiveSettingItemAdapter() {
-        super(R.layout.item_live_setting, new ArrayList<>());
+        super(R.layout.item_setting, new ArrayList<>());
     }
+
 
     @Override
     protected void convert(BaseViewHolder holder, LiveSettingItem item) {
         TextView tvItemName = holder.getView(R.id.tvSettingItemName);
-        tvItemName.setText(item.getItemName());
-        int itemIndex = item.getItemIndex();
-        if (item.isItemSelected() && itemIndex != focusedItemIndex) {
+        MyRadioButton tvItemSelect = holder.getView(R.id.tvSettingItemSelect);
+        tvItemName.setText(item.getItemName().split("&")[0]);
+        if (item.isItemSelected()) {
             tvItemName.setTextColor(mContext.getResources().getColor(R.color.color_selected));
+            tvItemSelect.setState(1);
         } else {
-            tvItemName.setTextColor(Color.WHITE);
+            if (focusedItemIndex==item.getItemIndex()) {
+                tvItemName.setTextColor(mContext.getResources().getColor(R.color.color_focused));
+                tvItemSelect.setState(-1);
+            }else {
+                tvItemName.setTextColor(Color.WHITE);
+                tvItemSelect.setState(0);
+            }
         }
+
     }
 
     public void selectItem(int selectedItemIndex, boolean select, boolean unselectPreItemIndex) {
