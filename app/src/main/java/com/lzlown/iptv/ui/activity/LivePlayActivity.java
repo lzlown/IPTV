@@ -440,9 +440,9 @@ public class LivePlayActivity extends BaseActivity {
             LiveChannelItem liveChannelItem = getCurrentLiveChannelItem();
             livePlayerManager.getLiveChannelPlayer(mVideoView, getCurrentChannelGroupIndex() + liveChannelItem.getChannelName() + liveChannelItem.getSourceIndex());
             isCanBack = liveChannelItem.getUrl().contains(".mp4");
-            if (liveChannelItem.getSourceName().contains("虎牙")||liveChannelItem.getSourceName().contains("斗鱼")){
+//            if (liveChannelItem.getSourceName().contains("虎牙")||liveChannelItem.getSourceName().contains("斗鱼")){
 //                livePlayerManager.changeLivePlayerType(mVideoView);
-            }
+//            }
             epgConfig.setEpgBackChannel(null);
             epgConfig.setSelectedEpgItem(null);
             selectTime = 0;
