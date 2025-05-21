@@ -246,6 +246,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
         mMediaPlayer.setPlayerEventListener(this);
         setInitOptions();
         mMediaPlayer.initPlayer();
+        mIsMute=true;
         setOptions();
     }
 

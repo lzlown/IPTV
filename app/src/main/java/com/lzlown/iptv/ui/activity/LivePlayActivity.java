@@ -350,11 +350,12 @@ public class LivePlayActivity extends BaseActivity {
                         mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
                         mHandler.removeCallbacks(mHideChannelNameRun);
                         mHandler.postDelayed(mHideChannelNameRun, 5000);
+                        mHandler.removeCallbacks(hideLoading);
+                        mHandler.postDelayed(hideLoading, 333);
                         break;
                     case VideoView.STATE_ERROR:
                     case VideoView.STATE_PREPARING:
                     case VideoView.STATE_BUFFERING:
-                        Log.i(TAG, "playStateChanged: ");
                         mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
                         if (App.LIVE_CONNECT_TIMEOUT < 0) {
                             mHandler.postDelayed(mConnectTimeoutChangeSourceRun, 10 * 1000);
@@ -408,6 +409,8 @@ public class LivePlayActivity extends BaseActivity {
 
     //播放准备
     private void playChannel(int channelGroupIndex, int liveChannelIndex, boolean changeSource) {
+        controller.showLoading();
+        mHandler.removeCallbacks(hideLoading);
         LiveChannelItem liveChannelItem = liveConfig.getLiveChannels(channelGroupIndex).get(liveChannelIndex);
         if (!changeSource) {
             liveConfig.setCurrentLiveChannelItem(liveChannelItem);
@@ -426,12 +429,18 @@ public class LivePlayActivity extends BaseActivity {
 
         }
         showProgressBar(false);
-        mVideoView.release();
-        controller.showLoading();
         tvBack.setVisibility(View.GONE);
         mHandler.removeCallbacks(playChannelRun);
         mHandler.postDelayed(playChannelRun, 100);
     }
+
+    private final Runnable hideLoading = new Runnable() {
+        @Override
+        public void run() {
+            if (controller != null) controller.hideLoading();
+            if (mVideoView != null) mVideoView.setMute(false);
+        }
+    };
 
     //播放实行
     private final Runnable playChannelRun = new Runnable() {
@@ -447,6 +456,7 @@ public class LivePlayActivity extends BaseActivity {
             epgConfig.setSelectedEpgItem(null);
             selectTime = 0;
             mHandler.removeCallbacks(backChangeRun);
+            mHandler.removeCallbacks(backPlayRun);
 
             mVideoView.release();
             mVideoView.setUrl(liveChannelItem.getUrl());
@@ -1332,11 +1342,11 @@ public class LivePlayActivity extends BaseActivity {
             Map<String, LiveEpgItem> liveEpgItemForMap = epgConfig.getLiveEpgItemForMap(getCurrentLiveChannelItem());
             LiveEpgItem liveEpgItem = liveEpgItemForMap.get("c");
             if (liveEpgItem != null) {
-                tip_name1.setText(String.format("%s-%s  %s", liveEpgItem.start, liveEpgItem.end,liveEpgItem.title));
+                tip_name1.setText(String.format("%s-%s  %s", liveEpgItem.start, liveEpgItem.end, liveEpgItem.title));
             }
             LiveEpgItem liveEpgItem1 = liveEpgItemForMap.get("n");
             if (liveEpgItem1 != null) {
-                tip_name2.setText(String.format("%s-%s  %s", liveEpgItem1.start, liveEpgItem1.end,liveEpgItem1.title));
+                tip_name2.setText(String.format("%s-%s  %s", liveEpgItem1.start, liveEpgItem1.end, liveEpgItem1.title));
             }
             if (liveEpgItem == liveEpgItem1) {
                 tip_name1.setText("ʚ ɞ");
@@ -1351,7 +1361,7 @@ public class LivePlayActivity extends BaseActivity {
     private void showInfo() {
         TextView tvSName = findViewById(R.id.tvSName);
         TextView tvSTimeDate = findViewById(R.id.tvSTimeDate);
-        tvSName.setText(String.valueOf(getCurrentLiveChannelItem().getChannelNum()) );
+        tvSName.setText(String.valueOf(getCurrentLiveChannelItem().getChannelNum()));
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd");
         tvSTimeDate.setText(String.format("%s %s", simpleDateFormat.format(new Date()), TimeUtil.getWeek()));
 

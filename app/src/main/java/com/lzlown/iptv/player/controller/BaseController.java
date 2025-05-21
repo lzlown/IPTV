@@ -6,6 +6,7 @@ import android.media.AudioManager;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.*;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -114,35 +115,30 @@ public abstract class BaseController extends BaseVideoController implements Gest
         super.onPlayStateChanged(playState);
         switch (playState) {
             case VideoView.STATE_IDLE:
-//                mLoading.setVisibility(GONE);
                 break;
             case VideoView.STATE_PLAYING:
-//                mPauseRoot.setVisibility(GONE);
-                mLoading.setVisibility(GONE);
+//                mLoading.setVisibility(GONE);
                 break;
             case VideoView.STATE_PAUSED:
-//                mPauseRoot.setVisibility(VISIBLE);
-//                mLoading.setVisibility(GONE);
                 break;
             case VideoView.STATE_ERROR:
                 break;
             case VideoView.STATE_PREPARED:
             case VideoView.STATE_BUFFERED:
-                mLoading.setVisibility(GONE);
                 break;
             case VideoView.STATE_PREPARING:
             case VideoView.STATE_BUFFERING:
-                showLoading();
                 break;
             case VideoView.STATE_PLAYBACK_COMPLETED:
-//                mLoading.setVisibility(GONE);
-//                mPauseRoot.setVisibility(GONE);
                 break;
         }
     }
 
     public void showLoading() {
         mLoading.setVisibility(VISIBLE);
+    }
+    public void hideLoading() {
+        mLoading.setVisibility(INVISIBLE);
     }
 
     /**
