@@ -426,7 +426,6 @@ public class LivePlayActivity extends BaseActivity {
 
         }
         showProgressBar(false);
-        mVideoView.release();
         controller.showLoading();
         tvBack.setVisibility(View.GONE);
         mHandler.removeCallbacks(playChannelRun);
@@ -447,6 +446,7 @@ public class LivePlayActivity extends BaseActivity {
             epgConfig.setSelectedEpgItem(null);
             selectTime = 0;
             mHandler.removeCallbacks(backChangeRun);
+            mHandler.removeCallbacks(backPlayRun);
 
             mVideoView.release();
             mVideoView.setUrl(liveChannelItem.getUrl());
